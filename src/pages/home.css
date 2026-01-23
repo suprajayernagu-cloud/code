@@ -1,0 +1,132 @@
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 16px;
+}
+
+/* Title */
+.page-title {
+  margin-bottom: 16px;
+  font-size: 1.6rem;
+}
+
+/* Jobs Grid */
+.jobs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* Job Card */
+.job-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  align-items: center;
+}
+
+/* Left (Logo) */
+.company-logo,
+.company-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.company-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef2ff;
+  font-weight: bold;
+  color: #3730a3;
+}
+
+/* Body */
+.job-card-body {
+  flex: 1;
+}
+
+.job-title a {
+  text-decoration: none;
+  color: #111827;
+}
+
+.job-meta {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.job-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.muted {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Right */
+.view-link {
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+/* ---------- Pagination ---------- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.page-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #f3f4f6;
+}
+
+.page-btn.active {
+  background: #2563eb;
+  color: #fff;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Responsive ---------- */
+
+/* Tablet */
+@media (min-width: 640px) {
+  .jobs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .jobs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
