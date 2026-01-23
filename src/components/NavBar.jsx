@@ -11,7 +11,7 @@ export default function NavBar() {
       <div className="container header-inner">
         
         {/* Brand */}
-        <Link to="/" className="brand">JobBoard</Link>
+        <Link to="/" className="brand">Fresh Hires</Link>
 
         {/* Desktop Nav */}
         <nav className="top-links">
