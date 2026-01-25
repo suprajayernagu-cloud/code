@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { JOBS_URL } from '../config'
-import './Home.css'
+import './home.css'
 
 const ITEMS_PER_PAGE = 6
 
