@@ -1,0 +1,87 @@
+/* ================= HEADER ================= */
+.site-header {
+  background: #2563eb;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Layout */
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+/* Brand */
+.brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+}
+
+/* ================= DESKTOP NAV ================= */
+.top-links {
+  display: flex;
+  gap: 24px;
+}
+
+.top-links a {
+  color: #dbeafe;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.top-links a:hover {
+  color: #ffffff;
+}
+
+/* ================= HAMBURGER ================= */
+.menu-btn {
+  display: none;        /* ⬅️ HIDDEN BY DEFAULT */
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* ================= MOBILE MENU ================= */
+.mobile-menu {
+  background: #1e40af;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mobile-menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.mobile-search {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+
+  /* Hide desktop links on mobile */
+  .top-links {
+    display: none;
+  }
+
+  /* Show hamburger ONLY on mobile */
+  .menu-btn {
+    display: block;
+  }
+}
