@@ -1,6 +1,14 @@
-// Replace the placeholder URL with your GitHub raw URL after you push data/jobs.json to a repo.
-export const JOBS_URL = 'https://siddiq3.github.io/jobsUpdateApi/jobs.json'
+// Hiringstoday Configuration
+// Domain: hiringstoday.com
+// Purpose: Latest job updates from public sources
 
-// Example: https://raw.githubusercontent.com/siddiqkolimi/jobUpdates/main/data/jobs.json
-// Replace with your companies JSON raw URL (host on GitHub or other static host)
-export const COMPANIES_URL = 'https://siddiq3.github.io/jobsUpdateApi/companies.json'
+// API endpoint for job listings
+// Replace with your production endpoint that serves job data from public sources
+export const JOBS_URL = 'https://suprajayernagu-cloud.github.io/Job-data/Jobdetails.json'
+
+// Optional: Companies API endpoint (if needed)
+// export const COMPANIES_URL = 'https://api.hiringstoday.com/companies.json'
+
+// Site domain and contact info
+export const SITE_URL = 'https://hiringstoday.in'
+export const CONTACT_EMAIL = 'hiringstoday13@gmail.com'

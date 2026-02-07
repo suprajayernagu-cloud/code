@@ -1,13 +1,24 @@
 {
-  "name": "job-board",
-  "version": "0.1.0",
+  "name": "hiringstoday",
+  "version": "1.0.0",
+  "description": "Hiringstoday - Discover the latest job opportunities updated daily. Job aggregation platform from public sources.",
   "private": true,
+  "keywords": [
+    "jobs",
+    "job board",
+    "career",
+    "hiring",
+    "employment"
+  ],
+  "author": "Hiringstoday",
+  "homepage": "https://hiringstoday.com",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.1"
