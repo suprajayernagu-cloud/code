@@ -108,33 +108,6 @@ export default function Home() {
 
   return (
     <main className="container" role="main" aria-label="Hiringstoday home page">
-      {/* Hero */}
-      {/* <section className="hero" aria-labelledby="hero-title">
-        <h1 id="hero-title">Hiringstoday</h1>
-        <p>
-          Discover the latest job opportunities, updated daily.
-          Your career starts here.
-        </p>
-
-        <form
-          className="search-form"
-          role="search"
-          aria-label="Search jobs"
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <input
-            type="text"
-            placeholder="Search jobs or companies"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value)
-              setPage(1)
-            }}
-            aria-label="Search jobs or companies"
-          />
-        </form>
-      </section> */}
-
       {/* Jobs */}
       <section className="jobs-grid" aria-label="Latest job listings">
         {loading &&
