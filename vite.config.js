@@ -1,6 +1,18 @@
 import { defineConfig } from 'vite'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  // default config is sufficient for this simple app
+  build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        if (
+          warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+          typeof warning.id === 'string' &&
+          warning.id.includes('node_modules/framer-motion')
+        ) {
+          return
+        }
+        warn(warning)
+      },
+    },
+  },
 })

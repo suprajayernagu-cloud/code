@@ -1,170 +1,271 @@
-// Hiringstoday Job Details Page
-// Displays detailed job information with original content, disclaimers, and apply CTA
-import React, { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { JOBS_URL } from '../config'
-import './JobDetails.css'
 import AdPlaceholder from '../components/AdPlaceholder'
 
-function CompanyAvatar({ company, logoUrl, large }){
+function parseDate(dateString) {
+  const date = new Date(dateString)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function formatDate(dateString) {
+  if (!dateString) return 'Date unavailable'
+  const date = parseDate(dateString)
+  if (!date) return dateString
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date)
+}
+
+function CompanyAvatar({ company, logoUrl, large = false }) {
+  const sizeClass = large ? 'h-16 w-16 rounded-2xl text-xl' : 'h-10 w-10 rounded-xl text-sm'
+
   if (logoUrl) {
-    return <img src={logoUrl} alt={`${company} logo`} className={large ? 'company-logo large' : 'company-logo'} />
+    return (
+      <img
+        src={logoUrl}
+        alt={`${company} logo`}
+        className={`${sizeClass} border border-white object-cover shadow-sm`}
+      />
+    )
   }
-  const initial = company ? company.trim()[0].toUpperCase() : '?'
-  return <div className={large ? 'company-avatar large' : 'company-avatar'} aria-label={`${company} initial`}>{initial}</div>
+
+  return (
+    <div
+      className={`${sizeClass} grid place-items-center bg-gradient-to-br from-brand-500 to-emerald-500 font-bold text-white`}
+      aria-label={`${company} initial`}
+      role="img"
+    >
+      {company?.trim()?.charAt(0)?.toUpperCase() || '?'}
+    </div>
+  )
+}
+
+function InfoCard({ title, children }) {
+  return (
+    <motion.section
+      className="surface p-6 sm:p-7"
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.35 }}
+    >
+      <h2 className="font-display text-2xl font-semibold text-ink-900">{title}</h2>
+      <div className="mt-4 text-sm leading-7 text-slate-700 sm:text-base">{children}</div>
+    </motion.section>
+  )
 }
 
 export default function JobDetails() {
   const { id } = useParams()
-  const [job, setJob] = useState(null)
-  const [otherJobs, setOtherJobs] = useState([])
+  const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    let mounted = true
-    setLoading(true)
-    fetch(JOBS_URL)
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch job details')
-        return res.json()
-      })
-      .then((data) => {
-        if (!mounted) return
-        const found = data.find((j) => String(j.id) === String(id))
-        setJob(found || null)
-        // Show up to 3 related jobs
-        const others = data.filter((j) => String(j.id) !== String(id)).slice(0, 3)
-        setOtherJobs(others)
-      })
-      .catch((err) => {
-        if (mounted) setError(err.message)
-      })
-      .finally(() => {
-        if (mounted) setLoading(false)
-      })
+    const controller = new AbortController()
 
-    return () => { mounted = false }
-  }, [id])
+    async function fetchJobs() {
+      setLoading(true)
+      setError('')
 
-  if (loading) return <div className="container">Loading job details…</div>
-  if (error) return <div className="container error">Failed to load job: {error}</div>
-  if (!job) return <div className="container">Job not found. <Link to="/">Return to jobs</Link></div>
+      try {
+        const response = await fetch(JOBS_URL, { signal: controller.signal })
+        if (!response.ok) {
+          throw new Error('Unable to load this job right now.')
+        }
+
+        const data = await response.json()
+        setJobs(Array.isArray(data) ? data : [])
+      } catch (fetchError) {
+        if (fetchError.name !== 'AbortError') {
+          setError(fetchError.message || 'Unable to load this job right now.')
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchJobs()
+
+    return () => controller.abort()
+  }, [])
+
+  const job = useMemo(
+    () => jobs.find((item) => String(item.id) === String(id)) || null,
+    [jobs, id]
+  )
+
+  const relatedJobs = useMemo(() => jobs.filter((item) => String(item.id) !== String(id)).slice(0, 3), [jobs, id])
+
+  if (loading) {
+    return (
+      <section className="surface p-8">
+        <p className="text-sm font-medium text-slate-600">Loading job details...</p>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="surface p-8">
+        <h1 className="font-display text-2xl font-bold text-red-700">Unable to load job details</h1>
+        <p className="mt-2 text-sm text-slate-600">{error}</p>
+        <Link to="/" className="primary-btn mt-6">
+          Back to Jobs
+        </Link>
+      </section>
+    )
+  }
+
+  if (!job) {
+    return (
+      <section className="surface p-8 text-center">
+        <h1 className="font-display text-3xl font-bold text-ink-900">Job not found</h1>
+        <p className="mt-2 text-sm text-slate-600">This role may have been removed or the URL is incorrect.</p>
+        <Link to="/" className="primary-btn mt-6">
+          Browse latest jobs
+        </Link>
+      </section>
+    )
+  }
 
   return (
-    <main className="container job-details" role="main" aria-label="Job details">
-      {/* Hero Section with Job Info */}
-      <section className="job-header" aria-labelledby="job-title">
-        <CompanyAvatar company={job.company} logoUrl={job.logoUrl} large />
-        <div className="job-header-body">
-          <h1 id="job-title" className="job-title">{job.title}</h1>
-          <div className="job-sub-meta">
-            <span className="company-name"><strong>{job.company}</strong></span>
-            <span className="location">{job.location}</span>
-            {job.type && <span className="job-type"><strong>{job.type}</strong></span>}
-            {job.postedAt && <span className="posted-date">Posted: {job.postedAt}</span>}
+    <section className="space-y-6">
+      <section className="surface relative overflow-hidden p-6 sm:p-8">
+        <div className="absolute inset-0 bg-mesh opacity-40" aria-hidden="true" />
+
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex items-start gap-4 sm:gap-5">
+            <CompanyAvatar company={job.company} logoUrl={job.logoUrl} large />
+
+            <div>
+              <p className="pill w-fit">{job.type || 'Opportunity'}</p>
+              <h1 className="mt-3 font-display text-3xl font-bold leading-tight text-ink-900 sm:text-4xl">{job.title}</h1>
+
+              <div className="mt-3 flex flex-wrap gap-2 text-sm text-slate-600">
+                <span className="rounded-full bg-white/85 px-3 py-1">{job.company}</span>
+                <span className="rounded-full bg-white/85 px-3 py-1">{job.location || 'Location not listed'}</span>
+                {job.experience ? <span className="rounded-full bg-white/85 px-3 py-1">{job.experience}</span> : null}
+                <span className="rounded-full bg-white/85 px-3 py-1">Posted {formatDate(job.postedAt)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center lg:flex-col lg:items-end">
+            {job.salary ? (
+              <div className="rounded-2xl border border-brand-200 bg-brand-50/90 px-4 py-2 text-sm font-semibold text-brand-700">
+                {job.salary}
+              </div>
+            ) : null}
+
+            {job.applyUrl ? (
+              <a
+                href={job.applyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="primary-btn"
+                aria-label={`Apply for ${job.title} at ${job.company}`}
+              >
+                Apply on company site
+              </a>
+            ) : null}
           </div>
         </div>
       </section>
 
-      {/* Ad Placeholder - Top 
       <AdPlaceholder position="job-details-top" />
-      */}
 
-      {/* Job Description */}
-      {job.description && (
-        <section className="job-body" aria-labelledby="job-description-heading">
-          <h2 id="job-description-heading" style={{ color: '#38BDF8' }}>Job Description</h2>
-          <div className="job-desc">
-            <p>{job.description}</p>
-          </div>
-        </section>
-      )}
+      {job.description ? (
+        <InfoCard title="Role overview">
+          <p>{job.description}</p>
+        </InfoCard>
+      ) : null}
 
-      {/* Responsibilities */}
-      {job.responsibilities && job.responsibilities.length > 0 && (
-        <section className="job-body" aria-labelledby="responsibilities-heading">
-          <h2 id="responsibilities-heading" style={{ color: '#38BDF8' }}>Responsibilities</h2>
-          <ul className="job-list">
-            {job.responsibilities.map((r, i) => (
-              <li key={i}>{r}</li>
+      {Array.isArray(job.responsibilities) && job.responsibilities.length > 0 ? (
+        <InfoCard title="Responsibilities">
+          <ul className="list-disc space-y-2 pl-5">
+            {job.responsibilities.map((responsibility) => (
+              <li key={responsibility}>{responsibility}</li>
             ))}
           </ul>
-        </section>
-      )}
+        </InfoCard>
+      ) : null}
 
-      {/* Qualifications */}
-      {job.qualifications && job.qualifications.length > 0 && (
-        <section className="job-body" aria-labelledby="qualifications-heading">
-          <h2 id="qualifications-heading" style={{ color: '#38BDF8' }}>Qualifications</h2>
-          <ul className="job-list">
-            {job.qualifications.map((q, i) => (
-              <li key={i}>{q}</li>
+      {Array.isArray(job.qualifications) && job.qualifications.length > 0 ? (
+        <InfoCard title="Qualifications">
+          <ul className="list-disc space-y-2 pl-5">
+            {job.qualifications.map((qualification) => (
+              <li key={qualification}>{qualification}</li>
             ))}
           </ul>
-        </section>
-      )}
+        </InfoCard>
+      ) : null}
 
-      {/* Skills & Tags */}
-      {job.tags && job.tags.length > 0 && (
-        <section className="job-body" aria-labelledby="skills-heading">
-          <h2 id="skills-heading" style={{ color: '#38BDF8' }}>Skills & Tags</h2>
-          <div className="tag-list">
-            {job.tags.map((t) => (
-              <span key={t} className="tag">{t}</span>
+      {Array.isArray(job.tags) && job.tags.length > 0 ? (
+        <InfoCard title="Skills and tags">
+          <div className="flex flex-wrap gap-2">
+            {job.tags.map((tag) => (
+              <span key={tag} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-700">
+                {tag}
+              </span>
             ))}
           </div>
-        </section>
-      )}
+        </InfoCard>
+      ) : null}
 
-      {/* Disclaimer */}
-      <section className="disclaimer" aria-labelledby="disclaimer-heading">
-        <h3 id="disclaimer-heading">Important Disclaimer</h3>
-        <p>
-          <strong>Hiringstoday</strong> is a job aggregator. This job information is sourced from public data and we are not affiliated with the hiring company. 
-          Please verify job details directly on the company's official website before applying. We recommend contacting the employer directly to confirm the role is still active.
+      <section className="surface border-amber-200/70 bg-amber-50/75 p-6 text-amber-900 sm:p-7">
+        <h2 className="font-display text-xl font-semibold">Important reminder</h2>
+        <p className="mt-3 text-sm leading-7 sm:text-base">
+          Hiringstoday is a job aggregator. Verify role details directly on the official company website before applying.
         </p>
       </section>
 
-      {/* Apply Button */}
-      {job.applyUrl && (
-        <div className="apply-below">
-          <a 
-            className="apply-btn full" 
-            href={job.applyUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            aria-label={`Apply for ${job.title} at ${job.company}`}
-          >
-            Apply on Company Website
-          </a>
-        </div>
-      )}
-
-      {/* Ad Placeholder - Bottom 
       <AdPlaceholder position="job-details-bottom" />
-      */}
 
-      {/* Related Jobs */}
-      {otherJobs.length > 0 && (
-        <section className="related-jobs" aria-labelledby="related-heading">
-          <h2 id="related-heading" style={{ color: '#38BDF8' }}>Related Jobs You Might Like</h2>
-          <div className="jobs-grid small">
-            {otherJobs.map((j) => (
-              <article key={j.id} className="job-card compact">
-                <div className="job-card-left"><CompanyAvatar company={j.company} logoUrl={j.logoUrl} /></div>
-                <div className="job-card-body">
-                  <Link to={`/jobs/${j.id}`} className="job-title-small">{j.title}</Link>
-                  <div className="job-meta">{j.company} · {j.location}</div>
+      {relatedJobs.length > 0 ? (
+        <section className="surface p-6 sm:p-7">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-display text-2xl font-semibold text-ink-900">Related roles</h2>
+            <Link to="/" className="text-sm font-semibold text-brand-700 hover:text-brand-800">
+              See all jobs
+            </Link>
+          </div>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {relatedJobs.map((relatedJob) => (
+              <article key={relatedJob.id} className="surface-muted flex h-full flex-col p-4">
+                <div className="flex items-start gap-3">
+                  <CompanyAvatar company={relatedJob.company} logoUrl={relatedJob.logoUrl} />
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{relatedJob.company}</p>
+                    <h3 className="mt-1 font-display text-base font-semibold text-ink-900">
+                      <Link to={`/jobs/${relatedJob.id}`} className="hover:text-brand-700">
+                        {relatedJob.title}
+                      </Link>
+                    </h3>
+                  </div>
                 </div>
-                <div className="job-card-right"><Link to={`/jobs/${j.id}`} className="view-link">View</Link></div>
+
+                <p className="mt-3 text-sm text-slate-600">{relatedJob.location || 'Location not listed'}</p>
+                <Link to={`/jobs/${relatedJob.id}`} className="outline-btn mt-4 text-xs">
+                  Open role
+                </Link>
               </article>
             ))}
           </div>
         </section>
-      )}
+      ) : null}
 
-      <p className="mt"><Link to="/">← Back to Jobs</Link></p>
-    </main>
+      <div className="pb-2">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800">
+          ← Back to jobs
+        </Link>
+      </div>
+    </section>
   )
 }
