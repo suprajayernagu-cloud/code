@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { JOBS_URL } from '../config'
 import AdPlaceholder from '../components/AdPlaceholder'
+import { getJobPath, hasCompanySlug, hasJobSlugs } from '../utils/jobRoute'
 
 function parseDate(dateString) {
   const date = new Date(dateString)
@@ -61,7 +62,9 @@ function InfoCard({ title, children }) {
 }
 
 export default function JobDetails() {
-  const { id } = useParams()
+  const { companySlug, titleSlug, companyOrId } = useParams()
+  const location = useLocation()
+  const selectedJobId = location.state?.jobId
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -95,12 +98,45 @@ export default function JobDetails() {
     return () => controller.abort()
   }, [])
 
-  const job = useMemo(
-    () => jobs.find((item) => String(item.id) === String(id)) || null,
-    [jobs, id]
-  )
+  const job = useMemo(() => {
+    if (companySlug && titleSlug) {
+      const byCompanyAndTitle = jobs.filter((item) => hasJobSlugs(item, companySlug, titleSlug))
+      if (byCompanyAndTitle.length === 0) return null
 
-  const relatedJobs = useMemo(() => jobs.filter((item) => String(item.id) !== String(id)).slice(0, 3), [jobs, id])
+      const selectedWithinMatches = byCompanyAndTitle.find((item) => String(item.id) === String(selectedJobId))
+      if (selectedWithinMatches) return selectedWithinMatches
+
+      return [...byCompanyAndTitle].sort((left, right) => {
+        const leftPostedAt = parseDate(left.postedAt)?.getTime() || 0
+        const rightPostedAt = parseDate(right.postedAt)?.getTime() || 0
+
+        if (rightPostedAt !== leftPostedAt) return rightPostedAt - leftPostedAt
+        return Number(right.id || 0) - Number(left.id || 0)
+      })[0]
+    }
+
+    const legacyIdMatch = jobs.find((item) => String(item.id) === String(companyOrId))
+    if (legacyIdMatch) return legacyIdMatch
+
+    const byCompanySlug = jobs.filter((item) => hasCompanySlug(item, companyOrId))
+    if (byCompanySlug.length === 0) return null
+
+    const selectedWithinCompany = byCompanySlug.find((item) => String(item.id) === String(selectedJobId))
+    if (selectedWithinCompany) return selectedWithinCompany
+
+    return [...byCompanySlug].sort((left, right) => {
+      const leftPostedAt = parseDate(left.postedAt)?.getTime() || 0
+      const rightPostedAt = parseDate(right.postedAt)?.getTime() || 0
+
+      if (rightPostedAt !== leftPostedAt) return rightPostedAt - leftPostedAt
+      return Number(right.id || 0) - Number(left.id || 0)
+    })[0]
+  }, [companyOrId, companySlug, jobs, selectedJobId, titleSlug])
+
+  const relatedJobs = useMemo(
+    () => jobs.filter((item) => String(item.id) !== String(job?.id)).slice(0, 3),
+    [jobs, job?.id]
+  )
 
   if (loading) {
     return (
@@ -244,7 +280,7 @@ export default function JobDetails() {
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{relatedJob.company}</p>
                     <h3 className="mt-1 font-display text-base font-semibold text-ink-900">
-                      <Link to={`/jobs/${relatedJob.id}`} className="hover:text-brand-700">
+                      <Link to={getJobPath(relatedJob)} state={{ jobId: relatedJob.id }} className="hover:text-brand-700">
                         {relatedJob.title}
                       </Link>
                     </h3>
@@ -252,7 +288,7 @@ export default function JobDetails() {
                 </div>
 
                 <p className="mt-3 text-sm text-slate-600">{relatedJob.location || 'Location not listed'}</p>
-                <Link to={`/jobs/${relatedJob.id}`} className="outline-btn mt-4 text-xs">
+                <Link to={getJobPath(relatedJob)} state={{ jobId: relatedJob.id }} className="outline-btn mt-4 text-xs">
                   Open role
                 </Link>
               </article>

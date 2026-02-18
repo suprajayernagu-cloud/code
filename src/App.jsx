@@ -58,7 +58,8 @@ export default function App() {
           >
             <Routes location={location}>
               <Route path="/" element={<Home />} />
-              <Route path="/jobs/:id" element={<JobDetails />} />
+              <Route path="/jobs/:companySlug/:titleSlug" element={<JobDetails />} />
+              <Route path="/jobs/:companyOrId" element={<JobDetails />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />

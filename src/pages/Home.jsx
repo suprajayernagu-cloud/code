@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { JOBS_URL } from '../config'
 import AdPlaceholder from '../components/AdPlaceholder'
+import { getJobPath } from '../utils/jobRoute'
 
 const ITEMS_PER_PAGE = 9
 const SAVED_JOBS_KEY = 'hiringstoday:saved-jobs'
@@ -366,7 +367,7 @@ export default function Home() {
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{job.company || 'Company'}</p>
                         <h3 className="mt-1 font-display text-lg font-semibold leading-snug text-ink-900">
-                          <Link to={`/jobs/${job.id}`} className="hover:text-brand-700">
+                          <Link to={getJobPath(job)} state={{ jobId: job.id }} className="hover:text-brand-700">
                             {job.title}
                           </Link>
                         </h3>
@@ -418,7 +419,7 @@ export default function Home() {
 
                   <div className="mt-5 flex items-center justify-between gap-3 pt-3">
                     <p className="text-xs text-slate-500">{formatDate(job.postedAt)}</p>
-                    <Link to={`/jobs/${job.id}`} className="primary-btn px-4 py-2 text-xs">
+                    <Link to={getJobPath(job)} state={{ jobId: job.id }} className="primary-btn px-4 py-2 text-xs">
                       View role
                     </Link>
                   </div>
