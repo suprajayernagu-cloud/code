@@ -198,18 +198,6 @@ export default function JobDetails() {
                 {job.salary}
               </div>
             ) : null}
-
-            {job.applyUrl ? (
-              <a
-                href={job.applyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="primary-btn"
-                aria-label={`Apply for ${job.title} at ${job.company}`}
-              >
-                Apply on company site
-              </a>
-            ) : null}
           </div>
         </div>
       </section>
@@ -260,6 +248,24 @@ export default function JobDetails() {
           Hiringstoday is a job aggregator. Verify role details directly on the official company website before applying.
         </p>
       </section>
+
+      {job.applyUrl ? (
+        <section className="surface p-6 sm:p-7">
+          <h2 className="font-display text-xl font-semibold text-ink-900">Ready to apply?</h2>
+          <p className="mt-2 text-sm text-slate-600">Continue to the official {job.company} site to submit your application.</p>
+          <div className="mt-4 flex justify-center">
+            <a
+              href={job.applyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="primary-btn"
+              aria-label={`Apply for ${job.title} at ${job.company}`}
+            >
+              Apply on company site
+            </a>
+          </div>
+        </section>
+      ) : null}
 
       <AdPlaceholder position="job-details-bottom" />
 
