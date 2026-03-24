@@ -1,0 +1,1 @@
+google.com, pub-7664393734940549, DIRECT, f08c47fec0942fa0npm run dev
