@@ -17,13 +17,13 @@ const legalLinks = [
 export default function Footer() {
   return (
     <footer className="border-t-4 border-[#F3A713] bg-brand-800 text-white">
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3 lg:px-10">
-        <section>
+      <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-8 sm:px-6 md:grid-cols-[1.15fr_0.85fr_1fr] lg:px-10">
+        <section className="max-w-md">
           <h2 className="font-display text-2xl font-bold text-white">
             Hiring<span className="text-[#F3A713]">stoday</span>
           </h2>
-          <p className="mt-3 max-w-sm text-sm leading-7 text-blue-100">
-            Job discovery for modern candidates. We aggregate opportunities from public sources and link directly to company application pages.
+          <p className="mt-3 text-sm leading-7 text-blue-100">
+            Job discovery with direct links to official company application pages.
           </p>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
@@ -58,7 +58,7 @@ export default function Footer() {
             ))}
           </ul>
           <PrivacySettingsButton className="mt-4 inline-flex text-sm font-semibold text-[#F3A713] hover:text-[#ffbc7d]" />
-          <p className="mt-4 text-xs leading-6 text-blue-100/80">
+          <p className="mt-3 text-xs leading-6 text-blue-100/80">
             Always verify job details on official company sites before submitting personal information.
           </p>
         </section>

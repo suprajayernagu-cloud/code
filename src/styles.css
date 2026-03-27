@@ -15,10 +15,7 @@ body,
 body {
   margin: 0;
   font-family: Poppins, ui-sans-serif, system-ui, sans-serif;
-  background:
-    radial-gradient(circle at 8% -10%, rgba(243, 167, 19, 0.18), transparent 36%),
-    radial-gradient(circle at 92% 4%, rgba(243, 167, 19, 0.14), transparent 32%),
-    linear-gradient(180deg, #f6f2ef 0%, #faf6ef 45%, #fffaf1 100%);
+  background: #fcfaf6;
   color: #1d1d1d;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
