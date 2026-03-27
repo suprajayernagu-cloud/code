@@ -311,9 +311,6 @@ export default function Home() {
             <p className="max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
               Search quickly, compare roles, and apply through verified company links without distracting UI.
             </p>
-            <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
-              Hiringstoday is an independent job discovery platform. We organize public listings into a simpler format so candidates can review openings faster before moving to the employer’s official application page.
-            </p>
 
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
               <label htmlFor="job-search" className="sr-only">
@@ -381,89 +378,6 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
-
-      <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-        <article className="surface p-6 sm:p-8">
-          <span className="pill">Welcome</span>
-          <h2 className="mt-3 font-display text-3xl font-semibold text-ink-900">What you can expect from this site</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
-            This site is built to help you discover openings, compare them quickly, and decide which ones deserve a closer look. We do not present ourselves as an employer, recruiter, or placement agency.
-          </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-700 sm:text-base">
-            {trustSignals.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </article>
-
-        <article className="surface-muted p-6 sm:p-8">
-          <h2 className="font-display text-2xl font-semibold text-ink-900">Popular in the current feed</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-600">
-            {topCompanies.length > 0
-              ? `Frequent companies in the current feed include ${topCompanies.join(', ')}.`
-              : 'As the feed updates, this section highlights recurring employers and activity patterns.'}
-          </p>
-          <p className="mt-3 text-sm leading-7 text-slate-600">
-            {topLocations.length > 0
-              ? `High-activity locations right now include ${topLocations.join(', ')}.`
-              : 'Location trends appear here as soon as enough listings are available.'}
-          </p>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link to="/about" className="outline-btn text-xs">
-              About the platform
-            </Link>
-            <Link to="/privacy" className="outline-btn text-xs">
-              Privacy policy
-            </Link>
-            <Link to="/disclaimer" className="outline-btn text-xs">
-              Disclaimer
-            </Link>
-            <Link to="/contact" className="outline-btn text-xs">
-              Contact us
-            </Link>
-          </div>
-        </article>
-      </section>
-
-      <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <article className="surface p-6 sm:p-8">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="max-w-2xl">
-              <span className="pill">Original insight</span>
-              <h2 className="mt-3 font-display text-3xl font-semibold text-ink-900">What today’s feed actually tells you</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
-                Hiringstoday is most useful when it helps you decide where to spend attention. Instead of treating every listing the same, use freshness, source clarity, and role details to narrow the field before you open application pages.
-              </p>
-              <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
-                {topLocations.length > 0
-                  ? `The most active locations in the current feed are ${topLocations.join(', ')}. That makes it easier to compare nearby opportunities instead of scanning job boards one post at a time.`
-                  : 'As new listings arrive, this section summarizes the current feed so you can spot patterns faster than a basic job list allows.'}
-              </p>
-            </div>
-
-            <div className="grid w-full gap-3 sm:grid-cols-2 xl:max-w-xl">
-              {feedSnapshot.map((item) => (
-                <div key={item.label} className="rounded-2xl border border-[#eadfce] bg-[#fffaf1] px-4 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{item.label}</p>
-                  <p className="mt-2 font-display text-3xl font-semibold text-ink-900">{item.value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </article>
-
-        <article className="surface-muted p-6 sm:p-8">
-          <h2 className="font-display text-2xl font-semibold text-ink-900">How to use this board well</h2>
-          <div className="mt-4 space-y-4">
-            {searchTips.map((tip) => (
-              <div key={tip.title}>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-700">{tip.title}</h3>
-                <p className="mt-2 text-sm leading-7 text-slate-600">{tip.description}</p>
-              </div>
-            ))}
-          </div>
-        </article>
-      </section>
 
       {/* 
         <AdPlaceholder position="home-top" />
@@ -644,6 +558,89 @@ export default function Home() {
           </button>
         </motion.nav>
       ) : null}
+
+      <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <article className="surface p-6 sm:p-8">
+          <span className="pill">Welcome</span>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-ink-900">What you can expect from this site</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+            This site is built to help you discover openings, compare them quickly, and decide which ones deserve a closer look. We do not present ourselves as an employer, recruiter, or placement agency.
+          </p>
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-700 sm:text-base">
+            {trustSignals.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="surface-muted p-6 sm:p-8">
+          <h2 className="font-display text-2xl font-semibold text-ink-900">Popular in the current feed</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            {topCompanies.length > 0
+              ? `Frequent companies in the current feed include ${topCompanies.join(', ')}.`
+              : 'As the feed updates, this section highlights recurring employers and activity patterns.'}
+          </p>
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            {topLocations.length > 0
+              ? `High-activity locations right now include ${topLocations.join(', ')}.`
+              : 'Location trends appear here as soon as enough listings are available.'}
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link to="/about" className="outline-btn text-xs">
+              About the platform
+            </Link>
+            <Link to="/privacy" className="outline-btn text-xs">
+              Privacy policy
+            </Link>
+            <Link to="/disclaimer" className="outline-btn text-xs">
+              Disclaimer
+            </Link>
+            <Link to="/contact" className="outline-btn text-xs">
+              Contact us
+            </Link>
+          </div>
+        </article>
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <article className="surface p-6 sm:p-8">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-2xl">
+              <span className="pill">Original insight</span>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-ink-900">What today’s feed actually tells you</h2>
+              <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                Hiringstoday is most useful when it helps you decide where to spend attention. Instead of treating every listing the same, use freshness, source clarity, and role details to narrow the field before you open application pages.
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                {topLocations.length > 0
+                  ? `The most active locations in the current feed are ${topLocations.join(', ')}. That makes it easier to compare nearby opportunities instead of scanning job boards one post at a time.`
+                  : 'As new listings arrive, this section summarizes the current feed so you can spot patterns faster than a basic job list allows.'}
+              </p>
+            </div>
+
+            <div className="grid w-full gap-3 sm:grid-cols-2 xl:max-w-xl">
+              {feedSnapshot.map((item) => (
+                <div key={item.label} className="rounded-2xl border border-[#eadfce] bg-[#fffaf1] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{item.label}</p>
+                  <p className="mt-2 font-display text-3xl font-semibold text-ink-900">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </article>
+
+        <article className="surface-muted p-6 sm:p-8">
+          <h2 className="font-display text-2xl font-semibold text-ink-900">How to use this board well</h2>
+          <div className="mt-4 space-y-4">
+            {searchTips.map((tip) => (
+              <div key={tip.title}>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-700">{tip.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-600">{tip.description}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
         <article className="surface p-6 sm:p-8">
