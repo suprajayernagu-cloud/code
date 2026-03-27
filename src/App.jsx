@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import NavBar from './components/NavBar'
 import Footer from './components/Footer'
+import MonetizationManager from './components/MonetizationManager'
 import Home from './pages/Home'
 import JobDetails from './pages/JobDetails'
 import About from './pages/About'
@@ -36,6 +37,8 @@ export default function App() {
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-clip">
+      <MonetizationManager />
+
       <div className="pointer-events-none fixed inset-0 -z-20 overflow-hidden">
         <div className="absolute -left-12 top-[-2rem] h-72 w-72 animate-float-slow rounded-full bg-amber-200/30 blur-3xl" />
         <div className="absolute right-[-4rem] top-14 h-80 w-80 animate-drift-slow rounded-full bg-amber-100/35 blur-3xl" />

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Hiringstoday</title>
+  <desc id="desc">Discover the latest job opportunities updated daily on Hiringstoday.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B567F" />
+      <stop offset="100%" stop-color="#033F63" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="170" cy="110" r="150" fill="#F3A713" opacity="0.15" />
+  <circle cx="1040" cy="540" r="210" fill="#F8D278" opacity="0.12" />
+  <text x="90" y="250" fill="#F9FBFC" font-family="Poppins, Arial, sans-serif" font-size="76" font-weight="800">
+    Hiringstoday
+  </text>
+  <text x="90" y="330" fill="#F8D278" font-family="Poppins, Arial, sans-serif" font-size="34" font-weight="600">
+    Calm job discovery with direct employer links
+  </text>
+  <text x="90" y="410" fill="#D9EAF2" font-family="Poppins, Arial, sans-serif" font-size="28">
+    Search current openings, compare roles, and apply through official company pages.
+  </text>
+</svg>

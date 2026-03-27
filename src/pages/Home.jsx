@@ -40,6 +40,14 @@ function formatRelativeDate(dateString) {
   return `Posted on ${formatDate(dateString)}`
 }
 
+function getAgeInDays(dateString) {
+  const date = parseDate(dateString)
+  if (!date) return null
+
+  const diffInMs = Date.now() - date.getTime()
+  return Math.floor(diffInMs / (1000 * 60 * 60 * 24))
+}
+
 function isRemote(job) {
   if (job.remote) return true
   return /remote/i.test(job.location || '')
@@ -89,6 +97,35 @@ function JobSkeleton() {
     </div>
   )
 }
+
+const searchTips = [
+  {
+    title: 'Start with freshness',
+    description: 'Prioritize roles posted in the last week, then verify the employer page still shows the same opening.',
+  },
+  {
+    title: 'Compare before you click',
+    description: 'Use the role, company, location, and job type filters together so you can eliminate weak matches fast.',
+  },
+  {
+    title: 'Verify the final step',
+    description: 'Treat every listing as a lead, not a guarantee. Confirm compensation, location, and eligibility on the official site.',
+  },
+]
+
+const trustChecks = [
+  'Clear company name, role title, and location.',
+  'A working apply link that points to the employer or original source.',
+  'Recent posting date and no exaggerated urgency language.',
+  'Enough context to understand seniority, work style, or core skills.',
+]
+
+const trustSignals = [
+  'About, Privacy, Contact, and Disclaimer pages are publicly available.',
+  'Applications continue to official employer or original source pages.',
+  'Users can report broken, duplicate, or suspicious listings.',
+  'The site focuses on discovery and comparison rather than placement promises.',
+]
 
 export default function Home() {
   const [jobs, setJobs] = useState([])
@@ -209,6 +246,53 @@ export default function Home() {
   const start = (page - 1) * ITEMS_PER_PAGE
   const currentJobs = filteredJobs.slice(start, start + ITEMS_PER_PAGE)
   const visiblePages = getVisiblePages(page, totalPages)
+  const feedSnapshot = useMemo(() => {
+    const recentRoles = jobs.filter((job) => {
+      const ageInDays = getAgeInDays(job.postedAt)
+      return ageInDays !== null && ageInDays <= 7
+    }).length
+
+    const hiringCompanies = new Set(jobs.map((job) => job.company).filter(Boolean)).size
+    const remoteRoles = jobs.filter(isRemote).length
+    const salaryVisibleRoles = jobs.filter((job) => Boolean(job.salary)).length
+
+    return [
+      { label: 'Open roles tracked', value: jobs.length },
+      { label: 'Hiring companies', value: hiringCompanies },
+      { label: 'Remote-friendly roles', value: remoteRoles },
+      { label: 'Posted in last 7 days', value: recentRoles },
+      { label: 'Roles with salary info', value: salaryVisibleRoles },
+    ]
+  }, [jobs])
+
+  const topLocations = useMemo(() => {
+    const counts = new Map()
+
+    jobs.forEach((job) => {
+      const location = job.location?.trim()
+      if (!location) return
+      counts.set(location, (counts.get(location) || 0) + 1)
+    })
+
+    return [...counts.entries()]
+      .sort((left, right) => right[1] - left[1])
+      .slice(0, 3)
+      .map(([location, count]) => `${location} (${count})`)
+  }, [jobs])
+  const topCompanies = useMemo(() => {
+    const counts = new Map()
+
+    jobs.forEach((job) => {
+      const company = job.company?.trim()
+      if (!company) return
+      counts.set(company, (counts.get(company) || 0) + 1)
+    })
+
+    return [...counts.entries()]
+      .sort((left, right) => right[1] - left[1])
+      .slice(0, 4)
+      .map(([company]) => company)
+  }, [jobs])
 
   return (
     <section className="space-y-8">
@@ -226,6 +310,9 @@ export default function Home() {
 
             <p className="max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
               Search quickly, compare roles, and apply through verified company links without distracting UI.
+            </p>
+            <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+              Hiringstoday is an independent job discovery platform. We organize public listings into a simpler format so candidates can review openings faster before moving to the employer’s official application page.
             </p>
 
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
@@ -294,6 +381,89 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
+
+      <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <article className="surface p-6 sm:p-8">
+          <span className="pill">Welcome</span>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-ink-900">What you can expect from this site</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+            This site is built to help you discover openings, compare them quickly, and decide which ones deserve a closer look. We do not present ourselves as an employer, recruiter, or placement agency.
+          </p>
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-700 sm:text-base">
+            {trustSignals.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="surface-muted p-6 sm:p-8">
+          <h2 className="font-display text-2xl font-semibold text-ink-900">Popular in the current feed</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            {topCompanies.length > 0
+              ? `Frequent companies in the current feed include ${topCompanies.join(', ')}.`
+              : 'As the feed updates, this section highlights recurring employers and activity patterns.'}
+          </p>
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            {topLocations.length > 0
+              ? `High-activity locations right now include ${topLocations.join(', ')}.`
+              : 'Location trends appear here as soon as enough listings are available.'}
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link to="/about" className="outline-btn text-xs">
+              About the platform
+            </Link>
+            <Link to="/privacy" className="outline-btn text-xs">
+              Privacy policy
+            </Link>
+            <Link to="/disclaimer" className="outline-btn text-xs">
+              Disclaimer
+            </Link>
+            <Link to="/contact" className="outline-btn text-xs">
+              Contact us
+            </Link>
+          </div>
+        </article>
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <article className="surface p-6 sm:p-8">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-2xl">
+              <span className="pill">Original insight</span>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-ink-900">What today’s feed actually tells you</h2>
+              <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                Hiringstoday is most useful when it helps you decide where to spend attention. Instead of treating every listing the same, use freshness, source clarity, and role details to narrow the field before you open application pages.
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                {topLocations.length > 0
+                  ? `The most active locations in the current feed are ${topLocations.join(', ')}. That makes it easier to compare nearby opportunities instead of scanning job boards one post at a time.`
+                  : 'As new listings arrive, this section summarizes the current feed so you can spot patterns faster than a basic job list allows.'}
+              </p>
+            </div>
+
+            <div className="grid w-full gap-3 sm:grid-cols-2 xl:max-w-xl">
+              {feedSnapshot.map((item) => (
+                <div key={item.label} className="rounded-2xl border border-[#eadfce] bg-[#fffaf1] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{item.label}</p>
+                  <p className="mt-2 font-display text-3xl font-semibold text-ink-900">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </article>
+
+        <article className="surface-muted p-6 sm:p-8">
+          <h2 className="font-display text-2xl font-semibold text-ink-900">How to use this board well</h2>
+          <div className="mt-4 space-y-4">
+            {searchTips.map((tip) => (
+              <div key={tip.title}>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-700">{tip.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-600">{tip.description}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
 
       {/* 
         <AdPlaceholder position="home-top" />
@@ -474,6 +644,35 @@ export default function Home() {
           </button>
         </motion.nav>
       ) : null}
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <article className="surface p-6 sm:p-8">
+          <span className="pill">Application safety</span>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-ink-900">Before you apply, check these first</h2>
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-700 sm:text-base">
+            {trustChecks.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+            The fastest way to waste time is applying before verifying the basics. Spend one extra minute on the employer page and you avoid most dead links, duplicate listings, and expired openings.
+          </p>
+        </article>
+
+        <article className="surface p-6 sm:p-8">
+          <span className="pill">Why Hiringstoday</span>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-ink-900">What we add beyond the source listing</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+            We are not trying to replace the employer page. The goal is to make the discovery step calmer by standardizing role details, surfacing freshness, and helping you compare openings from different companies in one view.
+          </p>
+          <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+            That means the value of this site is not only the feed itself. It is also the filtering, the cleaner structure, the saved-role workflow, and the practical guidance around verifying listings before you commit time to an application.
+          </p>
+          <Link to="/about" className="primary-btn mt-5">
+            Learn how we review listings
+          </Link>
+        </article>
+      </section>
     </section>
   )
 }

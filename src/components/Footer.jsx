@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { CONTACT_EMAIL } from '../config'
+import PrivacySettingsButton from './PrivacySettingsButton'
 
 const quickLinks = [
   { to: '/', label: 'Latest Jobs' },
@@ -56,6 +57,7 @@ export default function Footer() {
               </li>
             ))}
           </ul>
+          <PrivacySettingsButton className="mt-4 inline-flex text-sm font-semibold text-[#F3A713] hover:text-[#ffbc7d]" />
           <p className="mt-4 text-xs leading-6 text-blue-100/80">
             Always verify job details on official company sites before submitting personal information.
           </p>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { CONTACT_EMAIL } from '../config'
 
-const lastUpdated = 'February 11, 2026'
+const lastUpdated = 'March 27, 2026'
 
 const sections = [
   {
@@ -55,7 +55,14 @@ const sections = [
     ],
   },
   {
-    title: '8. Acceptance of terms',
+    title: '8. Copyright and takedown notices',
+    paragraphs: [
+      'If you believe content on Hiringstoday infringes your copyright or intellectual property rights, email us with enough detail to identify the material and your ownership claim.',
+      'Please include the relevant page URL, the work you believe is affected, and a contact method so we can review the request promptly.',
+    ],
+  },
+  {
+    title: '9. Acceptance of terms',
     paragraphs: [
       'By using Hiringstoday, you acknowledge this disclaimer and agree to verify job details independently before making decisions.',
     ],
@@ -106,6 +113,13 @@ export default function Disclaimer() {
             <li>Do not share bank or government ID details before proper verification.</li>
             <li>Report suspicious listings to the company and relevant authorities.</li>
           </ul>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-700 sm:p-5 sm:text-base">
+          <h2 className="font-display text-xl font-semibold text-ink-900">Reporting concerns</h2>
+          <p className="mt-3">
+            If you need to report a copyright issue, impersonation concern, or suspicious listing, send the exact page URL and a short description so we can investigate faster.
+          </p>
         </section>
 
         <section className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4 text-sm leading-7 text-amber-900 sm:p-5 sm:text-base">

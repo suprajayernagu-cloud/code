@@ -1,7 +1,7 @@
 import React from 'react'
 import { CONTACT_EMAIL } from '../config'
 
-const lastUpdated = 'February 11, 2026'
+const lastUpdated = 'March 27, 2026'
 
 const sections = [
   {
@@ -23,15 +23,16 @@ const sections = [
   {
     title: '3. Advertising and Ad Partners',
     paragraphs: [
-      'Hiringstoday may display ads from providers such as Google AdSense. Ad providers may use cookies or identifiers to show relevant ads and measure ad performance.',
+      'Hiringstoday may display ads from providers such as Google AdSense. Google and its partners may use cookies, IP addresses, or similar identifiers to serve and measure ads on this site.',
       'You can manage personalized ad preferences at https://adssettings.google.com.',
+      'Learn how Google uses information from sites or apps that use its services: https://policies.google.com/technologies/partner-sites.',
     ],
   },
   {
     title: '4. Analytics',
     paragraphs: [
-      'We use analytics tools to understand traffic, engagement patterns, and performance issues. This helps us improve site quality and user experience.',
-      'Analytics data is generally aggregated and not used to identify you directly.',
+      'We do not currently run a separate analytics platform on Hiringstoday.',
+      'If analytics features are added later, this policy will be updated before those tools are enabled.',
     ],
   },
   {
@@ -47,7 +48,7 @@ const sections = [
   {
     title: '6. Cookies',
     paragraphs: [
-      'Cookies are small files stored on your browser. We use essential, analytics, and advertising cookies depending on enabled features.',
+      'Cookies are small files stored on your browser. Hiringstoday may use essential cookies and advertising-related cookies depending on enabled features.',
       'You can disable or delete cookies through browser settings, but some parts of the site may not work as expected.',
     ],
   },
@@ -75,7 +76,28 @@ const sections = [
     ],
   },
   {
-    title: '10. Policy Updates',
+    title: '10. Children and sensitive data',
+    paragraphs: [
+      'Hiringstoday is intended for general job-search audiences and is not designed for children under the age required by applicable law to consent to data processing on their own.',
+      'Please avoid submitting highly sensitive personal information through the contact form or through any third-party job application page.',
+    ],
+  },
+  {
+    title: '11. International use',
+    paragraphs: [
+      'Hiringstoday may be accessed from multiple countries. By using the site, you understand that data handling may occur in jurisdictions with different legal requirements.',
+      'If you access the site from a region with specific privacy rights, contact us and we will review your request in line with applicable obligations.',
+    ],
+  },
+  {
+    title: '12. Online policy only',
+    paragraphs: [
+      'This Privacy Policy applies to information collected through the website and associated online interactions.',
+      'It does not apply to third-party services, employer websites, or offline communications that are not controlled by Hiringstoday.',
+    ],
+  },
+  {
+    title: '13. Policy Updates',
     paragraphs: [
       'We may update this policy as laws, tools, or product features change. The latest version will always be posted on this page.',
       `Current version date: ${lastUpdated}.`,
@@ -94,7 +116,7 @@ export default function Privacy() {
           <h1 className="mt-3 font-display text-4xl font-bold text-ink-900 sm:text-5xl">Privacy Policy</h1>
           <p className="mt-2 text-sm text-slate-600">Last updated: {lastUpdated}</p>
           <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
-            This page explains how Hiringstoday handles information across job browsing, analytics, and contact interactions.
+            This page explains how Hiringstoday handles information across job browsing, advertising, and contact interactions.
           </p>
         </div>
       </section>
@@ -119,6 +141,13 @@ export default function Privacy() {
             ) : null}
           </section>
         ))}
+
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-700 sm:p-5 sm:text-base">
+          <h2 className="font-display text-xl font-semibold text-ink-900">Privacy choices</h2>
+          <p className="mt-3">
+            You can manage browser cookies through your browser settings. If a Google consent message is active on this site, use the privacy and cookie settings link in the footer to review or change your ad consent choices.
+          </p>
+        </section>
 
         <section className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 text-sm leading-7 text-emerald-900 sm:p-5 sm:text-base">
           For privacy requests or questions, contact us at{' '}

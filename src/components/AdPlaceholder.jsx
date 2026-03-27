@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function AdPlaceholder({ position = 'general' }) {
   if (!import.meta.env.DEV) {
-    return <div className="min-h-[90px]" aria-hidden="true" />
+    return null
   }
 
   return (
