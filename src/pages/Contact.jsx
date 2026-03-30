@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import emailjs from '@emailjs/browser'
 import { CONTACT_EMAIL } from '../config'
+import PageMeta from '../components/PageMeta'
 
 const EMAIL_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
 const EMAIL_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
@@ -78,6 +79,11 @@ export default function Contact() {
   return (
     <section>
       <article className="surface space-y-8 p-6 sm:p-8">
+        <PageMeta
+          title="Contact Hiringstoday | Hiringstoday"
+          description="Contact Hiringstoday for support questions, broken listings, duplicate posts, suspicious jobs, or general website feedback."
+        />
+
         <div className="max-w-3xl">
           <span className="pill">Contact</span>
           <h1 className="mt-3 font-display text-4xl font-bold text-ink-900 sm:text-5xl">Let’s talk</h1>

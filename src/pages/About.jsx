@@ -1,10 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import PageMeta from '../components/PageMeta'
 
 export default function About() {
   return (
     <section>
       <article className="surface space-y-8 p-6 sm:p-8">
+        <PageMeta
+          title="About Hiringstoday | Hiringstoday"
+          description="Learn how Hiringstoday organizes public job listings into a cleaner, easier-to-compare job discovery experience."
+        />
+
         <div className="max-w-3xl">
           <span className="pill">About</span>
           <h1 className="mt-3 font-display text-4xl font-bold text-ink-900 sm:text-5xl">
@@ -44,15 +50,13 @@ export default function About() {
         </section>
 
         <section>
-        <div className="max-w-3xl">
-          <h2 className="font-display text-2xl font-semibold text-ink-900">
-            What makes a listing useful here
-          </h2>
-          <p className="mt-3 text-sm leading-7 text-slate-700 sm:text-base">
-            Not every listing online is equally helpful. We try to keep the board more readable by focusing on a few
-            basics that matter when you are comparing roles quickly.
-          </p>
-        </div>
+          <div className="max-w-3xl">
+            <h2 className="font-display text-2xl font-semibold text-ink-900">What makes a listing useful here</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-700 sm:text-base">
+              Not every listing online is equally helpful. We try to keep the board more readable by focusing on a few
+              basics that matter when you are comparing roles quickly.
+            </p>
+          </div>
 
           <div className="mt-4 space-y-4 text-sm leading-7 text-slate-700 sm:text-base">
             <p>

@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { JOBS_URL } from '../config'
+import { JOBS_URL, SITE_URL } from '../config'
+import PageMeta from '../components/PageMeta'
 import { getJobPath, hasCompanySlug, hasJobSlugs } from '../utils/jobRoute'
 
 function parseDate(dateString) {
@@ -19,6 +20,65 @@ function formatDate(dateString) {
     day: 'numeric',
     year: 'numeric',
   }).format(date)
+}
+
+function isRemoteJob(job) {
+  if (job?.remote) return true
+  return /remote/i.test(job?.location || '')
+}
+
+function buildJobMetaDescription(job) {
+  if (!job) {
+    return 'View job details, requirements, and official apply links on Hiringstoday.'
+  }
+
+  const parts = [
+    `${job.title} at ${job.company}`,
+    job.location ? `in ${job.location}` : '',
+    job.experience ? `for ${job.experience}` : '',
+  ].filter(Boolean)
+
+  return `${parts.join(' ')}. Review responsibilities, qualifications, and continue to the official company application page from Hiringstoday.`
+}
+
+function buildJobPostingSchema(job, canonicalUrl) {
+  if (!job) return null
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    title: job.title,
+    description: job.description || buildJobMetaDescription(job),
+    datePosted: job.postedAt,
+    employmentType: job.type || 'Full-time',
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: job.company,
+      sameAs: job.applyUrl || canonicalUrl,
+    },
+    identifier: {
+      '@type': 'PropertyValue',
+      name: 'Hiringstoday',
+      value: String(job.id || canonicalUrl),
+    },
+    url: canonicalUrl,
+  }
+
+  if (job.location) {
+    schema.jobLocation = {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: job.location,
+      },
+    }
+  }
+
+  if (isRemoteJob(job)) {
+    schema.jobLocationType = 'TELECOMMUTE'
+  }
+
+  return schema
 }
 
 function CompanyAvatar({ company, logoUrl, large = false }) {
@@ -98,6 +158,7 @@ function ShareIcon({ name }) {
 export default function JobDetails() {
   const { companySlug, titleSlug, companyOrId } = useParams()
   const location = useLocation()
+  const navigate = useNavigate()
   const selectedJobId = location.state?.jobId
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
@@ -185,6 +246,17 @@ export default function JobDetails() {
     [job?.id, sortedJobs]
   )
 
+  const canonicalJobPath = useMemo(() => (job ? getJobPath(job) : ''), [job])
+  const canonicalJobUrl = useMemo(
+    () => (canonicalJobPath ? `${SITE_URL}${canonicalJobPath}` : ''),
+    [canonicalJobPath]
+  )
+  const jobMetaDescription = useMemo(() => buildJobMetaDescription(job), [job])
+  const jobStructuredData = useMemo(
+    () => (job && canonicalJobUrl ? buildJobPostingSchema(job, canonicalJobUrl) : null),
+    [canonicalJobUrl, job]
+  )
+
   const relatedJobs = useMemo(
     () => jobs.filter((item) => String(item.id) !== String(job?.id)).slice(0, 3),
     [jobs, job?.id]
@@ -265,9 +337,24 @@ export default function JobDetails() {
     }
   }
 
+  useEffect(() => {
+    if (!job || !canonicalJobPath || location.pathname === canonicalJobPath) return
+
+    navigate(canonicalJobPath, {
+      replace: true,
+      state: { jobId: job.id },
+    })
+  }, [canonicalJobPath, job, location.pathname, navigate])
+
   if (loading) {
     return (
       <section className="surface p-8">
+        <PageMeta
+          title="Loading job details | Hiringstoday"
+          description="Loading the selected job listing on Hiringstoday."
+          canonicalPath={location.pathname}
+          robots="noindex,follow"
+        />
         <p className="text-sm font-medium text-slate-600">Loading job details...</p>
       </section>
     )
@@ -276,6 +363,12 @@ export default function JobDetails() {
   if (error) {
     return (
       <section className="surface p-8">
+        <PageMeta
+          title="Unable to load job details | Hiringstoday"
+          description="Hiringstoday could not load this job listing right now."
+          canonicalPath={location.pathname}
+          robots="noindex,follow"
+        />
         <h1 className="font-display text-2xl font-bold text-red-700">Unable to load job details</h1>
         <p className="mt-2 text-sm text-slate-600">{error}</p>
         <Link to="/" className="primary-btn mt-6">
@@ -288,6 +381,12 @@ export default function JobDetails() {
   if (!job) {
     return (
       <section className="surface p-8 text-center">
+        <PageMeta
+          title="Job not found | Hiringstoday"
+          description="This job listing may have been removed or the URL is incorrect."
+          canonicalPath={location.pathname}
+          robots="noindex,follow"
+        />
         <h1 className="font-display text-3xl font-bold text-ink-900">Job not found</h1>
         <p className="mt-2 text-sm text-slate-600">This role may have been removed or the URL is incorrect.</p>
         <Link to="/" className="primary-btn mt-6">
@@ -299,6 +398,14 @@ export default function JobDetails() {
 
   return (
     <section className="space-y-6">
+      <PageMeta
+        title={`${job.title} at ${job.company} | Hiringstoday`}
+        description={jobMetaDescription}
+        canonicalPath={canonicalJobPath}
+        ogType="article"
+        jsonLd={jobStructuredData}
+      />
+
       <section className="surface relative overflow-hidden p-6 sm:p-8">
         <div className="absolute inset-0 bg-mesh opacity-40" aria-hidden="true" />
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import { CONTACT_EMAIL } from '../config'
+import PageMeta from '../components/PageMeta'
 
 const lastUpdated = 'March 27, 2026'
 
@@ -72,6 +73,11 @@ const sections = [
 export default function Disclaimer() {
   return (
     <section className="space-y-6">
+      <PageMeta
+        title="Disclaimer | Hiringstoday"
+        description="Review the Hiringstoday disclaimer, including listing-source limits, third-party link responsibility, and job scam safety guidance."
+      />
+
       <section className="surface relative overflow-hidden p-6 sm:p-8">
         <div className="absolute inset-0 bg-mesh opacity-30" aria-hidden="true" />
 

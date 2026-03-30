@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { JOBS_URL } from '../config'
+import PageMeta from '../components/PageMeta'
 import { getJobPath } from '../utils/jobRoute'
 
 const ITEMS_PER_PAGE = 9
@@ -185,6 +186,11 @@ export default function Home() {
 
   return (
     <section className="space-y-6">
+      <PageMeta
+        title="Latest Jobs in India | Hiringstoday"
+        description="Browse current job openings by role, company, skill, and location. Compare jobs faster and continue to official employer apply pages from Hiringstoday."
+      />
+
       <motion.section ref={heroRef} className="surface p-6 sm:p-8" style={{ y: heroY }}>
         <motion.div
           className="space-y-5"
@@ -194,7 +200,9 @@ export default function Home() {
         >
           <div>
             <p className="text-sm font-semibold tracking-wide text-brand-700">Search Jobs</p>
-            <h1 className="mt-2 font-display text-3xl font-semibold text-ink-900 sm:text-4xl">Find jobs by role, company, skill, or location</h1>
+            <h1 className="mt-2 font-display text-3xl font-semibold text-ink-900 sm:text-4xl">
+              Find jobs by role, company, skill, or location
+            </h1>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
