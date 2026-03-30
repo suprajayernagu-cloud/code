@@ -37,6 +37,96 @@ function toSentenceList(items = []) {
   return `${cleanItems.slice(0, -1).join(', ')}, and ${cleanItems[cleanItems.length - 1]}`
 }
 
+const EMPTY_EXTENDED_CONTENT = {
+  companyOverview: [],
+  jobDescription: [],
+  eligibilityIntro: '',
+  eligibilityItems: [],
+  salaryInsights: [],
+  salaryChecks: [],
+  selectionIntro: '',
+  selectionSteps: [],
+  preparationIntro: '',
+  preparationTips: [],
+}
+
+function toTrimmedText(value) {
+  return typeof value === 'string' ? value.trim() : ''
+}
+
+function toTrimmedStringArray(items = []) {
+  if (!Array.isArray(items)) return []
+
+  return items
+    .map((item) => (typeof item === 'string' ? item.trim() : ''))
+    .filter(Boolean)
+}
+
+function toSelectionSteps(items = [], fallbackSteps = []) {
+  if (!Array.isArray(items)) return fallbackSteps
+
+  const normalized = items
+    .map((item, index) => {
+      const fallbackStep = fallbackSteps[index] || {}
+
+      if (typeof item === 'string' && item.trim()) {
+        return {
+          title: item.trim(),
+          body: fallbackStep.body || '',
+        }
+      }
+
+      if (!item || typeof item !== 'object') return null
+
+      const title = toTrimmedText(item.title) || fallbackStep.title || `Step ${index + 1}`
+      const body = toTrimmedText(item.body) || fallbackStep.body || ''
+
+      if (!title && !body) return null
+
+      return { title, body }
+    })
+    .filter(Boolean)
+
+  return normalized.length > 0 ? normalized : fallbackSteps
+}
+
+function toPreparationTips(items = [], fallbackTips = []) {
+  if (!Array.isArray(items)) return fallbackTips
+
+  const normalized = items
+    .map((item, index) => {
+      const fallbackTip = fallbackTips[index] || {}
+
+      if (typeof item === 'string' && item.trim()) {
+        return {
+          title: fallbackTip.title || `Tip ${index + 1}`,
+          body: item.trim(),
+        }
+      }
+
+      if (!item || typeof item !== 'object') return null
+
+      const title = toTrimmedText(item.title) || fallbackTip.title || `Tip ${index + 1}`
+      const body = toTrimmedText(item.body) || fallbackTip.body || ''
+
+      if (!title && !body) return null
+
+      return { title, body }
+    })
+    .filter(Boolean)
+
+  return normalized.length > 0 ? normalized : fallbackTips
+}
+
+function formatSourceType(value) {
+  const text = toTrimmedText(value)
+  if (!text) return ''
+
+  return text
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (character) => character.toUpperCase())
+}
+
 function getRoleContext(job) {
   const text = [job?.title, job?.company, job?.experience, ...(job?.tags || [])].join(' ').toLowerCase()
 
@@ -117,18 +207,7 @@ function getRoleContext(job) {
 
 function buildExtendedContent(job) {
   if (!job) {
-    return {
-      companyOverview: [],
-      jobDescription: [],
-      eligibilityIntro: '',
-      eligibilityItems: [],
-      salaryInsights: [],
-      salaryChecks: [],
-      selectionIntro: '',
-      selectionSteps: [],
-      preparationIntro: '',
-      preparationTips: [],
-    }
+    return EMPTY_EXTENDED_CONTENT
   }
 
   const tags = Array.isArray(job?.tags) ? job.tags.filter(Boolean).slice(0, 4) : []
@@ -216,6 +295,67 @@ function buildExtendedContent(job) {
       },
     ],
   }
+}
+
+function JobDetailsSkeleton({ path }) {
+  return (
+    <section className="space-y-6">
+      <PageMeta
+        title="Loading job details | Hiringstoday"
+        description="Loading the selected job listing on Hiringstoday."
+        canonicalPath={path}
+        robots="noindex,follow"
+      />
+
+      <section className="surface p-6 sm:p-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex items-start gap-4 sm:gap-5">
+            <div className="skeleton-shimmer h-16 w-16 rounded-2xl" />
+            <div className="space-y-3">
+              <div className="skeleton-shimmer h-7 w-24 rounded-full" />
+              <div className="skeleton-shimmer h-10 w-72 max-w-[80vw] rounded-2xl" />
+              <div className="flex flex-wrap gap-2">
+                <div className="skeleton-shimmer h-8 w-28 rounded-full" />
+                <div className="skeleton-shimmer h-8 w-32 rounded-full" />
+                <div className="skeleton-shimmer h-8 w-24 rounded-full" />
+              </div>
+            </div>
+          </div>
+          <div className="skeleton-shimmer h-12 w-44 rounded-2xl" />
+        </div>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
+        <section className="surface p-6 sm:p-7">
+          <div className="space-y-6">
+            {[0, 1, 2, 3, 4].map((block) => (
+              <div key={block} className="space-y-3">
+                <div className="skeleton-shimmer h-8 w-48 rounded-xl" />
+                <div className="space-y-2">
+                  <div className="skeleton-shimmer h-4 w-full rounded" />
+                  <div className="skeleton-shimmer h-4 w-full rounded" />
+                  <div className="skeleton-shimmer h-4 w-4/5 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <aside className="surface p-6">
+          <div className="skeleton-shimmer h-8 w-32 rounded-xl" />
+          <div className="mt-5 space-y-4">
+            {[0, 1, 2, 3, 4].map((item) => (
+              <div key={item} className="space-y-2 border-b border-[#efe6db] pb-4 last:border-b-0 last:pb-0">
+                <div className="skeleton-shimmer h-4 w-full rounded" />
+                <div className="skeleton-shimmer h-3 w-28 rounded" />
+                <div className="skeleton-shimmer h-3 w-24 rounded" />
+              </div>
+            ))}
+          </div>
+        </aside>
+      </section>
+    </section>
+  )
 }
 
 function buildJobMetaDescription(job) {
@@ -448,6 +588,19 @@ export default function JobDetails() {
     [canonicalJobUrl, job]
   )
   const extendedContent = useMemo(() => (job ? buildExtendedContent(job) : null), [job])
+  const hasOverview = Boolean(job?.overview)
+  const hasWhoShouldApply = Array.isArray(job?.whoShouldApply) && job.whoShouldApply.length > 0
+  const hasPrepTips = Array.isArray(job?.prepTips) && job.prepTips.length > 0
+  const hasSelectionProcess = Array.isArray(job?.selectionProcess) && job.selectionProcess.length > 0
+  const hasApplicationAdvice = Boolean(job?.applicationAdvice)
+  const hasSourceType = Boolean(job?.sourceType)
+  const fallbackContent = extendedContent || EMPTY_EXTENDED_CONTENT
+  const overviewParagraphs = hasOverview ? [job.overview].map((item) => item.trim()).filter(Boolean) : fallbackContent.companyOverview
+  const whoShouldApplyItems = hasWhoShouldApply ? toTrimmedStringArray(job.whoShouldApply) : fallbackContent.eligibilityItems
+  const preparationTipsToRender = hasPrepTips ? toPreparationTips(job.prepTips, fallbackContent.preparationTips) : fallbackContent.preparationTips
+  const selectionStepsToRender = hasSelectionProcess ? toSelectionSteps(job.selectionProcess, fallbackContent.selectionSteps) : fallbackContent.selectionSteps
+  const sourceTypeLabel = hasSourceType ? formatSourceType(job.sourceType) : ''
+  const applicationAdviceText = hasApplicationAdvice ? toTrimmedText(job.applicationAdvice) : ''
 
   const relatedJobs = useMemo(
     () => jobs.filter((item) => String(item.id) !== String(job?.id)).slice(0, 3),
@@ -539,17 +692,7 @@ export default function JobDetails() {
   }, [canonicalJobPath, job, location.pathname, navigate])
 
   if (loading) {
-    return (
-      <section className="surface p-8">
-        <PageMeta
-          title="Loading job details | Hiringstoday"
-          description="Loading the selected job listing on Hiringstoday."
-          canonicalPath={location.pathname}
-          robots="noindex,follow"
-        />
-        <p className="text-sm font-medium text-slate-600">Loading job details...</p>
-      </section>
-    )
+    return <JobDetailsSkeleton path={location.pathname} />
   }
 
   if (error) {
@@ -614,6 +757,7 @@ export default function JobDetails() {
                 <span className="rounded-full bg-white/85 px-3 py-1">{job.location || 'Location not listed'}</span>
                 {job.experience ? <span className="rounded-full bg-white/85 px-3 py-1">{job.experience}</span> : null}
                 <span className="rounded-full bg-white/85 px-3 py-1">Posted {formatDate(job.postedAt)}</span>
+                {hasSourceType ? <span className="rounded-full bg-white/85 px-3 py-1">Source: {sourceTypeLabel}</span> : null}
               </div>
             </div>
           </div>
@@ -621,7 +765,8 @@ export default function JobDetails() {
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center lg:flex-col lg:items-end">
             {job.salary ? (
               <div className="rounded-2xl border border-brand-200 bg-brand-50/90 px-4 py-2 text-sm font-semibold text-brand-700">
-                {job.salary}
+                <div>{job.salary}</div>
+                {job.isSalaryEstimated ? <div className="mt-1 text-xs font-medium text-brand-600">Estimated salary</div> : null}
               </div>
             ) : null}
           </div>
@@ -685,7 +830,7 @@ export default function JobDetails() {
               <section className="pt-1">
                 <h2 className="font-display text-2xl font-semibold text-ink-900">Company Overview</h2>
                 <div className="mt-4 space-y-4">
-                  {extendedContent.companyOverview.map((paragraph) => (
+                  {overviewParagraphs.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
                 </div>
@@ -694,7 +839,7 @@ export default function JobDetails() {
               <section className="pt-1">
                 <h2 className="font-display text-2xl font-semibold text-ink-900">Job Description</h2>
                 <div className="mt-4 space-y-4">
-                  {extendedContent.jobDescription.map((paragraph) => (
+                  {fallbackContent.jobDescription.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
                 </div>
@@ -715,10 +860,12 @@ export default function JobDetails() {
               </section>
 
               <section className="pt-1">
-                <h2 className="font-display text-2xl font-semibold text-ink-900">Eligibility Criteria</h2>
-                <p className="mt-4">{extendedContent.eligibilityIntro}</p>
+                <h2 className="font-display text-2xl font-semibold text-ink-900">
+                  {hasWhoShouldApply ? 'Who Should Apply' : 'Eligibility Criteria'}
+                </h2>
+                <p className="mt-4">{hasWhoShouldApply ? 'This role is likely to fit candidates who match most of the points below.' : fallbackContent.eligibilityIntro}</p>
                 <ul className="mt-4 list-disc space-y-2 pl-5">
-                  {extendedContent.eligibilityItems.map((item) => (
+                  {whoShouldApplyItems.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
@@ -727,15 +874,20 @@ export default function JobDetails() {
               <section className="pt-1">
                 <h2 className="font-display text-2xl font-semibold text-ink-900">Salary Insights</h2>
                 <div className="mt-4 space-y-4">
-                  {extendedContent.salaryInsights.map((paragraph) => (
+                  {fallbackContent.salaryInsights.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
+                  {job.isSalaryEstimated ? (
+                    <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                      The salary shown for this role appears to be estimated. Confirm the final compensation structure on the employer page before you apply.
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="mt-5 rounded-3xl border border-emerald-200 bg-emerald-50/70 p-5">
                   <h3 className="font-display text-xl font-semibold text-ink-900">What to confirm on the employer page</h3>
                   <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-700 sm:text-base">
-                    {extendedContent.salaryChecks.map((item) => (
+                    {fallbackContent.salaryChecks.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
@@ -744,15 +896,19 @@ export default function JobDetails() {
 
               <section className="pt-1">
                 <h2 className="font-display text-2xl font-semibold text-ink-900">Selection Process</h2>
-                <p className="mt-4">{extendedContent.selectionIntro}</p>
+                <p className="mt-4">
+                  {hasSelectionProcess
+                    ? 'The source listing already gives a clearer picture of the expected hiring flow. Use it as the primary sequence, then prepare for deeper role-fit questions as needed.'
+                    : fallbackContent.selectionIntro}
+                </p>
 
                 <div className="mt-5 space-y-4">
-                  {extendedContent.selectionSteps.map((step, index) => (
+                  {selectionStepsToRender.map((step, index) => (
                     <article key={step.title} className="rounded-3xl border border-slate-200 bg-white p-5">
                       <h3 className="font-display text-xl font-semibold text-ink-900">
                         {index + 1}. {step.title}
                       </h3>
-                      <p className="mt-2 text-sm leading-7 text-slate-700 sm:text-base">{step.body}</p>
+                      {step.body ? <p className="mt-2 text-sm leading-7 text-slate-700 sm:text-base">{step.body}</p> : null}
                     </article>
                   ))}
                 </div>
@@ -760,23 +916,35 @@ export default function JobDetails() {
 
               <section className="rounded-3xl border border-amber-200 bg-amber-50/70 p-5 sm:p-6">
                 <h2 className="font-display text-2xl font-semibold text-ink-900">Preparation Tips</h2>
-                <p className="mt-4">{extendedContent.preparationIntro}</p>
+                <p className="mt-4">
+                  {hasPrepTips
+                    ? 'Use these preparation points from the latest dataset first, then match them against the job description and responsibilities shown above.'
+                    : fallbackContent.preparationIntro}
+                </p>
 
                 <div className="mt-5 space-y-4">
-                  {extendedContent.preparationTips.map((tip) => (
+                  {preparationTipsToRender.map((tip) => (
                     <article key={tip.title} className="rounded-3xl border border-amber-200/80 bg-white/75 p-4 sm:p-5">
                       <h3 className="font-display text-xl font-semibold text-ink-900">{tip.title}</h3>
-                      <p className="mt-2 text-sm leading-7 text-slate-700 sm:text-base">{tip.body}</p>
+                      {tip.body ? <p className="mt-2 text-sm leading-7 text-slate-700 sm:text-base">{tip.body}</p> : null}
                     </article>
                   ))}
                 </div>
               </section>
+
+              {hasApplicationAdvice ? (
+                <section className="pt-1">
+                  <h2 className="font-display text-2xl font-semibold text-ink-900">Application Advice</h2>
+                  <p className="mt-4">{applicationAdviceText}</p>
+                </section>
+              ) : null}
 
               <section className="pt-1">
                 <h2 className="font-display text-2xl font-semibold text-ink-900">Important reminder</h2>
                 <p className="mt-4 text-amber-900">
                   Hiringstoday is a job aggregator. Verify role details directly on the official company website before applying.
                 </p>
+                {hasSourceType ? <p className="mt-2 text-sm text-slate-600">Current source type: {sourceTypeLabel}.</p> : null}
               </section>
 
               {job.applyUrl ? (
