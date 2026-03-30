@@ -525,6 +525,11 @@ export default function JobDetails() {
     return () => controller.abort()
   }, [])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [location.pathname])
+
   const job = useMemo(() => {
     if (companySlug && titleSlug) {
       const byCompanyAndTitle = jobs.filter((item) => hasJobSlugs(item, companySlug, titleSlug))
@@ -777,9 +782,9 @@ export default function JobDetails() {
         <div className="space-y-6">
           <motion.section
             className="surface p-6 sm:p-7"
+            key={job.id}
             initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.18 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
           >
             <div className="space-y-6 text-sm leading-7 text-slate-700 sm:text-base">
@@ -1048,9 +1053,9 @@ export default function JobDetails() {
         {latestJobs.length > 0 ? (
           <motion.aside
             className="xl:sticky xl:top-24"
+            key={`latest-${job.id}`}
             initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.05 }}
           >
             <section className="surface p-6">
