@@ -36,15 +36,11 @@ export default function App() {
   const location = useLocation()
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-clip">
+    <div className="relative flex min-h-screen flex-col overflow-x-clip bg-white">
       <MonetizationManager />
 
-      <div className="pointer-events-none fixed inset-0 -z-20 overflow-hidden">
-        <div className="absolute -left-12 top-[-2rem] h-72 w-72 animate-float-slow rounded-full bg-amber-200/30 blur-3xl" />
-        <div className="absolute right-[-4rem] top-14 h-80 w-80 animate-drift-slow rounded-full bg-amber-100/35 blur-3xl" />
-        <div className="absolute bottom-[-7rem] left-1/2 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-yellow-100/30 blur-3xl" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#f9f3e8]/40 via-transparent to-[#fefaf1]/55" />
-        <div className="organic-grid absolute inset-0 opacity-15" />
+      <div className="pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-white" />
       </div>
 
       <NavBar />

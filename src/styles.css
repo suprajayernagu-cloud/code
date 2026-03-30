@@ -15,7 +15,7 @@ body,
 body {
   margin: 0;
   font-family: Poppins, ui-sans-serif, system-ui, sans-serif;
-  background: #fcfaf6;
+  background: #ffffff;
   color: #1d1d1d;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -48,7 +48,7 @@ body {
 
 @layer components {
   .surface {
-    @apply relative overflow-hidden rounded-[1.75rem] border border-[#e4ddd5] bg-[#fffefc]/95 shadow-card;
+    @apply relative overflow-hidden rounded-[1.75rem] border border-[#e4ddd5] bg-white shadow-card;
   }
 
   .surface::after {
@@ -60,7 +60,7 @@ body {
   }
 
   .surface-muted {
-    @apply relative overflow-hidden rounded-[1.5rem] border border-[#e7dfd6] bg-[#fffefc] shadow-soft;
+    @apply relative overflow-hidden rounded-[1.5rem] border border-[#e7dfd6] bg-white shadow-soft;
   }
 
   .surface-muted::before {
