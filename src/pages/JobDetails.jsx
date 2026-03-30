@@ -27,6 +27,197 @@ function isRemoteJob(job) {
   return /remote/i.test(job?.location || '')
 }
 
+function toSentenceList(items = []) {
+  const cleanItems = items.filter(Boolean)
+
+  if (cleanItems.length === 0) return ''
+  if (cleanItems.length === 1) return cleanItems[0]
+  if (cleanItems.length === 2) return `${cleanItems[0]} and ${cleanItems[1]}`
+
+  return `${cleanItems.slice(0, -1).join(', ')}, and ${cleanItems[cleanItems.length - 1]}`
+}
+
+function getRoleContext(job) {
+  const text = [job?.title, job?.company, job?.experience, ...(job?.tags || [])].join(' ').toLowerCase()
+
+  if (/(developer|engineer|software|frontend|backend|full stack|mern|python|java|react|node|data|ai|cloud|technical)/i.test(text)) {
+    return {
+      family: 'technical',
+      focus: 'problem solving, implementation quality, and tool familiarity',
+      selectionSteps: [
+        'Application and profile screening',
+        'Skill or aptitude assessment',
+        'Technical discussion with the team',
+        'Final conversation with hiring or HR',
+      ],
+      prepAreas: [
+        'refresh the core tools, languages, or frameworks named in the listing',
+        'prepare to explain how you would approach a real task or bug',
+        'review projects that show ownership, debugging, or delivery',
+        'be ready to discuss learning speed and collaboration style',
+      ],
+    }
+  }
+
+  if (/(finance|audit|account|bank|banking|m&a|analyst|tax|billing|cfo|sox|investment)/i.test(text)) {
+    return {
+      family: 'finance',
+      focus: 'accuracy, commercial thinking, reporting discipline, and analytical judgement',
+      selectionSteps: [
+        'Resume shortlist and role-fit check',
+        'Functional or aptitude round',
+        'Role discussion with the business team',
+        'HR or final approval round',
+      ],
+      prepAreas: [
+        'revise the finance, audit, reporting, or analysis basics tied to the role',
+        'prepare examples that show attention to detail and clean documentation',
+        'be ready to discuss Excel, numbers, reconciliation, or research workflows',
+        'understand why the company may be hiring for this function right now',
+      ],
+    }
+  }
+
+  if (/(sales|relationship|business development|telesales|customer|retail banking)/i.test(text)) {
+    return {
+      family: 'sales',
+      focus: 'communication, follow-up discipline, product understanding, and customer handling',
+      selectionSteps: [
+        'Initial profile screening',
+        'Communication or role-fit round',
+        'Manager discussion on targets and customer handling',
+        'HR round and offer discussion',
+      ],
+      prepAreas: [
+        'practice a clear introduction and a confident explanation of your background',
+        'prepare examples of persuasion, follow-up, or customer support situations',
+        'learn the basics of the product, service, or category you may discuss',
+        'show that you understand targets, discipline, and responsiveness',
+      ],
+    }
+  }
+
+  return {
+    family: 'professional',
+    focus: 'clarity, reliability, domain understanding, and ability to learn quickly',
+    selectionSteps: [
+      'Application review',
+      'Shortlisting or screening call',
+      'Role-specific evaluation',
+      'Final HR or manager discussion',
+    ],
+    prepAreas: [
+      'review the main duties listed on the page and connect them to your experience',
+      'prepare simple examples that show ownership and consistency',
+      'study the company page so your answers do not feel generic',
+      'double-check location, schedule, and eligibility details before the interview',
+    ],
+  }
+}
+
+function buildExtendedContent(job) {
+  if (!job) {
+    return {
+      companyOverview: [],
+      jobDescription: [],
+      eligibilityIntro: '',
+      eligibilityItems: [],
+      salaryInsights: [],
+      salaryChecks: [],
+      selectionIntro: '',
+      selectionSteps: [],
+      preparationIntro: '',
+      preparationTips: [],
+    }
+  }
+
+  const tags = Array.isArray(job?.tags) ? job.tags.filter(Boolean).slice(0, 4) : []
+  const responsibilities = Array.isArray(job?.responsibilities)
+    ? job.responsibilities.filter(Boolean).slice(0, 4)
+    : []
+  const qualifications = Array.isArray(job?.qualifications)
+    ? job.qualifications.filter(Boolean).slice(0, 4)
+    : []
+  const context = getRoleContext(job)
+  const locationText = job?.location || 'the listed work location'
+  const workModeText = isRemoteJob(job)
+    ? `The listing also suggests some level of remote flexibility, so candidates should still confirm whether the role is fully remote, hybrid, or tied to a city after joining.`
+    : `Because the role is tied to ${locationText}, it is worth confirming reporting expectations, relocation rules, and whether travel or office presence is part of the day-to-day setup.`
+  const skillText = tags.length > 0 ? toSentenceList(tags) : 'the core responsibilities listed above'
+  const responsibilityText =
+    responsibilities.length > 0
+      ? `From the listed responsibilities, the job appears to focus on ${toSentenceList(responsibilities)}.`
+      : `The listing points to a role where candidates will need to understand the work quickly, communicate clearly, and handle day-to-day execution with consistency.`
+  const qualificationsText =
+    qualifications.length > 0
+      ? `The formal entry points mentioned include ${toSentenceList(qualifications)}.`
+      : `The final eligibility should still be checked on the employer page because some openings update education, experience, or documentation rules after publishing.`
+  const salaryParagraph = job?.salary
+    ? /\d/.test(job.salary)
+      ? `${job.salary} is shown on this page, which is helpful because many listings do not share compensation upfront. Even then, candidates should confirm whether the amount reflects fixed pay only or includes bonus, incentives, training period terms, or variable components.`
+      : `The listing mentions compensation as "${job.salary}", which gives a direction but not a full structure. Before applying, confirm whether there is fixed pay, performance-linked pay, allowances, probation adjustments, or location-based differences.`
+    : `The listing does not show a clear salary band, so compensation should not be assumed from the title alone. Before spending time on tests or interviews, it is smart to ask whether the package, variable pay, and location expectations match your target range.`
+
+  return {
+    companyOverview: [
+      `${job.company} is hiring for the ${job.title} role, and the information available on this page makes the first review much easier than scanning a raw listing. You can already see the role title, location, experience level, work type, and important skills before moving to the employer page.`,
+      `For job seekers, that matters because a role like this is usually evaluated on fit, timing, and clarity. Based on the listing signals, this appears to be a ${context.family} opening that values ${context.focus}. ${workModeText}`,
+    ],
+    jobDescription: [
+      `${job.description || `This opening is presented as a ${job.type || 'professional'} opportunity with ${job.company}.`} ${responsibilityText} That gives candidates a better sense of whether the role is hands-on, analytical, customer-facing, or execution-heavy.`,
+      `In practical terms, a strong applicant for this role is likely someone who can work with ${skillText}, communicate clearly, and stay dependable when instructions or priorities shift. The employer page should still be the final source, but the listing already suggests what kind of profile may stand out early in screening.`,
+    ],
+    eligibilityIntro: `Before applying, it helps to read the eligibility in a practical way instead of only scanning the title. ${qualificationsText} You should also compare the required skills, location, and work style with your actual profile so you do not waste time on a role that looks attractive but is not a true match.`,
+    eligibilityItems: [
+      ...qualifications,
+      job?.experience ? `Experience expectation: ${job.experience}` : 'Review whether the role expects freshers, entry-level candidates, or prior domain exposure.',
+      tags.length > 0 ? `Comfort with ${skillText} will strengthen your profile.` : 'Role-relevant tools or domain basics should be revised before applying.',
+      `Make sure you can work from ${locationText} or meet the listed work-style expectations.`,
+    ].slice(0, 6),
+    salaryInsights: [
+      salaryParagraph,
+      `Salary should also be judged in context, not just by headline numbers. Compare the location, role scope, learning value, and progression path. A slightly lower package can still be worthwhile if the role gives stronger brand value, better training, or a clearer route into the kind of work you want next.`,
+    ],
+    salaryChecks: [
+      'fixed pay versus incentives or bonus',
+      'probation period salary changes',
+      'work location costs and relocation needs',
+      'shift timing, travel, or other hidden expectations',
+    ],
+    selectionIntro: `The exact hiring flow may differ by employer, but roles like this usually follow a predictable path. The main thing is to prepare for both basic screening and one role-specific evaluation, because most candidates lose momentum when they only prepare for HR questions and skip the functional part.`,
+    selectionSteps: context.selectionSteps.map((step, index) => ({
+      title: step,
+      body:
+        index === 0
+          ? `Your resume, keywords, location fit, and eligibility are usually checked first. If your profile lines up with the title, experience level, and skills shown on this page, your chances of moving forward improve immediately.`
+          : index === 1
+            ? `This stage often checks whether you actually understand the basics needed for the job. Depending on the role, that can mean aptitude, domain questions, communication assessment, or a short practical exercise.`
+            : index === 2
+              ? `Expect deeper discussion on the work itself. Interviewers often look for examples, clarity, and whether you understand what success in the role would look like after joining.`
+              : `The last stage usually confirms compensation fit, notice period or joining readiness, work location comfort, and overall seriousness. This is also the right time to verify anything that looked vague in the original listing.`,
+    })),
+    preparationIntro: `Preparation matters more than most candidates think, especially for listings that attract a high number of applicants in a short time. A little role-specific prep can make your answers sharper, your resume more relevant, and your application much more believable.`,
+    preparationTips: [
+      {
+        title: 'Match your resume to the role',
+        body: `Rework the top part of your resume so it reflects the job title, skills, and responsibilities shown here. If the role emphasizes ${skillText}, your projects, internships, coursework, or prior work should make that connection obvious within a few seconds.`,
+      },
+      {
+        title: 'Prepare for the first screening round',
+        body: `Have a short introduction ready that explains who you are, what kind of roles you are targeting, and why this opening fits. Avoid generic answers. A focused response usually performs much better than saying you are open to anything.`,
+      },
+      {
+        title: 'Revise the role-specific basics',
+        body: `Use the listing as a study guide. Review the responsibilities and the most visible skills, then prepare one or two examples that show how you have used similar concepts before. ${context.prepAreas[0]}.`,
+      },
+      {
+        title: 'Verify details before investing time',
+        body: `Before taking an assessment or submitting documents, confirm the apply link, salary structure, location expectations, and any degree or experience cutoffs. That final check saves time and helps you focus on roles that genuinely fit your goals.`,
+      },
+    ],
+  }
+}
+
 function buildJobMetaDescription(job) {
   if (!job) {
     return 'View job details, requirements, and official apply links on Hiringstoday.'
@@ -256,6 +447,7 @@ export default function JobDetails() {
     () => (job && canonicalJobUrl ? buildJobPostingSchema(job, canonicalJobUrl) : null),
     [canonicalJobUrl, job]
   )
+  const extendedContent = useMemo(() => (job ? buildExtendedContent(job) : null), [job])
 
   const relatedJobs = useMemo(
     () => jobs.filter((item) => String(item.id) !== String(job?.id)).slice(0, 3),
@@ -489,6 +681,96 @@ export default function JobDetails() {
                   </div>
                 </section>
               ) : null}
+
+              <section className="pt-1">
+                <h2 className="font-display text-2xl font-semibold text-ink-900">Company Overview</h2>
+                <div className="mt-4 space-y-4">
+                  {extendedContent.companyOverview.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+              </section>
+
+              <section className="pt-1">
+                <h2 className="font-display text-2xl font-semibold text-ink-900">Job Description</h2>
+                <div className="mt-4 space-y-4">
+                  {extendedContent.jobDescription.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+
+                <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <h3 className="font-display text-xl font-semibold text-ink-900">What this role seems to prioritize</h3>
+                  <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-700 sm:text-base">
+                    {(Array.isArray(job.responsibilities) && job.responsibilities.length > 0
+                      ? job.responsibilities
+                      : ['Role ownership', 'Clear communication', 'Execution quality']
+                    )
+                      .slice(0, 4)
+                      .map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                  </ul>
+                </div>
+              </section>
+
+              <section className="pt-1">
+                <h2 className="font-display text-2xl font-semibold text-ink-900">Eligibility Criteria</h2>
+                <p className="mt-4">{extendedContent.eligibilityIntro}</p>
+                <ul className="mt-4 list-disc space-y-2 pl-5">
+                  {extendedContent.eligibilityItems.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </section>
+
+              <section className="pt-1">
+                <h2 className="font-display text-2xl font-semibold text-ink-900">Salary Insights</h2>
+                <div className="mt-4 space-y-4">
+                  {extendedContent.salaryInsights.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+
+                <div className="mt-5 rounded-3xl border border-emerald-200 bg-emerald-50/70 p-5">
+                  <h3 className="font-display text-xl font-semibold text-ink-900">What to confirm on the employer page</h3>
+                  <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-700 sm:text-base">
+                    {extendedContent.salaryChecks.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+
+              <section className="pt-1">
+                <h2 className="font-display text-2xl font-semibold text-ink-900">Selection Process</h2>
+                <p className="mt-4">{extendedContent.selectionIntro}</p>
+
+                <div className="mt-5 space-y-4">
+                  {extendedContent.selectionSteps.map((step, index) => (
+                    <article key={step.title} className="rounded-3xl border border-slate-200 bg-white p-5">
+                      <h3 className="font-display text-xl font-semibold text-ink-900">
+                        {index + 1}. {step.title}
+                      </h3>
+                      <p className="mt-2 text-sm leading-7 text-slate-700 sm:text-base">{step.body}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="rounded-3xl border border-amber-200 bg-amber-50/70 p-5 sm:p-6">
+                <h2 className="font-display text-2xl font-semibold text-ink-900">Preparation Tips</h2>
+                <p className="mt-4">{extendedContent.preparationIntro}</p>
+
+                <div className="mt-5 space-y-4">
+                  {extendedContent.preparationTips.map((tip) => (
+                    <article key={tip.title} className="rounded-3xl border border-amber-200/80 bg-white/75 p-4 sm:p-5">
+                      <h3 className="font-display text-xl font-semibold text-ink-900">{tip.title}</h3>
+                      <p className="mt-2 text-sm leading-7 text-slate-700 sm:text-base">{tip.body}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
 
               <section className="pt-1">
                 <h2 className="font-display text-2xl font-semibold text-ink-900">Important reminder</h2>
