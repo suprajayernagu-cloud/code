@@ -15,10 +15,7 @@ body,
 body {
   margin: 0;
   font-family: Poppins, ui-sans-serif, system-ui, sans-serif;
-  background:
-    radial-gradient(circle at 8% -10%, rgba(243, 167, 19, 0.18), transparent 36%),
-    radial-gradient(circle at 92% 4%, rgba(243, 167, 19, 0.14), transparent 32%),
-    linear-gradient(180deg, #f6f2ef 0%, #faf6ef 45%, #fffaf1 100%);
+  background: #ffffff;
   color: #1d1d1d;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -51,7 +48,7 @@ body {
 
 @layer components {
   .surface {
-    @apply relative overflow-hidden rounded-[1.75rem] border border-[#e4ddd5] bg-[#fffefc]/95 shadow-card;
+    @apply relative overflow-hidden rounded-[1.75rem] border border-[#e4ddd5] bg-white shadow-card;
   }
 
   .surface::after {
@@ -63,7 +60,7 @@ body {
   }
 
   .surface-muted {
-    @apply relative overflow-hidden rounded-[1.5rem] border border-[#e7dfd6] bg-[#fffefc] shadow-soft;
+    @apply relative overflow-hidden rounded-[1.5rem] border border-[#e7dfd6] bg-white shadow-soft;
   }
 
   .surface-muted::before {
@@ -105,6 +102,29 @@ body {
 }
 
 @layer utilities {
+  @keyframes skeleton-shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .skeleton-shimmer {
+    @apply relative overflow-hidden bg-slate-200;
+  }
+
+  .skeleton-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, rgba(226, 232, 240, 0) 0%, rgba(255, 255, 255, 0.72) 50%, rgba(226, 232, 240, 0) 100%);
+    animation: skeleton-shimmer 1.35s ease-in-out infinite;
+  }
+
   .text-balance {
     text-wrap: balance;
   }

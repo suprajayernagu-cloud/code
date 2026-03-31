@@ -11,9 +11,10 @@
     "employment"
   ],
   "author": "Hiringstoday",
-  "homepage": "https://hiringstoday.com",
+  "homepage": "https://hiringstoday.in",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/generate-sitemap.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },
