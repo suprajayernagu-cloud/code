@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import PageMeta from '../components/PageMeta'
 import RelatedJobs from '../components/RelatedJobs'
+import RelatedArticles from '../components/RelatedArticles'
 
 export default function JobDetailsEnhanced() {
   const { jobId } = useParams()
@@ -363,6 +364,9 @@ export default function JobDetailsEnhanced() {
 
             {/* Related Jobs */}
             <RelatedJobs currentJob={job} allJobs={jobs} />
+
+            {/* Related Articles */}
+            <RelatedArticles category={job.category || 'Interview Prep'} />
           </aside>
         </div>
       </article>
