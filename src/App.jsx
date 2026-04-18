@@ -6,6 +6,9 @@ import Footer from './components/Footer'
 import MonetizationManager from './components/MonetizationManager'
 import Home from './pages/Home'
 import JobDetails from './pages/JobDetails'
+import JobDetailsEnhanced from './pages/JobDetailsEnhanced'
+import Blog from './pages/Blog'
+import BlogDetail from './pages/BlogDetail'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Privacy from './pages/Privacy'
@@ -57,8 +60,11 @@ export default function App() {
           >
             <Routes location={location}>
               <Route path="/" element={<Home />} />
+              <Route path="/job/:jobId" element={<JobDetailsEnhanced />} />
               <Route path="/jobs/:companySlug/:titleSlug" element={<JobDetails />} />
               <Route path="/jobs/:companyOrId" element={<JobDetails />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogDetail />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />

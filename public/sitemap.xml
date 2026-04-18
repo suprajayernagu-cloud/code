@@ -2,19 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://hiringstoday.in</loc>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-18</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/about</loc>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-18</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/contact</loc>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-18</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/disclaimer</loc>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-18</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/3m-india/specialist-global-sox-auditor</loc>
@@ -27,6 +27,10 @@
   <url>
     <loc>https://hiringstoday.in/jobs/accenture-india/business-and-technology-delivery-associate</loc>
     <lastmod>2026-02-10</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/accenture/application-tech-support-associate</loc>
+    <lastmod>2026-04-13</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/accenture/associate</loc>
@@ -46,6 +50,14 @@
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/accenture/s-and-c-gn-cfo-ev-consultant</loc>
+    <lastmod>2026-03-26</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/adobe/data-engineer-spark-and-analytics</loc>
+    <lastmod>2026-03-26</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/adobe/software-engineer-3-typescript-web</loc>
     <lastmod>2026-03-26</lastmod>
   </url>
   <url>
@@ -93,6 +105,10 @@
     <lastmod>2026-02-08</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/amazon/sde-ii-prime-video</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/amazon/senior-accounting-analyst</loc>
     <lastmod>2026-03-20</lastmod>
   </url>
@@ -107,6 +123,18 @@
   <url>
     <loc>https://hiringstoday.in/jobs/amazon/software-development-engineer-i-sde-i</loc>
     <lastmod>2026-03-09</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/amazon/software-development-engineer-sde</loc>
+    <lastmod>2026-03-28</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/amazon/software-development-engineer-sde-ii-alexa-ai</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/amazon/software-development-manager-ads-ai</loc>
+    <lastmod>2026-03-30</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/amazon/tax-analyst-i-frc-3p-wht</loc>
@@ -149,6 +177,26 @@
     <lastmod>2026-02-10</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/apple/platform-engineer-dev-containers</loc>
+    <lastmod>2026-03-26</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/apple/product-manager-gssm</loc>
+    <lastmod>2026-04-01</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/apple/software-engineer-product-security</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/apple/technical-specialist</loc>
+    <lastmod>2026-04-01</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/arcesium/software-development-engineer-fresher</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/auctech-marcom/mern-stack-developer-fresher</loc>
     <lastmod>2026-02-09</lastmod>
   </url>
@@ -159,6 +207,10 @@
   <url>
     <loc>https://hiringstoday.in/jobs/bank-of-america/servicenow-platform-specialist</loc>
     <lastmod>2026-02-06</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/bank-of-america/software-engineer-ii-a</loc>
+    <lastmod>2026-03-30</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/bank-of-baroda/it-specialist-officer-so</loc>
@@ -209,8 +261,20 @@
     <lastmod>2026-02-09</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/cisco/security-research-engineer</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/cisco/software-engineer-asic-sdk-development</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/cisco/software-engineer-entry-level</loc>
     <lastmod>2026-02-09</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/cisco/software-engineer-sdk-developer-c</loc>
+    <lastmod>2026-03-31</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/citi/junior-python-developer</loc>
@@ -269,6 +333,14 @@
     <lastmod>2026-03-12</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/creative-pulse-studios/ui-ux-designer-luxury-tech-aesthetics</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/cred/mobile-engineer-ios-high-end-consumer-apps</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/credlawn-india/relationship-executive-hdfc-dsa</loc>
     <lastmod>2026-03-27</lastmod>
   </url>
@@ -289,10 +361,6 @@
     <lastmod>2026-03-03</lastmod>
   </url>
   <url>
-    <loc>https://hiringstoday.in/jobs/deloitte/associate-m-and-a-corporate-finance</loc>
-    <lastmod>2026-03-27</lastmod>
-  </url>
-  <url>
     <loc>https://hiringstoday.in/jobs/deloitte/consultant-oracle-erp</loc>
     <lastmod>2026-03-26</lastmod>
   </url>
@@ -309,12 +377,32 @@
     <lastmod>2026-03-09</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/drdo/graduate-apprentice-fy-2026-27</loc>
+    <lastmod>2026-04-01</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/drdo/junior-research-fellowship-jrf</loc>
+    <lastmod>2026-04-01</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/drinkprime/graduate-engineer-trainee-get</loc>
     <lastmod>2026-02-11</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/edtech-solutions/software-engineer-react-native-studygarage</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/educontent-india/telugu-content-editor-and-localization-lead</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/egainz/fresher-web-designer</loc>
     <lastmod>2026-02-17</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/elite-sports-media/sports-media-and-cinematography-lead</loc>
+    <lastmod>2026-03-30</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/emobomo-soft/mern-full-stack-intern</loc>
@@ -333,8 +421,16 @@
     <lastmod>2026-02-10</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/flipkart/senior-frontend-engineer-react-typescript</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/flipkart/software-development-engineer-ii</loc>
     <lastmod>2026-02-06</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/flipkart/software-engineer-web-platforms</loc>
+    <lastmod>2026-03-31</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/fractal-analytics/ai-ml-engineer-entry-level</loc>
@@ -357,6 +453,10 @@
     <lastmod>2026-02-01</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/global-content-services/telugu-language-specialist-and-translator</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/globaldata/associate-analyst</loc>
     <lastmod>2026-03-10</lastmod>
   </url>
@@ -377,8 +477,16 @@
     <lastmod>2026-02-11</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/google/software-engineer-google-cloud</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/google/software-engineer-iii-google-cloud</loc>
     <lastmod>2026-03-26</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/google/staff-software-engineer-distributed-cloud</loc>
+    <lastmod>2026-03-31</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/hcltech/digital-process-support</loc>
@@ -401,6 +509,10 @@
     <lastmod>2026-03-27</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/heritage-textiles/marketing-and-branding-specialist-apparel-industry</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/hindustan-aeronautics-limited-hal/visiting-consultant-radiology-urology</loc>
     <lastmod>2026-02-10</lastmod>
   </url>
@@ -419,6 +531,14 @@
   <url>
     <loc>https://hiringstoday.in/jobs/icici-bank/audit-manager</loc>
     <lastmod>2026-03-27</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/iit-hyderabad/research-assistant-icssr</loc>
+    <lastmod>2026-04-02</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/iit-hyderabad/web-developer-iit-hyderabad</loc>
+    <lastmod>2026-03-09</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/imc-financial-markets/python-software-developer-freshers</loc>
@@ -469,12 +589,28 @@
     <lastmod>2026-03-20</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/jpmorgan-chase-and-co/software-engineer-core-banking</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/jpmorgan-chase-and-co/software-engineer-i-model-risk-governance</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/jpmorgan-chase-and-co/software-engineer-ii-fullstack-dotnet-aws</loc>
+    <lastmod>2026-03-29</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/jpmorgan-chase/analytics-solutions-associate</loc>
     <lastmod>2026-03-08</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/jpmorgan-chase/financial-reporting-data-analyst</loc>
     <lastmod>2026-02-27</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/khwaja-menswear/marketing-associate-textiles-and-fashion</loc>
+    <lastmod>2026-03-29</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/kpatricii-it-services/hr-intern-mba-2026</loc>
@@ -525,8 +661,40 @@
     <lastmod>2026-02-06</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/microsoft/cloud-solution-architect-ai-transformation</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/microsoft/machine-learning-engineer-llm-infrastructure</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/microsoft/product-manager-ii</loc>
+    <lastmod>2026-04-01</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/microsoft/software-engineer-ii-data-science</loc>
+    <lastmod>2026-04-01</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/microsoft/software-engineer-ii-microsoft-security</loc>
+    <lastmod>2026-03-29</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/mindtree/devops-engineer-entry-level</loc>
     <lastmod>2026-02-14</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/modern-web-lab/full-stack-developer-next-js-and-vercel</loc>
+    <lastmod>2026-03-29</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/netflix/backend-engineer-core-services</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/neural-data-systems/data-architect-ai-and-json-ecosystems</loc>
+    <lastmod>2026-03-30</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/nobl-q/software-developer-2026-batch</loc>
@@ -565,6 +733,14 @@
     <lastmod>2026-02-10</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/oracle/java-fullstack-engineer</loc>
+    <lastmod>2026-03-28</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/oracle/software-engineer-database-internals</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/panchi-fintech/telesales-executive-hdfc-bank</loc>
     <lastmod>2026-03-27</lastmod>
   </url>
@@ -579,6 +755,10 @@
   <url>
     <loc>https://hiringstoday.in/jobs/paytm/software-engineer-frontend</loc>
     <lastmod>2026-02-09</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/phonepe/data-engineer-analytics-infrastructure</loc>
+    <lastmod>2026-03-29</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/pixentia-solutions-india-private-ltd/jr-python-full-stack-developer</loc>
@@ -605,6 +785,14 @@
     <lastmod>2026-03-11</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/prompthub-ai/ai-prompt-engineer-and-dataset-specialist</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/prompthub-ai/full-stack-developer-ai-and-prompthub</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/propel-technology-group/associate-software-engineer-2026</loc>
     <lastmod>2026-02-12</lastmod>
   </url>
@@ -617,8 +805,20 @@
     <lastmod>2026-02-05</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/qualcomm/associate-engineer-2026-campus-hire</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/qualcomm/embedded-software-engineer</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/razorpay/associate-solutions-engineer</loc>
     <lastmod>2026-02-09</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/razorpay/backend-engineer-go-fintech-scale-up</loc>
+    <lastmod>2026-03-31</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/razorpay/frontend-developer-entry-level</loc>
@@ -641,12 +841,20 @@
     <lastmod>2026-03-24</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/richlabz-it-solutions/react-native-developer</loc>
+    <lastmod>2026-04-02</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/s-and-p-global/apprentice-quality-engineering</loc>
     <lastmod>2026-02-06</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/saint-gobain/corporate-finance-intern</loc>
     <lastmod>2026-03-25</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/salesforce/ai-engineer-generative-ai</loc>
+    <lastmod>2026-03-31</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/salesforce/operations-associate-analyst</loc>
@@ -657,8 +865,36 @@
     <lastmod>2026-02-11</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/salesforce/software-engineering-amts-2026-batch</loc>
+    <lastmod>2026-03-26</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/sap/expert-ai-engineer</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/sap/software-engineer-quality-specialist-devops</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/scaleup-consulting/cloud-architect-vercel-and-aws-integration</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/servicenow/infrastructure-developer-servicenow-content</loc>
+    <lastmod>2026-03-29</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/servicenow/software-engineer-i</loc>
     <lastmod>2026-02-03</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/servicenow/software-engineer-moveworks-agentic-ai</loc>
+    <lastmod>2026-03-17</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/siddiq-consulting/lead-software-consultant-react-native-and-web</loc>
+    <lastmod>2026-03-31</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/siemens-healthineers/technical-intern-2026-batch</loc>
@@ -701,8 +937,20 @@
     <lastmod>2026-02-10</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/studygarage/react-native-developer-education-and-quiz</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/sutherland/international-voice-process-walk-in-drive</loc>
     <lastmod>2026-02-28</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/swiggy/senior-devops-engineer-security-focus</loc>
+    <lastmod>2026-03-29</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/swiggy/software-engineer-core-services</loc>
+    <lastmod>2026-03-31</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/syslint-technologies/customer-support-engineer</loc>
@@ -745,6 +993,10 @@
     <lastmod>2026-02-11</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/tesla/embedded-software-engineer</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/testvagrant/qa-automation-engineer-fresher</loc>
     <lastmod>2026-02-14</lastmod>
   </url>
@@ -761,12 +1013,28 @@
     <lastmod>2026-01-25</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/uber/software-engineer-core-infrastructure</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/unthinkable-solutions/associate-software-engineer</loc>
     <lastmod>2026-03-26</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/vasista-enterprise-solutions/functional-consultant-cma</loc>
     <lastmod>2026-03-16</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/vercel/senior-ui-engineer-next-js-vercel</loc>
+    <lastmod>2026-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/vikas-high-school/junior-web-developer-react-focus</loc>
+    <lastmod>2026-03-28</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/vikas-high-school/software-development-engineer-vercel-showcase</loc>
+    <lastmod>2026-03-31</lastmod>
   </url>
   <url>
     <loc>https://hiringstoday.in/jobs/virim-infotech/junior-software-engineer-2026-batch</loc>
@@ -833,6 +1101,18 @@
     <lastmod>2026-02-07</lastmod>
   </url>
   <url>
+    <loc>https://hiringstoday.in/jobs/zomato/data-scientist-adtech</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/zomato/devops-engineer-cloud-platform</loc>
+    <lastmod>2026-03-29</lastmod>
+  </url>
+  <url>
+    <loc>https://hiringstoday.in/jobs/zomato/mobile-engineer-android-consumer-apps</loc>
+    <lastmod>2026-03-30</lastmod>
+  </url>
+  <url>
     <loc>https://hiringstoday.in/jobs/zomato/sde-intern-pre-placement-offer</loc>
     <lastmod>2026-02-08</lastmod>
   </url>
@@ -842,6 +1122,6 @@
   </url>
   <url>
     <loc>https://hiringstoday.in/privacy</loc>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-18</lastmod>
   </url>
 </urlset>
