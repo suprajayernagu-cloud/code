@@ -1,9 +1,11 @@
+'use client'
+
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { fetchJobs, searchJobs } from '../utils/jobsApi'
 
 export default function SearchBar() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [jobs, setJobs] = useState([])
   const [suggestions, setSuggestions] = useState([])

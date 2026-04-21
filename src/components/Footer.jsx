@@ -1,17 +1,19 @@
+'use client'
+
 import React from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { CONTACT_EMAIL } from '../config'
 import PrivacySettingsButton from './PrivacySettingsButton'
 
 const quickLinks = [
-  { to: '/', label: 'Latest Jobs' },
-  { to: '/about', label: 'About' },
-  { to: '/contact', label: 'Contact' },
+  { href: '/', label: 'Latest Jobs' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
 ]
 
 const legalLinks = [
-  { to: '/privacy', label: 'Privacy Policy' },
-  { to: '/disclaimer', label: 'Disclaimer' },
+  { href: '/privacy', label: 'Privacy Policy' },
+  { href: '/disclaimer', label: 'Disclaimer' },
 ]
 
 export default function Footer() {
@@ -37,8 +39,8 @@ export default function Footer() {
           <h3 className="font-display text-lg font-semibold text-white">Explore</h3>
           <ul className="mt-3 space-y-2">
             {quickLinks.map((item) => (
-              <li key={item.to}>
-                <Link to={item.to} className="text-sm text-blue-100 hover:text-[#F3A713]">
+              <li key={item.href}>
+                <Link href={item.href} className="text-sm text-blue-100 hover:text-[#F3A713]">
                   {item.label}
                 </Link>
               </li>
@@ -50,8 +52,8 @@ export default function Footer() {
           <h3 className="font-display text-lg font-semibold text-white">Legal</h3>
           <ul className="mt-3 space-y-2">
             {legalLinks.map((item) => (
-              <li key={item.to}>
-                <Link to={item.to} className="text-sm text-blue-100 hover:text-[#F3A713]">
+              <li key={item.href}>
+                <Link href={item.href} className="text-sm text-blue-100 hover:text-[#F3A713]">
                   {item.label}
                 </Link>
               </li>

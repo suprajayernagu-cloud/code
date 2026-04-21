@@ -1,7 +1,10 @@
-import React, { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+'use client'
 
-export default function RelatedJobs({ currentJob, allJobs = [] }) {
+import React, { useMemo } from 'react'
+import Link from 'next/link'
+
+export default function RelatedJobs({ currentJobId, allJobs = [] }) {
+  const currentJob = allJobs.find(j => j.id === currentJobId)
   const relatedJobs = useMemo(() => {
     if (!currentJob || !allJobs.length) return []
 
@@ -39,17 +42,19 @@ export default function RelatedJobs({ currentJob, allJobs = [] }) {
     <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
       <h3 className="font-bold text-slate-900 mb-4">Related Opportunities</h3>
       <div className="space-y-3">
-        {relatedJobs.map(job => (
-          <Link
-            key={job.id}
-            to={`/job/${job.id}`}
-            className="block rounded-lg p-3 hover:bg-slate-50 transition"
-          >
-            <p className="font-medium text-slate-900 text-sm">{job.title}</p>
-            <p className="text-xs text-slate-600 mt-1">{job.company}</p>
-            <p className="text-xs text-slate-500 mt-1">{job.location}</p>
-          </Link>
-        ))}
+        {relatedJobs.map(job => {
+          return (
+            <Link
+              key={job.id}
+              href={`/job/${job.id}`}
+              className="block rounded-lg p-3 hover:bg-slate-50 transition"
+            >
+              <p className="font-medium text-slate-900 text-sm">{job.title}</p>
+              <p className="text-xs text-slate-600 mt-1">{job.company}</p>
+              <p className="text-xs text-slate-500 mt-1">{job.location}</p>
+            </Link>
+          )
+        })}
       </div>
     </div>
   )

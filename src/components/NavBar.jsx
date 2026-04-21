@@ -1,47 +1,50 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 
 const links = [
-  { to: '/', label: 'Jobs' },
-  { to: '/blog', label: 'Blog' },
-  { to: '/about', label: 'About' },
-  { to: '/contact', label: 'Contact' },
-  { to: '/privacy', label: 'Privacy' },
+  { href: '/', label: 'Jobs' },
+  { href: '/jobs', label: 'Browse' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/resources', label: 'Resources' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
 ]
 
-function NavItem({ to, label, mobile = false }) {
+function NavItem({ href, label, mobile = false, isActive = false }) {
   return (
-    <NavLink
-      to={to}
-      className={({ isActive }) =>
-        [
-          mobile
-            ? 'block rounded-xl px-3 py-2 text-base font-semibold transition'
-            : 'rounded-full px-4 py-2 text-sm font-semibold transition',
-          isActive
-            ? 'bg-[#F3A713] text-brand-900'
-            : 'text-blue-100 hover:bg-white/10 hover:text-[#F3A713]',
-        ].join(' ')
-      }
+    <Link
+      href={href}
+      className={[
+        mobile
+          ? 'block rounded-xl px-3 py-2 text-base font-semibold transition'
+          : 'rounded-full px-4 py-2 text-sm font-semibold transition',
+        isActive
+          ? 'bg-[#F3A713] text-brand-900'
+          : 'text-blue-100 hover:bg-white/10 hover:text-[#F3A713]',
+      ].join(' ')}
     >
       {label}
-    </NavLink>
+    </Link>
   )
 }
 
 export default function NavBar() {
   const [open, setOpen] = useState(false)
-  const location = useLocation()
+  const pathname = usePathname()
 
   useEffect(() => {
     setOpen(false)
-  }, [location.pathname])
+  }, [pathname])
 
   return (
     <header className="sticky top-0 z-50 border-b-4 border-[#F3A713] bg-brand-800 shadow-lg shadow-brand-900/25">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
-        <Link to="/" className="group inline-flex items-center" aria-label="Hiringstoday home">
+        <Link href="/" className="group inline-flex items-center" aria-label="Hiringstoday home">
           <span className="relative inline-flex flex-col">
             <span className="font-display text-xl font-bold tracking-tight text-brand-100 sm:text-2xl">
               Hirings
@@ -65,7 +68,7 @@ export default function NavBar() {
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
           {links.map((link) => (
-            <NavItem key={link.to} to={link.to} label={link.label} />
+            <NavItem key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
           ))}
         </nav>
 
@@ -101,7 +104,7 @@ export default function NavBar() {
           >
             <div className="space-y-1">
               {links.map((link) => (
-                <NavItem key={link.to} to={link.to} label={link.label} mobile />
+                <NavItem key={link.href} href={link.href} label={link.label} mobile isActive={pathname === link.href} />
               ))}
             </div>
           </motion.nav>

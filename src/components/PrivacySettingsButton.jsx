@@ -1,8 +1,10 @@
+'use client'
+
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 
 export default function PrivacySettingsButton({ className = '' }) {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const handleClick = () => {
     if (typeof window !== 'undefined') {
@@ -14,7 +16,7 @@ export default function PrivacySettingsButton({ className = '' }) {
       }
     }
 
-    navigate('/privacy')
+    router.push('/privacy')
   }
 
   return (

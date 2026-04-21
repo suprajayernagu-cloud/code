@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { usePathname } from 'next/navigation'
 import { SITE_URL } from '../config'
 
 function buildCanonicalUrl(pathname) {
@@ -52,12 +54,12 @@ export default function PageMeta({
   ogType = 'website',
   jsonLd,
 }) {
-  const location = useLocation()
+  const pathname = usePathname()
 
   useEffect(() => {
     if (typeof document === 'undefined') return undefined
 
-    const url = canonicalUrl || buildCanonicalUrl(canonicalPath ?? location.pathname)
+    const url = canonicalUrl || buildCanonicalUrl(canonicalPath ?? pathname)
 
     if (title) {
       document.title = title
@@ -123,7 +125,7 @@ export default function PageMeta({
     return () => {
       removeManagedJsonLd()
     }
-  }, [canonicalPath, canonicalUrl, description, jsonLd, location.pathname, ogType, robots, title])
+  }, [canonicalPath, canonicalUrl, description, jsonLd, pathname, ogType, robots, title])
 
   return null
 }

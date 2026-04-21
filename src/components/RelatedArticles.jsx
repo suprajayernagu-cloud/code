@@ -1,5 +1,7 @@
+'use client'
+
 import React from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { blogArticles } from '../data/blog'
 
 export default function RelatedArticles({ category }) {
@@ -21,7 +23,7 @@ export default function RelatedArticles({ category }) {
         {articles.map(article => (
           <Link
             key={article.id}
-            to={`/blog/${article.slug}`}
+            href={`/blog/${article.slug}`}
             className="block group"
           >
             <div className="flex gap-3 p-3 rounded-lg hover:bg-white transition-colors">
@@ -40,7 +42,7 @@ export default function RelatedArticles({ category }) {
       </div>
 
       <Link
-        to="/blog"
+        href="/blog"
         className="mt-4 inline-block text-sm font-semibold text-blue-600 hover:text-blue-700"
       >
         View all articles →

@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { usePathname } from 'next/navigation'
 import { ADSENSE_CLIENT_ID, ENABLE_ADSENSE_SCRIPT, PRIVACY_MESSAGE_SCRIPT_URL } from '../config'
 
 const ADSENSE_SCRIPT_ID = 'google-adsense-script'
@@ -28,11 +30,12 @@ function removeScript(id) {
 }
 
 export default function MonetizationManager() {
-  const location = useLocation()
-  const isPrivacyDisclosurePage = location.pathname === '/privacy'
+  const pathname = usePathname()
+  const isPrivacyDisclosurePage = pathname === '/privacy'
 
   useEffect(() => {
-    if (import.meta.env.DEV || isPrivacyDisclosurePage) {
+    const isDev = process.env.NODE_ENV === 'development'
+    if (isDev || isPrivacyDisclosurePage) {
       removeScript(PRIVACY_MESSAGE_SCRIPT_ID)
       removeScript(ADSENSE_SCRIPT_ID)
       return
