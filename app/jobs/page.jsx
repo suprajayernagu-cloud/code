@@ -300,36 +300,40 @@ export default function BrowseJobsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <button
-                disabled={page === 1}
-                onClick={() => setPage(1)}
-                className="flex h-10 w-10 items-center justify-center rounded border border-slate-300 bg-white text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                ←
-              </button>
-
-              {pageNumbers.map((p) => (
+            <div className="mt-16 flex justify-center">
+              <div className="flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 shadow-sm">
                 <button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  className={`flex h-10 w-10 items-center justify-center rounded border text-sm font-medium transition ${
-                    p === page
-                      ? 'border-brand-700 bg-brand-700 text-white'
-                      : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
-                  }`}
+                  disabled={page === 1}
+                  onClick={() => setPage(1)}
+                  className="rounded-full border-2 border-slate-300 bg-white px-5 py-1.5 text-sm font-semibold text-slate-500 transition duration-200 hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:text-slate-300"
                 >
-                  {p}
+                  Previous
                 </button>
-              ))}
 
-              <button
-                disabled={page === totalPages}
-                onClick={() => setPage(totalPages)}
-                className="flex h-10 w-10 items-center justify-center rounded border border-slate-300 bg-white text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                →
-              </button>
+                <div className="mx-2 flex items-center gap-1">
+                  {pageNumbers.map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition duration-200 ${
+                        p === page
+                          ? 'bg-brand-700 text-white shadow-md'
+                          : 'border-2 border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:shadow-sm'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => setPage(totalPages)}
+                  className="rounded-full border-2 border-slate-300 bg-white px-5 py-1.5 text-sm font-semibold text-slate-500 transition duration-200 hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:text-slate-300"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           )}
         </>
