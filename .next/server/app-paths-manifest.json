@@ -1,15 +1,5 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/about/page": "app/about/page.js",
-  "/blog/page": "app/blog/page.js",
-  "/blog/[slug]/page": "app/blog/[slug]/page.js",
-  "/contact/page": "app/contact/page.js",
-  "/disclaimer/page": "app/disclaimer/page.js",
-  "/job/[id]/page": "app/job/[id]/page.js",
-  "/faq/page": "app/faq/page.js",
-  "/jobs/page": "app/jobs/page.js",
   "/page": "app/page.js",
-  "/resources/page": "app/resources/page.js",
-  "/privacy/page": "app/privacy/page.js",
-  "/api/jobs/route": "app/api/jobs/route.js"
+  "/jobs/page": "app/jobs/page.js"
 }
