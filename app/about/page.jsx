@@ -33,7 +33,7 @@ export default function AboutPage() {
           </p>
         </section>
 
-        <section className="space-y-6">
+        {/* <section className="space-y-6">
           <h2 className="font-display text-2xl font-semibold text-ink-900">Meet the Founder</h2>
           
           <div className="border-l-4 border-brand-700 pl-6 space-y-3">
@@ -48,7 +48,7 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-        </section>
+        </section> */}
 
         <section className="space-y-4">
           <h2 className="font-display text-2xl font-semibold text-ink-900">How We Work</h2>
