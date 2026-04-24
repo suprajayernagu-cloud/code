@@ -199,16 +199,16 @@ export default function Home() {
       />
 
       {/* Search Card */}
-      <div className="surface rounded-2xl border border-slate-200 p-8">
+      <div className="surface rounded-2xl border border-slate-200 p-4 sm:p-6 md:p-8">
         <div className="space-y-4">
           <div className="space-y-2">
-            <p className="text-sm font-semibold tracking-wide text-slate-600">Search Jobs</p>
-            <h2 className="font-display text-2xl font-bold text-ink-900">
+            <p className="text-xs sm:text-sm font-semibold tracking-wide text-slate-600">Search Jobs</p>
+            <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-ink-900">
               Find jobs by role, company, skill, or location
             </h2>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               placeholder="Search role, company, skill, or location"
@@ -217,7 +217,7 @@ export default function Home() {
                 setSearchQuery(e.target.value)
                 setPage(1)
               }}
-              className="flex-1 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-transparent"
+              className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-transparent"
             />
             <button
               onClick={() => {
@@ -226,13 +226,13 @@ export default function Home() {
                 setRemoteOnly(false)
                 setPage(1)
               }}
-              className="px-6 py-3 rounded-lg bg-slate-800 text-white font-semibold hover:bg-slate-900 transition"
+              className="px-4 sm:px-6 py-2 sm:py-3 rounded-lg bg-slate-800 text-white font-semibold text-sm sm:text-base hover:bg-slate-900 transition whitespace-nowrap"
             >
               Reset
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-start sm:items-center">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -241,20 +241,20 @@ export default function Home() {
                   setRemoteOnly(e.target.checked)
                   setPage(1)
                 }}
-                className="w-5 h-5 rounded border-slate-300 text-brand-700"
+                className="w-4 h-4 sm:w-5 sm:h-5 rounded border-slate-300 text-brand-700"
               />
-              <span className="text-sm font-medium text-slate-700">Remote only</span>
+              <span className="text-xs sm:text-sm font-medium text-slate-700">Remote only</span>
             </label>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-slate-700">Type:</span>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <span className="text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">Type:</span>
               <select
                 value={selectedJobType}
                 onChange={(e) => {
                   setSelectedJobType(e.target.value)
                   setPage(1)
                 }}
-                className="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-brand-700"
+                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-700"
               >
                 <option value="All">All</option>
                 <option value="Full-time">Full-time</option>
