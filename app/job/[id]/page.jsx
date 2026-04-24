@@ -4,16 +4,10 @@ import RelatedJobs from '@/src/components/RelatedJobs'
 import RelatedArticles from '@/src/components/RelatedArticles'
 import { notFound } from 'next/navigation'
 import { getJobById, getAllJobs } from '@/src/lib/jobs'
-import { SITE_URL } from '@/src/config'
 
-// Force dynamic rendering for fresh data
 export const dynamic = 'force-dynamic'
 export const revalidate = 3600
 
-/**
- * Generate metadata for the job detail page
- * Critical for SEO and social sharing
- */
 export async function generateMetadata({ params }) {
   const job = await getJobById(params.id)
 
@@ -25,8 +19,8 @@ export async function generateMetadata({ params }) {
   }
 
   const title = `${job.title} at ${job.company} | HiringsToday`
-  const description = (job.overview || `Apply for ${job.title} position at ${job.company}`).slice(0, 160)
-  const canonicalUrl = `${SITE_URL}/job/${params.id}`
+  const description = (job.overview || `Apply for ${job.title} position at ${job.company}`).slice(0, 155)
+  const canonicalUrl = `https://hiringstoday.in/job/${params.id}`
 
   return {
     title,
@@ -49,11 +43,21 @@ export async function generateMetadata({ params }) {
   }
 }
 
-/**
- * Generate JSON-LD for Google Jobs structured data
- */
-function JobPostingSchema({ job }) {
-  const schema = {
+export default async function JobDetailsPage({ params }) {
+  const job = await getJobById(params.id)
+
+  if (!job) {
+    notFound()
+  }
+
+  let allJobs = []
+  try {
+    allJobs = await getAllJobs(false)
+  } catch (error) {
+    console.error('Failed to fetch related jobs:', error)
+  }
+
+  const jobSchema = {
     '@context': 'https://schema.org',
     '@type': 'JobPosting',
     title: job.title,
@@ -78,49 +82,20 @@ function JobPostingSchema({ job }) {
   }
 
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      suppressHydrationWarning
-    />
-  )
-}
-
-/**
- * Job detail page component
- * Server component that renders full job content for SEO
- */
-export default async function JobDetailsPage({ params }) {
-  // Fetch job directly without API call
-  const job = await getJobById(params.id)
-
-  // Return 404 if job not found
-  if (!job) {
-    notFound()
-  }
-
-  // Fetch all jobs for related jobs section
-  let allJobs = []
-  try {
-    allJobs = await getAllJobs(true)
-  } catch (error) {
-    console.error('Failed to fetch related jobs:', error)
-  }
-
-  return (
     <>
-      {/* JSON-LD Schema for Google Jobs */}
-      <JobPostingSchema job={job} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobSchema) }}
+        suppressHydrationWarning
+      />
 
       <article className="mx-auto max-w-4xl space-y-8">
-        {/* Back link */}
         <div>
           <Link href="/" className="text-sm text-brand-700 hover:text-brand-800">
             ← Back to Jobs
           </Link>
         </div>
 
-        {/* Header with job title and company */}
         <header className="space-y-4">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -129,7 +104,6 @@ export default async function JobDetailsPage({ params }) {
             </div>
           </div>
 
-          {/* Job metadata badges */}
           <div className="flex flex-wrap gap-2">
             {job.location && (
               <span className="rounded-full bg-brand-100 px-3 py-1 text-sm text-brand-700">
@@ -149,7 +123,6 @@ export default async function JobDetailsPage({ params }) {
           </div>
         </header>
 
-        {/* About the role section */}
         {job.overview && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">About This Role</h2>
@@ -157,7 +130,6 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {/* Responsibilities section */}
         {job.responsibilitiesDetailed && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Responsibilities</h2>
@@ -189,7 +161,6 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {/* Skills section */}
         {job.skillsRequired && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Required Skills</h2>
@@ -212,7 +183,6 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {/* Salary & Benefits section */}
         {job.salaryInsights && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Salary & Benefits</h2>
@@ -220,7 +190,6 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {/* Why Apply section */}
         {job.whyApply && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Why Apply</h2>
@@ -241,7 +210,6 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {/* Call to action */}
         <section className="border-t pt-6">
           <a
             href={job.link || job.applyLink || '#'}
@@ -253,12 +221,10 @@ export default async function JobDetailsPage({ params }) {
           </a>
         </section>
 
-        {/* Related jobs */}
         {Array.isArray(allJobs) && allJobs.length > 0 && (
           <RelatedJobs currentJobId={job.id} allJobs={allJobs} />
         )}
 
-        {/* Related articles */}
         <RelatedArticles />
       </article>
     </>
