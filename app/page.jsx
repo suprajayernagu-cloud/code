@@ -52,6 +52,33 @@ function CompanyAvatar({ company, logoUrl }) {
   )
 }
 
+function SkeletonCard() {
+  return (
+    <div className="surface-muted animate-pulse flex flex-col gap-3 rounded-2xl border border-slate-200 p-5">
+      <div className="flex items-start gap-3">
+        <div className="h-12 w-12 rounded-2xl bg-slate-300"></div>
+        <div className="flex-1 min-w-0 space-y-2">
+          <div className="h-5 bg-slate-300 rounded w-3/4"></div>
+          <div className="h-4 bg-slate-200 rounded w-1/2"></div>
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <div className="h-7 w-20 bg-slate-300 rounded-full"></div>
+        <div className="h-7 w-24 bg-slate-300 rounded-full"></div>
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 bg-slate-200 rounded w-full"></div>
+        <div className="h-4 bg-slate-200 rounded w-2/3"></div>
+      </div>
+      <div className="flex gap-2">
+        <div className="h-6 w-16 bg-slate-300 rounded-full"></div>
+        <div className="h-6 w-20 bg-slate-300 rounded-full"></div>
+        <div className="h-6 w-14 bg-slate-300 rounded-full"></div>
+      </div>
+    </div>
+  )
+}
+
 function formatSalary(salaryData) {
   if (typeof salaryData === 'string' && salaryData) {
     return salaryData.replace(' INR', '').trim()
@@ -247,7 +274,13 @@ export default function Home() {
         </h2>
 
         {/* Job Results Grid */}
-        {!loading && currentJobs.length > 0 ? (
+        {loading ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        ) : currentJobs.length > 0 ? (
           <>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {currentJobs.map((job) => (
