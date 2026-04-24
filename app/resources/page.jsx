@@ -7,6 +7,7 @@ import PageMeta from '@/src/components/PageMeta'
 const guides = [
   {
     title: 'How to Write a Winning Resume',
+    slug: 'resume-writing-guide',
     description: 'Learn the structure, formatting, and content strategies that help your resume stand out to recruiters and hiring managers.',
     icon: '📄',
     topics: ['ATS Optimization', 'Action Verbs', 'Quantifiable Results', 'Skills Section', 'Format Tips'],
@@ -20,6 +21,7 @@ const guides = [
   },
   {
     title: 'Interview Preparation Guide',
+    slug: 'interview-prep-guide',
     description: 'Master common interview questions, behavioral techniques, and strategies to present yourself confidently.',
     icon: '🎤',
     topics: ['Common Questions', 'STAR Method', 'Technical Prep', 'Body Language', 'Follow-up'],
@@ -33,6 +35,7 @@ const guides = [
   },
   {
     title: 'Salary Negotiation Tactics',
+    slug: 'salary-negotiation-guide',
     description: 'Understand market rates, timing, and negotiation strategies to secure the compensation you deserve.',
     icon: '💰',
     topics: ['Market Research', 'Timing', 'Negotiation Scripts', 'Benefits Package', 'Counter Offers'],
@@ -46,6 +49,7 @@ const guides = [
   },
   {
     title: 'Job Search Strategy',
+    slug: 'job-search-strategy',
     description: 'Develop an effective job search plan with application tracking, networking, and timeline management.',
     icon: '🔍',
     topics: ['Job Boards', 'Networking', 'Application Tracking', 'Follow-up', 'Timeline'],
@@ -59,6 +63,7 @@ const guides = [
   },
   {
     title: 'Career Transition Guide',
+    slug: 'career-transition-guide',
     description: 'Plan a successful career change with skill-building, storytelling, and strategy.',
     icon: '🚀',
     topics: ['Skills Assessment', 'Reskilling', 'Storytelling', 'Networking', 'First Roles'],
@@ -72,6 +77,7 @@ const guides = [
   },
   {
     title: 'Remote Job Success',
+    slug: 'remote-job-success',
     description: 'Master remote work by optimizing your environment, communication, and work-life balance.',
     icon: '🏡',
     topics: ['Home Setup', 'Communication', 'Time Management', 'Boundaries', 'Networking'],
@@ -154,9 +160,12 @@ export default function ResourcesPage() {
               </div>
             </div>
 
-            <button className="mt-auto inline-flex items-center justify-center rounded-lg border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-100">
-              View Full Guide
-            </button>
+            <Link
+              href={`/resources/${guide.slug}`}
+              className="mt-auto inline-flex items-center justify-center rounded-lg border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-100"
+            >
+              View Full Guide →
+            </Link>
           </div>
         ))}
       </div>
@@ -192,19 +201,28 @@ export default function ResourcesPage() {
           Get Job Updates in Your Inbox
         </h3>
         <p className="text-sm text-slate-600">
-          No spam, just fresh job opportunities and career tips delivered weekly.
+          We'll send you curated job opportunities and career tips (no spam, unsubscribe anytime).
         </p>
-        <form className="flex gap-2">
+        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+          <p className="text-sm text-blue-800">
+            <strong>Coming Soon:</strong> Our newsletter feature is launching soon. Sign up below and we'll notify you when it's ready.
+          </p>
+        </div>
+        <form className="flex gap-2" onSubmit={(e) => {
+          e.preventDefault()
+          alert('Thank you! Our newsletter is coming soon. We\'ll notify you when it\'s available.')
+        }}>
           <input
             type="email"
             placeholder="Your email address"
+            required
             className="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
           />
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-lg bg-brand-700 px-4 py-2 font-semibold text-white transition hover:bg-brand-800"
+            className="inline-flex items-center justify-center rounded-lg bg-brand-700 px-4 py-2 font-semibold text-white transition hover:bg-brand-800 whitespace-nowrap"
           >
-            Subscribe
+            Notify Me
           </button>
         </form>
       </section>

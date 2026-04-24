@@ -6,11 +6,21 @@ import { useParams } from 'next/navigation'
 import PageMeta from '@/src/components/PageMeta'
 import { blogArticles } from '@/src/data/blog'
 
+function getAuthorSlug(authorName) {
+  return authorName.toLowerCase().replace(' ', '-')
+}
+
 export default function BlogDetailPage() {
   const params = useParams()
   const slug = params?.slug
 
   const article = blogArticles.find((a) => a.slug === slug)
+  const articleIndex = blogArticles.findIndex((a) => a.slug === slug)
+  
+  // Get related articles (same category, different article)
+  const relatedArticles = blogArticles
+    .filter((a) => a.category === article?.category && a.id !== article?.id)
+    .slice(0, 3)
 
   if (!article) {
     return (
@@ -39,6 +49,8 @@ export default function BlogDetailPage() {
     month: 'long',
     day: 'numeric',
   })
+
+  const authorSlug = getAuthorSlug(article.author)
 
   return (
     <>
@@ -74,7 +86,9 @@ export default function BlogDetailPage() {
                 {article.category}
               </span>
               <div className="flex items-center gap-2 text-sm text-slate-600">
-                <span>{article.author}</span>
+                <Link href={`/author/${authorSlug}`} className="font-medium text-brand-700 hover:text-brand-800">
+                  {article.author}
+                </Link>
                 <span>•</span>
                 <span>{formattedDate}</span>
                 <span>•</span>
@@ -130,30 +144,70 @@ export default function BlogDetailPage() {
               })}
             </div>
 
-            {/* Author Bio */}
+            {/* Author Bio with Link */}
             <div className="mt-12 border-t border-slate-200 pt-8">
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-brand-400 to-brand-700" />
-                <div>
-                  <h4 className="font-semibold text-ink-900">{article.author}</h4>
-                  <p className="text-sm text-slate-600">
-                    Career mentor and tech industry professional sharing real experiences and insights.
-                  </p>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-16 rounded-full bg-gradient-to-br from-brand-400 to-brand-700" />
+                  <div>
+                    <Link href={`/author/${authorSlug}`} className="font-semibold text-ink-900 hover:text-brand-700">
+                      {article.author}
+                    </Link>
+                    <p className="text-sm text-slate-600">
+                      Career mentor and tech industry professional sharing real experiences and insights.
+                    </p>
+                  </div>
                 </div>
+                <Link href={`/author/${authorSlug}`} className="text-brand-700 hover:text-brand-800 font-semibold text-sm">
+                  View Profile →
+                </Link>
               </div>
             </div>
+
+            {/* Related Articles */}
+            {relatedArticles.length > 0 && (
+              <div className="mt-12 border-t border-slate-200 pt-8">
+                <h3 className="font-display text-xl font-bold text-ink-900 mb-6">Related Articles</h3>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {relatedArticles.map((relArticle) => (
+                    <Link key={relArticle.id} href={`/blog/${relArticle.slug}`} className="group">
+                      <div className="overflow-hidden rounded-lg border border-slate-200 hover:border-brand-300 transition">
+                        <div className="relative h-40 w-full overflow-hidden bg-slate-100">
+                          <img
+                            src={relArticle.image}
+                            alt={relArticle.title}
+                            className="h-full w-full object-cover group-hover:scale-105 transition"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h4 className="font-semibold text-ink-900 group-hover:text-brand-700 line-clamp-2">
+                            {relArticle.title}
+                          </h4>
+                          <p className="mt-2 text-xs text-slate-500">{relArticle.readTime} min read</p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* CTA */}
             <div className="mt-12 rounded-xl bg-brand-50 p-8 text-center">
               <h3 className="font-display text-xl font-bold text-ink-900">
-                Get more career insights
+                Ready to advance your career?
               </h3>
               <p className="mt-2 text-slate-600">
-                Subscribe for weekly tips on interviews, negotiations, and job hunting.
+                Explore more career resources and job opportunities on Hiringstoday.
               </p>
-              <button className="mt-6 inline-flex items-center gap-2 rounded-lg bg-brand-700 px-6 py-3 font-semibold text-white transition hover:bg-brand-800">
-                Subscribe Now
-              </button>
+              <div className="mt-6 flex flex-wrap gap-3 justify-center">
+                <Link href="/resources" className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-2 font-semibold text-white transition hover:bg-brand-800">
+                  Career Resources →
+                </Link>
+                <Link href="/jobs" className="inline-flex items-center gap-2 rounded-full border border-brand-700 px-6 py-2 font-semibold text-brand-700 transition hover:bg-brand-50">
+                  Browse Jobs →
+                </Link>
+              </div>
             </div>
           </div>
         </div>
