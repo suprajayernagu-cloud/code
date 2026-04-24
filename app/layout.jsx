@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
     url: 'https://hiringstoday.in',
     logo: 'https://hiringstoday.in/logo.png',
     description: 'Job discovery platform with direct links to official company application pages',
-    email: 'hiringstoday7@gmail.com',
+    email: 'contact@hiringstoday.in',
     sameAs: [
       'https://twitter.com/hiringstoday',
       'https://linkedin.com/company/hiringstoday',

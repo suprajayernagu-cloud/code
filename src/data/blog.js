@@ -671,7 +671,7 @@ Startups are great for someone. Just make sure it's you.`
     author: 'Shreya Verma',
     publishedDate: '2026-04-12',
     readTime: 7,
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&h=600&fit=crop',
     content: `Day 1 at TCS.
 
 I was terrified.
@@ -970,7 +970,7 @@ And that's how you will too.`
     author: 'Anjali Reddy',
     publishedDate: '2026-04-01',
     readTime: 6,
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1516321318423-f06c8be504b9?w=1200&h=600&fit=crop',
     content: `I was an intern at Microsoft for 3 months.
 
 When it ended, they asked: "Do you want to stay?"

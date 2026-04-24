@@ -107,7 +107,7 @@ const faqs = [
       },
       {
         q: 'The website is slow or not loading properly. What do I do?',
-        a: 'Try clearing your browser cache, disabling browser extensions, or trying a different browser. If the issue persists, contact us at hiringstoday7@gmail.com with details about what you\'re experiencing.',
+        a: 'Try clearing your browser cache, disabling browser extensions, or trying a different browser. If the issue persists, contact us through our Contact page with details about what you\'re experiencing.',
       },
       {
         q: 'Is the site mobile-friendly?',
@@ -159,11 +159,10 @@ function FAQAccordion() {
                     </span>
                   </button>
 
-                  {isOpen && (
-                    <div className="mt-4 text-slate-600 space-y-2">
-                      <p>{faq.a}</p>
-                    </div>
-                  )}
+                  {/* Answer is always in the DOM but visually hidden when not open */}
+                  <div style={{ display: isOpen ? 'block' : 'none' }} className="mt-4 text-slate-600 space-y-2">
+                    <p>{faq.a}</p>
+                  </div>
                 </div>
               )
             })}

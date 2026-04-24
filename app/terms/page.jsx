@@ -55,7 +55,7 @@ export default function TermsPage() {
               The materials on Hiringstoday's website are provided on an 'as is' basis. Hiringstoday makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
             </p>
             <p>
-              <strong>Job Listings Disclaimer:</strong> Hiringstoday aggregates job listings from public sources. We do not guarantee the accuracy, completeness, or continued availability of any job listing. We do not verify the legitimacy of employers or job posts. Job seekers should always verify job details on the official employer website before applying or sharing personal information.
+              <strong>Job Listings Disclaimer:</strong> Hiringstoday curates and verifies job listings from trusted public sources. While we work to ensure accuracy and legitimacy, we do not guarantee the accuracy, completeness, or continued availability of any job listing. Job seekers should always verify job details on the official employer website before applying or sharing personal information.
             </p>
           </section>
 
@@ -79,7 +79,7 @@ export default function TermsPage() {
               The materials on Hiringstoday's website are owned by or licensed to Hiringstoday and are protected by international copyright laws. You may not use job listing content or materials without explicit permission.
             </p>
             <p>
-              Job listings remain the property of their original source or employer. By using Hiringstoday, you acknowledge that you are accessing aggregated content provided for informational purposes only.
+              Job listings remain the property of their original source or employer. By using Hiringstoday, you acknowledge that you are accessing curated content provided for informational purposes only.
             </p>
           </section>
 
@@ -119,7 +119,7 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-2xl font-bold text-ink-900">9. Application Process</h2>
             <p>
-              Hiringstoday serves as an aggregator and facilitator of job listings. When you click "Apply Now," you are directed to the official employer's application page or source website. Hiringstoday is not an employment agency and does not conduct interviews, offer jobs, or hire individuals. All employment inquiries and applications are handled directly between you and the employer.
+              Hiringstoday serves as a curator and facilitator of verified job listings. When you click "Apply Now," you are directed to the official employer's application page or source website. Hiringstoday is not an employment agency and does not conduct interviews, offer jobs, or hire individuals. All employment inquiries and applications are handled directly between you and the employer.
             </p>
             <p>
               Hiringstoday is not responsible for the application process, hiring decisions, or any interactions between job seekers and employers.
