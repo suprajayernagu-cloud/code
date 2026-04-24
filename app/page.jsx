@@ -73,6 +73,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [page, setPage] = useState(1)
+  const [selectedJobType, setSelectedJobType] = useState('All')
+  const [remoteOnly, setRemoteOnly] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -118,24 +120,40 @@ export default function Home() {
     })
   }, [jobs])
 
-  // Filter by search query
+  // Filter by search query and filters
   const filteredJobs = useMemo(() => {
-    if (!searchQuery.trim()) return sortedJobs
-    const query = searchQuery.toLowerCase()
-    return sortedJobs.filter(
-      (job) =>
-        job.title?.toLowerCase().includes(query) ||
-        job.company?.toLowerCase().includes(query) ||
-        job.location?.toLowerCase().includes(query) ||
-        (job.tags &&
-          Array.isArray(job.tags) &&
-          job.tags.some((tag) =>
-            (typeof tag === 'string' ? tag : tag.name)
-              .toLowerCase()
-              .includes(query)
-          ))
-    )
-  }, [sortedJobs, searchQuery])
+    let filtered = sortedJobs
+    
+    // Apply search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (job) =>
+          job.title?.toLowerCase().includes(query) ||
+          job.company?.toLowerCase().includes(query) ||
+          job.location?.toLowerCase().includes(query) ||
+          (job.tags &&
+            Array.isArray(job.tags) &&
+            job.tags.some((tag) =>
+              (typeof tag === 'string' ? tag : tag.name)
+                .toLowerCase()
+                .includes(query)
+            ))
+      )
+    }
+    
+    // Apply job type filter
+    if (selectedJobType !== 'All') {
+      filtered = filtered.filter((job) => job.type === selectedJobType)
+    }
+    
+    // Apply remote only filter
+    if (remoteOnly) {
+      filtered = filtered.filter((job) => job.location?.toLowerCase().includes('remote'))
+    }
+    
+    return filtered
+  }, [sortedJobs, searchQuery, selectedJobType, remoteOnly])
 
   const totalPages = Math.max(1, Math.ceil(filteredJobs.length / ITEMS_PER_PAGE))
   const start = (page - 1) * ITEMS_PER_PAGE
@@ -153,26 +171,73 @@ export default function Home() {
         description="Browse current job openings by role, company, skill, and location. Compare jobs faster and continue to official employer apply pages from Hiringstoday."
       />
 
-      {/* Hero Section */}
-      <div className="text-center space-y-3">
-        <p className="text-sm font-semibold tracking-wide text-brand-700">Find Your Next Role</p>
-        <h1 className="font-display text-4xl font-bold text-ink-900 sm:text-5xl">
-          Search Jobs
-        </h1>
-      </div>
+      {/* Search Card */}
+      <div className="surface rounded-2xl border border-slate-200 p-8">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <p className="text-sm font-semibold tracking-wide text-slate-600">Search Jobs</p>
+            <h2 className="font-display text-2xl font-bold text-ink-900">
+              Find jobs by role, company, skill, or location
+            </h2>
+          </div>
 
-      {/* Search Box */}
-      <div className="surface rounded-2xl border border-slate-200 p-6">
-        <input
-          type="text"
-          placeholder="Search by job title, company, location, or skill..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value)
-            setPage(1)
-          }}
-          className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-transparent"
-        />
+          <div className="flex gap-3">
+            <input
+              type="text"
+              placeholder="Search role, company, skill, or location"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setPage(1)
+              }}
+              className="flex-1 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-transparent"
+            />
+            <button
+              onClick={() => {
+                setSearchQuery('')
+                setSelectedJobType('All')
+                setRemoteOnly(false)
+                setPage(1)
+              }}
+              className="px-6 py-3 rounded-lg bg-slate-800 text-white font-semibold hover:bg-slate-900 transition"
+            >
+              Reset
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-4 items-center">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={remoteOnly}
+                onChange={(e) => {
+                  setRemoteOnly(e.target.checked)
+                  setPage(1)
+                }}
+                className="w-5 h-5 rounded border-slate-300 text-brand-700"
+              />
+              <span className="text-sm font-medium text-slate-700">Remote only</span>
+            </label>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-slate-700">Type:</span>
+              <select
+                value={selectedJobType}
+                onChange={(e) => {
+                  setSelectedJobType(e.target.value)
+                  setPage(1)
+                }}
+                className="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-brand-700"
+              >
+                <option value="All">All</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Freelance">Freelance</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Latest Jobs Section */}
