@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 const filterCategories = {
   experience: {
     label: 'By Experience',
+    color: 'bg-blue-100 text-blue-700',
     filters: [
       { label: 'Fresher Jobs', href: '/jobs/fresher' },
       { label: 'Experienced Jobs', href: '/jobs/experienced' },
@@ -15,6 +16,7 @@ const filterCategories = {
   },
   workType: {
     label: 'By Work Type',
+    color: 'bg-blue-100 text-blue-700',
     filters: [
       { label: 'Remote Jobs', href: '/jobs/remote' },
       { label: 'Work from Office', href: '/jobs/office' },
@@ -23,6 +25,7 @@ const filterCategories = {
   },
   year: {
     label: 'By Year',
+    color: 'bg-blue-100 text-blue-700',
     filters: [
       { label: 'Jobs in 2026', href: '/jobs/2026' },
       { label: 'Jobs in 2025', href: '/jobs/2025' },
@@ -30,6 +33,7 @@ const filterCategories = {
   },
   location: {
     label: 'By Location',
+    color: 'bg-blue-100 text-blue-700',
     filters: [
       { label: 'Bangalore', href: '/jobs/bangalore' },
       { label: 'Hyderabad', href: '/jobs/hyderabad' },
@@ -81,7 +85,7 @@ export default function NavDropdown() {
             : 'text-blue-100 hover:bg-white/10 hover:text-[#F3A713]',
         ].join(' ')}
       >
-        Browse
+        Fresher Jobs
         <span className={`inline-block transition-transform ${isOpen ? 'rotate-180' : ''}`}>
           ▼
         </span>
@@ -92,7 +96,7 @@ export default function NavDropdown() {
           <div className="space-y-4">
             {Object.values(filterCategories).map((category) => (
               <div key={category.label} className="space-y-2">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-500 px-2">
+                <p className={`text-xs font-bold uppercase tracking-wide px-3 py-2 rounded-lg ${category.color}`}>
                   {category.label}
                 </p>
                 <div className="space-y-1">

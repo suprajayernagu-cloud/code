@@ -106,7 +106,7 @@ export default function NavBar() {
             <div className="space-y-1">
               <NavItem href="/" label="Jobs" mobile isActive={pathname === '/'} />
               <div className="pb-2 border-b border-brand-700 mb-2">
-                <p className="text-xs font-bold uppercase tracking-wide text-blue-200 px-3 py-1">Browse Jobs by Filter</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-blue-200 px-3 py-1">Fresher Jobs & More</p>
                 <div className="space-y-1 mt-1 pl-2">
                   <Link href="/jobs/fresher" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Fresher Jobs</Link>
                   <Link href="/jobs/experienced" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Experienced</Link>
