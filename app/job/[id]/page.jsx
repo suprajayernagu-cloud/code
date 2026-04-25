@@ -6,7 +6,6 @@ import { notFound } from 'next/navigation'
 import { getJobById, getAllJobs } from '@/src/lib/jobs'
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 3600
 
 export async function generateMetadata({ params }) {
   const job = await getJobById(params.id)
@@ -89,7 +88,11 @@ export default async function JobDetailsPage({ params }) {
         suppressHydrationWarning
       />
 
-      <article className="mx-auto max-w-4xl space-y-8">
+      <article
+        className="mx-auto max-w-4xl space-y-8"
+        itemScope
+        itemType="https://schema.org/JobPosting"
+      >
         <div>
           <Link href="/" className="text-sm text-brand-700 hover:text-brand-800">
             ← Back to Jobs
@@ -99,8 +102,8 @@ export default async function JobDetailsPage({ params }) {
         <header className="space-y-4">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-ink-900">{job.title}</h1>
-              <p className="mt-2 text-lg text-slate-600">{job.company}</p>
+              <h1 className="text-3xl font-bold text-ink-900" itemProp="title">{job.title}</h1>
+              <p className="mt-2 text-lg text-slate-600" itemProp="hiringOrganization">{job.company}</p>
             </div>
           </div>
 
@@ -126,7 +129,7 @@ export default async function JobDetailsPage({ params }) {
         {job.overview && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">About This Role</h2>
-            <p className="text-slate-700 leading-relaxed">{job.overview}</p>
+            <p className="text-slate-700 leading-relaxed" itemProp="description">{job.overview}</p>
           </section>
         )}
 
