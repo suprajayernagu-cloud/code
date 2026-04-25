@@ -175,7 +175,7 @@ export default function TermsPage() {
               If you have any questions about these terms and conditions, please contact us at:
             </p>
             <div className="bg-slate-100 p-4 rounded-lg">
-              <p><strong>Email:</strong> contact@hiringstoday.in</p>
+              <p><strong>Email:</strong> hiringstoday7@gmail.com</p>
               <p><strong>Website:</strong> https://www.hiringstoday.in</p>
             </div>
           </section>

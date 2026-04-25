@@ -9,7 +9,7 @@ export const JOBS_URL = 'https://suprajayernagu-cloud.github.io/Job-data/Jobdeta
 export const COMPANIES_URL = 'https://suprajayernagu-cloud.github.io/Job-data/companies.json'
 
 export const SITE_URL = 'https://hiringstoday.in'
-export const CONTACT_EMAIL = 'contact@hiringstoday.in'
+export const CONTACT_EMAIL = 'hiringstoday7@gmail.com'
 export const ADSENSE_CLIENT_ID = 'ca-pub-7664393734940549'
 export const ENABLE_ADSENSE_SCRIPT = process.env.NEXT_PUBLIC_ENABLE_ADSENSE_SCRIPT === 'true'
 export const PRIVACY_MESSAGE_SCRIPT_URL =

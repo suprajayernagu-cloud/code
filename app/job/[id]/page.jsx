@@ -12,13 +12,13 @@ export async function generateMetadata({ params }) {
 
   if (!job) {
     return {
-      title: 'Job Not Found | HiringsToday',
+      title: 'Job Not Found | Hiringstoday',
       description: 'The job you are looking for does not exist.',
     }
   }
 
-  const title = `${job.title} at ${job.company} | HiringsToday`
-  const description = (job.overview || `Apply for ${job.title} position at ${job.company}`).slice(0, 155)
+  const title = `${job.title} at ${job.company} | Hiringstoday`
+  const description = (job.overview || `Apply for ${job.title} at ${job.company}`).slice(0, 155)
   const canonicalUrl = `https://hiringstoday.in/job/${params.id}`
 
   return {
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }) {
       description,
       url: canonicalUrl,
       type: 'website',
-      siteName: 'HiringsToday',
+      siteName: 'Hiringstoday',
     },
     twitter: {
       card: 'summary_large_image',
@@ -74,7 +74,12 @@ export default async function JobDetailsPage({ params }) {
         ...(job.location && { addressLocality: job.location }),
       },
     },
+    applicantLocationRequirements: {
+      '@type': 'Country',
+      name: 'India',
+    },
     ...(job.postedAt && { datePosted: job.postedAt }),
+    validThrough: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     employmentType: job.type?.toUpperCase() ?? 'FULL_TIME',
     directApply: true,
     ...(job.link && { url: job.link }),
@@ -214,14 +219,18 @@ export default async function JobDetailsPage({ params }) {
         )}
 
         <section className="border-t pt-6">
-          <a
-            href={job.link || job.applyLink || '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block rounded-lg bg-brand-700 px-6 py-3 font-semibold text-white transition hover:bg-brand-800"
-          >
-            Apply Now →
-          </a>
+          {job.link || job.applyLink ? (
+            <a
+              href={job.link || job.applyLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded-lg bg-brand-700 px-6 py-3 font-semibold text-white transition hover:bg-brand-800"
+            >
+              Apply Now →
+            </a>
+          ) : (
+            <p className="text-slate-600 italic">Apply link not available at this time. Please check back later or contact the employer directly.</p>
+          )}
         </section>
 
         {Array.isArray(allJobs) && allJobs.length > 0 && (
