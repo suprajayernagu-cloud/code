@@ -149,19 +149,19 @@ export default function RemoteJobSuccessGuide() {
         <section className="space-y-4">
           <h2 className="text-2xl font-bold text-ink-900">Remote Work Pitfalls: What Goes Wrong and How to Avoid It</h2>
           <p>
-            <strong>Pitfall 1: Burnout from always-on culture.</strong> Remote work blurs work and personal life. Without commute separation, you slip into working 8 AM - midnight. Burnout comes fast. Solution: Set hard boundaries. After 6 PM (or your chosen end time), you're offline. Communicate this clearly.</li>
+            <strong>Pitfall 1: Burnout from always-on culture.</strong> Remote work blurs work and personal life. Without commute separation, you slip into working 8 AM - midnight. Burnout comes fast. Solution: Set hard boundaries. After 6 PM (or your chosen end time), you're offline. Communicate this clearly.
           </p>
           <p>
-            <strong>Pitfall 2: Timezone hell and exhaustion.</strong> A ₹80 LPA role working 2 PM - 10 PM IST sounds great until month 3 when you're perpetually tired. Long-term happiness matters more than salary bump. Prefer roles where your timezone works naturally or have async flexibility.</li>
+            <strong>Pitfall 2: Timezone hell and exhaustion.</strong> A ₹80 LPA role working 2 PM - 10 PM IST sounds great until month 3 when you're perpetually tired. Long-term happiness matters more than salary bump. Prefer roles where your timezone works naturally or have async flexibility.
           </p>
           <p>
-            <strong>Pitfall 3: Miscommunication and misalignment.</strong> Remote teams assume others know context they actually don't. A miscommunication spirals into conflict in async channels. Solution: Over-explain. Assume context is unknown. Clarify ambiguous statements. "When you said 'high priority,' did you mean Monday launch or end-of-sprint?" saves hours of rework.</li>
+            <strong>Pitfall 3: Miscommunication and misalignment.</strong> Remote teams assume others know context they actually don't. A miscommunication spirals into conflict in async channels. Solution: Over-explain. Assume context is unknown. Clarify ambiguous statements. "When you said 'high priority,' did you mean Monday launch or end-of-sprint?" saves hours of rework.
           </p>
           <p>
-            <strong>Pitfall 4: Invisible work becoming invisible career.</strong> You deliver great work but nobody sees it. You're not considered for promotions because leadership doesn't know you. Solution: Document, share, and communicate relentlessly. Your manager should know every major thing you've accomplished.</li>
+            <strong>Pitfall 4: Invisible work becoming invisible career.</strong> You deliver great work but nobody sees it. You're not considered for promotions because leadership doesn't know you. Solution: Document, share, and communicate relentlessly. Your manager should know every major thing you've accomplished.
           </p>
           <p>
-            <strong>Pitfall 5: Isolation and loneliness.</strong> Many remote workers feel isolated after 6-12 months. No casual conversations, no team bonding, no serendipitous collaborations. Some thrive on this; others need community. Seek out co-working spaces 1-2 days weekly, or build community with other remote workers locally.</li>
+            <strong>Pitfall 5: Isolation and loneliness.</strong> Many remote workers feel isolated after 6-12 months. No casual conversations, no team bonding, no serendipitous collaborations. Some thrive on this; others need community. Seek out co-working spaces 1-2 days weekly, or build community with other remote workers locally.
           </p>
         </section>
 

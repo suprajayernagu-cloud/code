@@ -65,7 +65,10 @@ export default function NavDropdown() {
     }
   }, [isOpen])
 
-  const isActive = pathname.startsWith('/jobs/') || pathname === '/jobs'
+  const isActive = pathname.startsWith('/jobs/') || pathname === '/jobs' || pathname === '/jobs/fresher'
+
+  // Highlight current active filter
+  const currentFilter = pathname.split('/jobs/')[1] || 'fresher'
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -93,16 +96,24 @@ export default function NavDropdown() {
                   {category.label}
                 </p>
                 <div className="space-y-1">
-                  {category.filters.map((filter) => (
-                    <Link
-                      key={filter.href}
-                      href={filter.href}
-                      className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {filter.label}
-                    </Link>
-                  ))}
+                  {category.filters.map((filter) => {
+                    const filterName = filter.href.split('/jobs/')[1]
+                    const isSelected = currentFilter === filterName
+                    return (
+                      <Link
+                        key={filter.href}
+                        href={filter.href}
+                        className={`block rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                          isSelected
+                            ? 'bg-brand-700 text-white'
+                            : 'text-slate-700 hover:bg-brand-50 hover:text-brand-700'
+                        }`}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {filter.label}
+                      </Link>
+                    )
+                  })}
                 </div>
               </div>
             ))}
