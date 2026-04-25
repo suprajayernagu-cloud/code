@@ -549,7 +549,7 @@ That's ₹57.5 LPA per hour of work.`
     author: 'Neha Gupta',
     publishedDate: '2026-03-12',
     readTime: 9,
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop',
     content: `Everyone told me my job was a dream.
 
 "Oh wow, you work at a startup? That's so cool!"
@@ -970,7 +970,7 @@ And that's how you will too.`
     author: 'Anjali Reddy',
     publishedDate: '2026-04-01',
     readTime: 6,
-    image: 'https://images.unsplash.com/photo-1516321318423-f06c8be504b9?w=1200&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1200&h=600&fit=crop',
     content: `I was an intern at Microsoft for 3 months.
 
 When it ended, they asked: "Do you want to stay?"
