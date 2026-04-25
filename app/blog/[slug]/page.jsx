@@ -86,10 +86,11 @@ export default function BlogDetailPage() {
                 {article.category}
               </span>
               <div className="flex items-center gap-2 text-sm text-slate-600">
-                <Link href={`/author/${authorSlug}`} className="font-medium text-brand-700 hover:text-brand-800">
+                {/* Author link - COMMENTED OUT */}
+                {/* <Link href={`/author/${authorSlug}`} className="font-medium text-brand-700 hover:text-brand-800">
                   {article.author}
                 </Link>
-                <span>•</span>
+                <span>•</span> */}
                 <span>{formattedDate}</span>
                 <span>•</span>
                 <span>{article.readTime} min read</span>
@@ -144,8 +145,8 @@ export default function BlogDetailPage() {
               })}
             </div>
 
-            {/* Author Bio with Link */}
-            <div className="mt-12 border-t border-slate-200 pt-8">
+            {/* Author Bio with Link - COMMENTED OUT */}
+            {/* <div className="mt-12 border-t border-slate-200 pt-8">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="h-16 w-16 rounded-full bg-gradient-to-br from-brand-400 to-brand-700" />
@@ -162,7 +163,7 @@ export default function BlogDetailPage() {
                   View Profile →
                 </Link>
               </div>
-            </div>
+            </div> */}
 
             {/* Related Articles */}
             {relatedArticles.length > 0 && (

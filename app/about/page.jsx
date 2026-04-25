@@ -3,8 +3,8 @@ import Link from 'next/link'
 import PageMeta from '@/src/components/PageMeta'
 
 export const metadata = {
-  title: 'About Hiringstoday | Meet Our Founders',
-  description: 'Learn about Hiringstoday\'s mission to help Indian job seekers discover better opportunities. Founded by career professionals dedicated to simplifying job search.',
+  title: 'About Hiringstoday | Meet Sai Supraja Yernagu',
+  description: 'Learn about Hiringstoday\'s mission to help Indian job seekers discover better opportunities. Founded by Sai Supraja Yernagu, dedicated to simplifying job search.',
 }
 
 export default function AboutPage() {
@@ -12,8 +12,8 @@ export default function AboutPage() {
     <section>
       <article className="surface space-y-8 p-6 sm:p-8 max-w-3xl mx-auto">
         <PageMeta
-          title="About Hiringstoday | Meet Our Founders"
-          description="Learn about Hiringstoday's mission to help Indian job seekers discover better opportunities. Founded by career professionals dedicated to simplifying job search."
+          title="About Hiringstoday | Meet Sai Supraja Yernagu"
+          description="Learn about Hiringstoday's mission to help Indian job seekers discover better opportunities. Founded by Sai Supraja Yernagu, dedicated to simplifying job search."
         />
 
         <div>
@@ -22,7 +22,7 @@ export default function AboutPage() {
             Making Job Search Less Frustrating
           </h1>
           <p className="mt-4 text-base leading-7 text-slate-700 sm:text-lg">
-            Hi, I'm Siddiq, a developer based in Hyderabad. I built Hiringstoday because I got tired of the mess. I spent weeks job hunting across broken platforms, spam-filled boards, and fake listings. Something had to change. Today, I'm building the job platform I wish existed—one where real opportunities connect with real talent, no noise, no middlemen, no BS.
+            Hi, I'm Sai Supraja Yernagu, a developer based in Hyderabad. I built Hiringstoday because I got tired of the mess. I spent weeks job hunting across broken platforms, spam-filled boards, and fake listings. Something had to change. Today, I'm building the job platform I wish existed—one where real opportunities connect with real talent, no noise, no middlemen, no BS.
           </p>
         </div>
 
@@ -41,8 +41,8 @@ export default function AboutPage() {
           
           <div className="border-l-4 border-brand-700 pl-6 space-y-3">
             <div>
-              <h3 className="font-display text-lg font-bold text-ink-900">Siddiq Kolimi</h3>
-              <p className="text-sm text-brand-700 font-semibold">Founder & Developer</p>
+              <h3 className="font-display text-lg font-bold text-ink-900">Sai Supraja Yernagu</h3>
+              <p className="text-sm text-brand-700 font-semibold">Founder & Developer (she/her)</p>
               <p className="mt-2 text-slate-700 leading-relaxed">
                 I've spent the last 2+ years working in product development, helping teams ship real products that solve real problems. I've worked with startups and established companies, lived through hiring booms and busts, and sat in hiring meetings. I know how hiring actually works.
               </p>
