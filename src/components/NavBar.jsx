@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
+import NavDropdown from './NavDropdown'
 
 const links = [
   { href: '/', label: 'Jobs' },
-  { href: '/jobs', label: 'Browse' },
   { href: '/blog', label: 'Blog' },
   { href: '/resources', label: 'Resources' },
   { href: '/faq', label: 'FAQ' },
@@ -67,6 +67,7 @@ export default function NavBar() {
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+          <NavDropdown />
           {links.map((link) => (
             <NavItem key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
           ))}
@@ -103,6 +104,16 @@ export default function NavBar() {
             aria-label="Mobile navigation"
           >
             <div className="space-y-1">
+              <div className="pb-2 border-b border-brand-700 mb-2">
+                <p className="text-xs font-bold uppercase tracking-wide text-blue-200 px-3 py-1">Browse Jobs</p>
+                <div className="space-y-1 mt-1 pl-2">
+                  <Link href="/jobs/fresher" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Fresher</Link>
+                  <Link href="/jobs/experienced" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Experienced</Link>
+                  <Link href="/jobs/remote" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Remote</Link>
+                  <Link href="/jobs/bangalore" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Bangalore</Link>
+                  <Link href="/jobs/india" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Pan India</Link>
+                </div>
+              </div>
               {links.map((link) => (
                 <NavItem key={link.href} href={link.href} label={link.label} mobile isActive={pathname === link.href} />
               ))}
