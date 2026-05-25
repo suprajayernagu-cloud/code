@@ -198,33 +198,25 @@ export default function ResourcesPage() {
 
       <section className="surface space-y-4 rounded-2xl border border-slate-200 p-6 text-center">
         <h3 className="font-display text-lg font-semibold text-ink-900">
-          Get Job Updates in Your Inbox
+          Need help choosing what to read first?
         </h3>
         <p className="text-sm text-slate-600">
-          We'll send you curated job opportunities and career tips (no spam, unsubscribe anytime).
+          Start with the blog archive for real job search stories, then use the guides when you need a step-by-step checklist.
         </p>
-        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-          <p className="text-sm text-blue-800">
-            <strong>Coming Soon:</strong> Our newsletter feature is launching soon. Sign up below and we'll notify you when it's ready.
-          </p>
-        </div>
-        <form className="flex gap-2" onSubmit={(e) => {
-          e.preventDefault()
-          alert('Thank you! Our newsletter is coming soon. We\'ll notify you when it\'s available.')
-        }}>
-          <input
-            type="email"
-            placeholder="Your email address"
-            required
-            className="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
-          />
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center rounded-lg bg-brand-700 px-4 py-2 font-semibold text-white transition hover:bg-brand-800 whitespace-nowrap"
+        <div className="flex flex-wrap justify-center gap-3">
+          <Link
+            href="/blog"
+            className="inline-flex items-center justify-center rounded-lg bg-brand-700 px-4 py-2 font-semibold text-white transition hover:bg-brand-800"
           >
-            Notify Me
-          </button>
-        </form>
+            Read the blog
+          </Link>
+          <Link
+            href="/contact"
+            className="inline-flex items-center justify-center rounded-lg border border-brand-700 bg-white px-4 py-2 font-semibold text-brand-700 transition hover:bg-brand-50"
+          >
+            Contact us
+          </Link>
+        </div>
       </section>
     </section>
   )

@@ -12,12 +12,12 @@ const poppins = Poppins({
 })
 
 export const metadata = {
-  title: 'HiringsToday - Premium Job Board for Tech Professionals',
-  description: 'Discover curated job opportunities at leading tech companies. Find roles matching your skills with detailed company insights, salary info, and interview preparation guides.',
-  keywords: 'jobs, hiring, tech jobs, software engineer, india jobs, career',
+  title: 'Hiringstoday - Daily Job Updates and Career Blog',
+  description: 'Find daily updated jobs in India and read practical career advice for interviews, fresher jobs, salary negotiation, and job search planning.',
+  keywords: 'daily jobs, job updates, career blog, jobs, hiring, tech jobs, software engineer, india jobs, interview tips, salary negotiation',
   openGraph: {
-    title: 'HiringsToday - Premium Job Board for Tech Professionals',
-    description: 'Discover curated job opportunities at leading tech companies.',
+    title: 'Hiringstoday - Daily Job Updates and Career Blog',
+    description: 'Daily job updates, career advice, and verified job opportunities for Indian professionals.',
     url: 'https://hiringstoday.in',
     type: 'website',
   },
@@ -26,11 +26,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   const schemaMarkup = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'WebSite',
     name: 'Hiringstoday',
     url: 'https://hiringstoday.in',
     logo: 'https://hiringstoday.in/logo.png',
-    description: 'Job discovery platform with direct links to official company application pages',
+    description: 'Daily job updates and career blog with practical advice and direct links to official company application pages',
     email: 'hiringstoday7@gmail.com',
     sameAs: [
       'https://twitter.com/hiringstoday',
@@ -48,18 +48,18 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
         />
       </head>
-      <body className="bg-white">
-        <div className="relative flex min-h-screen flex-col overflow-x-clip bg-white">
+      <body className="bg-[#f6f8fb]">
+        <div className="relative flex min-h-screen flex-col overflow-x-clip bg-[#f6f8fb]">
           <MonetizationManager />
 
-          <div className="pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-white">
-            <div className="absolute inset-0 bg-white" />
+          <div className="pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-[#f6f8fb]">
+            <div className="absolute inset-0 bg-[#f6f8fb]" />
           </div>
 
           <NavBar />
 
           <main
-            className="relative mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 lg:px-10"
+            className="relative mx-auto w-full max-w-7xl flex-1 px-3 pb-12 pt-5 sm:px-6 sm:pb-16 sm:pt-8 lg:px-10"
             role="main"
           >
             {children}

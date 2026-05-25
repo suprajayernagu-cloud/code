@@ -7,6 +7,19 @@ import { getJobById, getAllJobs } from '@/src/lib/jobs'
 
 export const dynamic = 'force-dynamic'
 
+function formatPostedDate(dateString) {
+  if (!dateString) return 'Posted date not listed'
+
+  const date = new Date(dateString)
+  if (Number.isNaN(date.getTime())) return 'Posted date not listed'
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date)
+}
+
 export async function generateMetadata({ params }) {
   const job = await getJobById(params.id)
 
@@ -56,6 +69,8 @@ export default async function JobDetailsPage({ params }) {
     console.error('Failed to fetch related jobs:', error)
   }
 
+  const applyUrl = job.link || job.applyUrl || job.applyLink
+
   const jobSchema = {
     '@context': 'https://schema.org',
     '@type': 'JobPosting',
@@ -82,7 +97,7 @@ export default async function JobDetailsPage({ params }) {
     validThrough: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     employmentType: job.type?.toUpperCase() ?? 'FULL_TIME',
     directApply: true,
-    ...(job.link && { url: job.link }),
+    ...(applyUrl && { url: applyUrl }),
   }
 
   return (
@@ -112,22 +127,32 @@ export default async function JobDetailsPage({ params }) {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {job.location && (
-              <span className="rounded-full bg-brand-100 px-3 py-1 text-sm text-brand-700">
-                {job.location}
-              </span>
-            )}
-            {job.type && (
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
-                {job.type}
-              </span>
-            )}
-            {job.remote && (
-              <span className="rounded-full bg-green-100 px-3 py-1 text-sm text-green-700">
-                Remote
-              </span>
-            )}
+          <div className="grid gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Posted Date</p>
+              <p className="mt-1 text-sm font-semibold text-ink-900">
+                <time dateTime={job.postedAt || undefined} itemProp="datePosted">
+                  {formatPostedDate(job.postedAt)}
+                </time>
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Author</p>
+              <p className="mt-1 text-sm font-semibold text-ink-900">Siddiq K</p>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Location</p>
+              <p className="mt-1 text-sm font-semibold text-ink-900">{job.location || 'Not listed'}</p>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Job Type</p>
+              <p className="mt-1 text-sm font-semibold text-ink-900">
+                {job.remote ? 'Remote' : job.type || 'Full-time'}
+              </p>
+            </div>
           </div>
         </header>
 
@@ -219,9 +244,9 @@ export default async function JobDetailsPage({ params }) {
         )}
 
         <section className="border-t pt-6">
-          {job.link || job.applyLink ? (
+          {applyUrl ? (
             <a
-              href={job.link || job.applyLink}
+              href={applyUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block rounded-lg bg-brand-700 px-6 py-3 font-semibold text-white transition hover:bg-brand-800"

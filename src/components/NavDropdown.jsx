@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 const filterCategories = {
   experience: {
     label: 'By Experience',
-    color: 'bg-blue-100 text-blue-700',
+    color: 'bg-brand-50 text-brand-800',
     filters: [
       { label: 'Fresher Jobs', href: '/jobs/fresher' },
       { label: 'Experienced Jobs', href: '/jobs/experienced' },
@@ -16,7 +16,7 @@ const filterCategories = {
   },
   workType: {
     label: 'By Work Type',
-    color: 'bg-blue-100 text-blue-700',
+    color: 'bg-brand-50 text-brand-800',
     filters: [
       { label: 'Remote Jobs', href: '/jobs/remote' },
       { label: 'Work from Office', href: '/jobs/office' },
@@ -25,7 +25,7 @@ const filterCategories = {
   },
   year: {
     label: 'By Year',
-    color: 'bg-blue-100 text-blue-700',
+    color: 'bg-orange-50 text-orange-700',
     filters: [
       { label: 'Jobs in 2026', href: '/jobs/2026' },
       { label: 'Jobs in 2025', href: '/jobs/2025' },
@@ -33,7 +33,7 @@ const filterCategories = {
   },
   location: {
     label: 'By Location',
-    color: 'bg-blue-100 text-blue-700',
+    color: 'bg-orange-50 text-orange-700',
     filters: [
       { label: 'Bangalore', href: '/jobs/bangalore' },
       { label: 'Hyderabad', href: '/jobs/hyderabad' },
@@ -79,20 +79,20 @@ export default function NavDropdown() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={[
-          'rounded-full px-4 py-2 text-sm font-semibold transition flex items-center gap-2',
+          'rounded-md px-3 py-2 text-sm font-semibold transition flex items-center gap-2',
           isActive
-            ? 'bg-[#F3A713] text-brand-900'
-            : 'text-blue-100 hover:bg-white/10 hover:text-[#F3A713]',
+            ? 'bg-orange-50 text-orange-700'
+            : 'text-slate-700 hover:bg-slate-100 hover:text-brand-800',
         ].join(' ')}
       >
-        Fresher Jobs
+        Job categories
         <span className={`inline-block transition-transform ${isOpen ? 'rotate-180' : ''}`}>
           ▼
         </span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-80 rounded-2xl bg-white shadow-2xl border border-slate-200 p-4 z-50">
+        <div className="absolute left-0 top-full z-50 mt-2 w-80 rounded-lg border border-slate-200 bg-white p-4 shadow-2xl">
           <div className="space-y-4">
             {Object.values(filterCategories).map((category) => (
               <div key={category.label} className="space-y-2">
@@ -109,8 +109,8 @@ export default function NavDropdown() {
                         href={filter.href}
                         className={`block rounded-lg px-3 py-2 text-sm font-semibold transition ${
                           isSelected
-                            ? 'bg-brand-700 text-white'
-                            : 'text-slate-700 hover:bg-brand-50 hover:text-brand-700'
+                            ? 'bg-brand-800 text-white'
+                            : 'text-slate-700 hover:bg-slate-50 hover:text-brand-800'
                         }`}
                         onClick={() => setIsOpen(false)}
                       >

@@ -1,218 +1,264 @@
-'use client'
-
 import React from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import PageMeta from '@/src/components/PageMeta'
+import { SITE_URL } from '@/src/config'
 import { blogArticles } from '@/src/data/blog'
 
-function getAuthorSlug(authorName) {
-  return authorName.toLowerCase().replace(' ', '-')
-}
-
-export default function BlogDetailPage() {
-  const params = useParams()
-  const slug = params?.slug
-
-  const article = blogArticles.find((a) => a.slug === slug)
-  const articleIndex = blogArticles.findIndex((a) => a.slug === slug)
-  
-  // Get related articles (same category, different article)
-  const relatedArticles = blogArticles
-    .filter((a) => a.category === article?.category && a.id !== article?.id)
-    .slice(0, 3)
-
-  if (!article) {
-    return (
-      <>
-        <PageMeta title="Article Not Found - Hiringstoday" description="This article could not be found." />
-        <div className="min-h-screen bg-white">
-          <div className="mx-auto max-w-4xl px-4 py-24 sm:px-6 lg:px-10">
-            <div className="text-center">
-              <h1 className="font-display text-4xl font-bold text-ink-900">Article Not Found</h1>
-              <p className="mt-4 text-lg text-slate-600">The article you're looking for doesn't exist.</p>
-              <Link
-                href="/blog"
-                className="mt-8 inline-flex items-center gap-2 rounded-lg bg-brand-700 px-6 py-3 font-semibold text-white transition hover:bg-brand-800"
-              >
-                ← Back to Blog
-              </Link>
-            </div>
-          </div>
-        </div>
-      </>
-    )
-  }
-
-  const formattedDate = new Date(article.publishedDate).toLocaleDateString('en-US', {
+function formatDate(dateString) {
+  return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  })
+  }).format(new Date(dateString))
+}
 
-  const authorSlug = getAuthorSlug(article.author)
+function getArticle(slug) {
+  return blogArticles.find((article) => article.slug === slug)
+}
+
+function renderInline(text) {
+  const parts = text.split(/(\*\*.*?\*\*)/g)
+
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={index} className="font-semibold text-ink-900">
+          {part.slice(2, -2)}
+        </strong>
+      )
+    }
+
+    return <React.Fragment key={index}>{part}</React.Fragment>
+  })
+}
+
+function isOrderedList(block) {
+  return block.split('\n').every((line) => /^\d+\.\s+/.test(line.trim()))
+}
+
+function isUnorderedList(block) {
+  return block.split('\n').every((line) => /^-\s+/.test(line.trim()))
+}
+
+function ArticleContent({ content }) {
+  return (
+    <div className="mt-10 space-y-6">
+      {content.split('\n\n').map((block, index) => {
+        const trimmed = block.trim()
+
+        if (trimmed.startsWith('## ')) {
+          return (
+            <h2 key={index} className="pt-4 font-display text-2xl font-bold leading-tight text-ink-900 sm:text-3xl">
+              {trimmed.replace('## ', '')}
+            </h2>
+          )
+        }
+
+        if (trimmed.startsWith('### ')) {
+          return (
+            <h3 key={index} className="pt-2 font-display text-xl font-bold leading-tight text-ink-900">
+              {trimmed.replace('### ', '')}
+            </h3>
+          )
+        }
+
+        if (isOrderedList(trimmed)) {
+          const lines = trimmed.split('\n')
+          const firstNumber = Number.parseInt(lines[0].match(/^(\d+)\./)?.[1] || '1', 10)
+
+          return (
+            <ol key={index} start={firstNumber} className="list-decimal space-y-2 pl-6 text-base leading-8 text-slate-700">
+              {lines.map((line) => (
+                <li key={line}>{renderInline(line.replace(/^\d+\.\s+/, ''))}</li>
+              ))}
+            </ol>
+          )
+        }
+
+        if (isUnorderedList(trimmed)) {
+          return (
+            <ul key={index} className="list-disc space-y-2 pl-6 text-base leading-8 text-slate-700">
+              {trimmed.split('\n').map((line) => (
+                <li key={line}>{renderInline(line.replace(/^-\s+/, ''))}</li>
+              ))}
+            </ul>
+          )
+        }
+
+        return (
+          <p key={index} className="text-base leading-8 text-slate-700">
+            {renderInline(trimmed)}
+          </p>
+        )
+      })}
+    </div>
+  )
+}
+
+export function generateStaticParams() {
+  return blogArticles.map((article) => ({
+    slug: article.slug,
+  }))
+}
+
+export function generateMetadata({ params }) {
+  const article = getArticle(params.slug)
+
+  if (!article) {
+    return {
+      title: 'Article Not Found - Hiringstoday',
+      description: 'This Hiringstoday article could not be found.',
+    }
+  }
+
+  return {
+    title: `${article.title} - Hiringstoday`,
+    description: article.excerpt,
+    alternates: {
+      canonical: `${SITE_URL}/blog/${article.slug}`,
+    },
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      type: 'article',
+      publishedTime: article.publishedDate,
+      authors: [article.author],
+      images: [article.image],
+    },
+  }
+}
+
+export default function BlogDetailPage({ params }) {
+  const article = getArticle(params.slug)
+
+  if (!article) {
+    notFound()
+  }
+
+  const formattedDate = formatDate(article.publishedDate)
+  const headings = article.content
+    .split('\n')
+    .filter((line) => line.startsWith('## '))
+    .map((line) => line.replace('## ', ''))
+  const sameTopicArticles = blogArticles
+    .filter((candidate) => candidate.category === article.category && candidate.id !== article.id)
+    .slice(0, 3)
+  const relatedArticles =
+    sameTopicArticles.length > 0
+      ? sameTopicArticles
+      : blogArticles.filter((candidate) => candidate.id !== article.id).slice(0, 3)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: article.title,
+    description: article.excerpt,
+    image: article.image,
+    datePublished: article.publishedDate,
+    dateModified: article.publishedDate,
+    author: {
+      '@type': 'Person',
+      name: article.author,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Hiringstoday',
+      url: SITE_URL,
+    },
+    mainEntityOfPage: `${SITE_URL}/blog/${article.slug}`,
+  }
 
   return (
     <>
       <PageMeta
         title={`${article.title} - Hiringstoday`}
         description={article.excerpt}
+        canonicalPath={`/blog/${article.slug}`}
+        ogType="article"
+        jsonLd={jsonLd}
       />
 
-      <div className="min-h-screen bg-white">
-        {/* Hero Section with Image */}
-        <div className="relative h-96 w-full overflow-hidden bg-slate-100 sm:h-[500px]">
-          <img
-            src={article.image}
-            alt={article.title}
-            className="h-full w-full object-cover"
-          />
-        </div>
+      <article className="mx-auto max-w-6xl">
+        <Link href="/blog" className="text-sm font-semibold text-brand-700 hover:text-brand-800">
+          Back to blog
+        </Link>
 
-        {/* Content Section */}
-        <div className="px-4 py-12 sm:px-6 lg:px-10">
-          <div className="mx-auto max-w-3xl">
-            {/* Back Button */}
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-brand-700 transition hover:text-brand-800 font-semibold"
-            >
-              ← Back to Blog
-            </Link>
-
-            {/* Category & Meta */}
-            <div className="mt-6 flex flex-wrap items-center gap-4">
-              <span className="inline-block rounded-full bg-brand-100 px-3 py-1 text-sm font-semibold text-brand-700">
-                {article.category}
-              </span>
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                {/* Author link - COMMENTED OUT */}
-                {/* <Link href={`/author/${authorSlug}`} className="font-medium text-brand-700 hover:text-brand-800">
-                  {article.author}
-                </Link>
-                <span>•</span> */}
-                <span>{formattedDate}</span>
-                <span>•</span>
-                <span>{article.readTime} min read</span>
-              </div>
-            </div>
-
-            {/* Title */}
-            <h1 className="mt-6 font-display text-4xl font-bold text-ink-900 sm:text-5xl">
+        <header className="mt-6 grid gap-8 border-b border-slate-200 pb-10 lg:grid-cols-[1fr_0.72fr] lg:items-end">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-700">{article.category}</p>
+            <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-ink-900 sm:text-5xl">
               {article.title}
             </h1>
-
-            {/* Content */}
-            <div className="prose prose-slate mt-10 max-w-none">
-              {article.content.split('\n\n').map((paragraph, index) => {
-                // Handle headings
-                if (paragraph.startsWith('## ')) {
-                  return (
-                    <h2 key={index} className="mt-8 mb-4 font-display text-2xl font-bold text-ink-900">
-                      {paragraph.replace('## ', '')}
-                    </h2>
-                  )
-                }
-
-                if (paragraph.startsWith('### ')) {
-                  return (
-                    <h3 key={index} className="mt-6 mb-3 font-display text-xl font-bold text-ink-900">
-                      {paragraph.replace('### ', '')}
-                    </h3>
-                  )
-                }
-
-                // Handle bold text
-                const renderedText = paragraph
-                  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                  .split('<strong>')
-                  .map((part, i) => {
-                    if (i === 0) return part
-                    const [strong, rest] = part.split('</strong>')
-                    return (
-                      <span key={i}>
-                        <strong className="font-semibold text-ink-900">{strong}</strong>
-                        {rest}
-                      </span>
-                    )
-                  })
-
-                return (
-                  <p key={index} className="mb-4 text-base leading-relaxed text-slate-700">
-                    {renderedText}
-                  </p>
-                )
-              })}
-            </div>
-
-            {/* Author Bio with Link - COMMENTED OUT */}
-            {/* <div className="mt-12 border-t border-slate-200 pt-8">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 rounded-full bg-gradient-to-br from-brand-400 to-brand-700" />
-                  <div>
-                    <Link href={`/author/${authorSlug}`} className="font-semibold text-ink-900 hover:text-brand-700">
-                      {article.author}
-                    </Link>
-                    <p className="text-sm text-slate-600">
-                      Career mentor and tech industry professional sharing real experiences and insights.
-                    </p>
-                  </div>
-                </div>
-                <Link href={`/author/${authorSlug}`} className="text-brand-700 hover:text-brand-800 font-semibold text-sm">
-                  View Profile →
-                </Link>
-              </div>
-            </div> */}
-
-            {/* Related Articles */}
-            {relatedArticles.length > 0 && (
-              <div className="mt-12 border-t border-slate-200 pt-8">
-                <h3 className="font-display text-xl font-bold text-ink-900 mb-6">Related Articles</h3>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {relatedArticles.map((relArticle) => (
-                    <Link key={relArticle.id} href={`/blog/${relArticle.slug}`} className="group">
-                      <div className="overflow-hidden rounded-lg border border-slate-200 hover:border-brand-300 transition">
-                        <div className="relative h-40 w-full overflow-hidden bg-slate-100">
-                          <img
-                            src={relArticle.image}
-                            alt={relArticle.title}
-                            className="h-full w-full object-cover group-hover:scale-105 transition"
-                          />
-                        </div>
-                        <div className="p-4">
-                          <h4 className="font-semibold text-ink-900 group-hover:text-brand-700 line-clamp-2">
-                            {relArticle.title}
-                          </h4>
-                          <p className="mt-2 text-xs text-slate-500">{relArticle.readTime} min read</p>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* CTA */}
-            <div className="mt-12 rounded-xl bg-brand-50 p-8 text-center">
-              <h3 className="font-display text-xl font-bold text-ink-900">
-                Ready to advance your career?
-              </h3>
-              <p className="mt-2 text-slate-600">
-                Explore more career resources and job opportunities on Hiringstoday.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3 justify-center">
-                <Link href="/resources" className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-2 font-semibold text-white transition hover:bg-brand-800">
-                  Career Resources →
-                </Link>
-                <Link href="/jobs" className="inline-flex items-center gap-2 rounded-full border border-brand-700 px-6 py-2 font-semibold text-brand-700 transition hover:bg-brand-50">
-                  Browse Jobs →
-                </Link>
-              </div>
+            <p className="mt-5 text-lg leading-8 text-slate-600">{article.excerpt}</p>
+            <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-500">
+              <span className="font-semibold text-slate-700">By {article.author}</span>
+              <span>{formattedDate}</span>
+              <span>{article.readTime} min read</span>
             </div>
           </div>
+
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+            <img src={article.image} alt={article.title} className="h-full min-h-[280px] w-full object-cover" />
+          </div>
+        </header>
+
+        <div className="grid gap-10 py-10 lg:grid-cols-[minmax(0,1fr)_280px]">
+          <div className="min-w-0">
+            <ArticleContent content={article.content} />
+
+            <section className="mt-12 rounded-lg border border-slate-200 bg-slate-50 p-6">
+              <h2 className="font-display text-xl font-bold text-ink-900">About this article</h2>
+              <p className="mt-3 text-sm leading-7 text-slate-600">
+                Hiringstoday publishes practical career guidance for readers comparing jobs,
+                preparing for interviews, negotiating offers, and planning career moves in India.
+              </p>
+            </section>
+          </div>
+
+          <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+            {headings.length > 0 ? (
+              <section className="rounded-lg border border-slate-200 bg-white p-5">
+                <h2 className="font-display text-lg font-bold text-ink-900">In this article</h2>
+                <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
+                  {headings.slice(0, 8).map((heading) => (
+                    <li key={heading}>{heading}</li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
+            <section className="rounded-lg border border-slate-200 bg-white p-5">
+              <h2 className="font-display text-lg font-bold text-ink-900">More from this topic</h2>
+              <div className="mt-4 space-y-4">
+                {relatedArticles.map((related) => (
+                  <Link key={related.id} href={`/blog/${related.slug}`} className="group block">
+                    <p className="text-sm font-semibold leading-6 text-ink-900 group-hover:text-brand-700">
+                      {related.title}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">{related.readTime} min read</p>
+                  </Link>
+                ))}
+              </div>
+              <Link href="/blog" className="mt-5 inline-block text-sm font-semibold text-brand-700 hover:text-brand-800">
+                View all articles
+              </Link>
+            </section>
+
+            <section className="rounded-lg border border-brand-100 bg-brand-50 p-5">
+              <h2 className="font-display text-lg font-bold text-ink-900">Ready to apply?</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Browse job listings after you prepare with the guide.
+              </p>
+              <Link
+                href="/jobs"
+                className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800"
+              >
+                Browse jobs
+              </Link>
+            </section>
+          </aside>
         </div>
-      </div>
+      </article>
     </>
   )
 }

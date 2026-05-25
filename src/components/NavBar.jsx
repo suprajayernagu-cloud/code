@@ -7,11 +7,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import NavDropdown from './NavDropdown'
 
 const links = [
-  { href: '/blog', label: 'Blog' },
-  { href: '/resources', label: 'Resources' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/jobs/fresher', label: 'Off Campus Drive 2026' },
+  { href: '/jobs/remote', label: 'Work From Home' },
+  { href: '/jobs/internship', label: 'Internships' },
+  { href: '/blog', label: 'Career Advice' },
 ]
 
 function NavItem({ href, label, mobile = false, isActive = false }) {
@@ -20,11 +19,11 @@ function NavItem({ href, label, mobile = false, isActive = false }) {
       href={href}
       className={[
         mobile
-          ? 'block rounded-xl px-3 py-2 text-base font-semibold transition'
-          : 'rounded-full px-4 py-2 text-sm font-semibold transition',
+          ? 'block rounded-lg px-3 py-2 text-base font-semibold transition'
+          : 'rounded-md px-3 py-2 text-sm font-semibold transition',
         isActive
-          ? 'bg-[#F3A713] text-brand-900'
-          : 'text-blue-100 hover:bg-white/10 hover:text-[#F3A713]',
+          ? 'bg-orange-50 text-orange-700'
+          : 'text-slate-700 hover:bg-slate-100 hover:text-brand-800',
       ].join(' ')}
     >
       {label}
@@ -41,14 +40,17 @@ export default function NavBar() {
   }, [pathname])
 
   return (
-    <header className="sticky top-0 z-50 border-b-4 border-[#F3A713] bg-brand-800 shadow-lg shadow-brand-900/25">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
+      <div className="bg-brand-900 px-3 py-2 text-center text-[11px] font-semibold leading-5 text-blue-100 sm:px-6 sm:text-xs">
+        Get instant job alerts for off-campus drives, internships, and WFH jobs
+      </div>
+      <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-10">
         <Link href="/" className="group inline-flex items-center" aria-label="Hiringstoday home">
           <span className="relative inline-flex flex-col">
-            <span className="font-display text-xl font-bold tracking-tight text-brand-100 sm:text-2xl">
+            <span className="font-display text-xl font-bold tracking-tight text-brand-900 sm:text-2xl">
               Hirings
               <motion.span
-                className="text-[#F3A713]"
+                className="text-orange-500"
                 animate={{ opacity: [1, 0.78, 1] }}
                 transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
               >
@@ -56,26 +58,26 @@ export default function NavBar() {
               </motion.span>
             </span>
 
-            <span className="absolute -bottom-0.5 left-0 h-[2px] w-full rounded-full bg-brand-200/30" />
+            <span className="absolute -bottom-0.5 left-0 h-[2px] w-full rounded-full bg-slate-200" />
             <motion.span
-              className="pointer-events-none absolute -bottom-0.5 left-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-[#F3A713] to-transparent"
+              className="pointer-events-none absolute -bottom-0.5 left-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-orange-500 to-transparent"
               animate={{ x: [-28, 132] }}
               transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
             />
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
-          <NavItem href="/" label="Jobs" isActive={pathname === '/'} />
-          <NavDropdown />
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+          <NavItem href="/" label="Home" isActive={pathname === '/'} />
           {links.map((link) => (
             <NavItem key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
           ))}
+          <NavDropdown />
         </nav>
 
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-brand-300/35 bg-brand-700/50 text-brand-100 transition hover:text-[#F3A713] md:hidden"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-brand-900 transition hover:border-orange-300 hover:text-orange-600 lg:hidden"
           onClick={() => setOpen((prev) => !prev)}
           aria-expanded={open}
           aria-label={open ? 'Close menu' : 'Open menu'}
@@ -100,24 +102,24 @@ export default function NavBar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="border-t border-brand-700 bg-brand-900 px-4 pb-4 pt-3 md:hidden"
+            className="max-h-[calc(100vh-6.75rem)] overflow-y-auto border-t border-slate-200 bg-white px-4 pb-4 pt-3 shadow-lg lg:hidden"
             aria-label="Mobile navigation"
           >
             <div className="space-y-1">
-              <NavItem href="/" label="Jobs" mobile isActive={pathname === '/'} />
-              <div className="pb-2 border-b border-brand-700 mb-2">
-                <p className="text-xs font-bold uppercase tracking-wide text-blue-200 px-3 py-1">Fresher Jobs & More</p>
-                <div className="space-y-1 mt-1 pl-2">
-                  <Link href="/jobs/fresher" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Fresher Jobs</Link>
-                  <Link href="/jobs/experienced" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Experienced</Link>
-                  <Link href="/jobs/remote" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Remote</Link>
-                  <Link href="/jobs/bangalore" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Bangalore</Link>
-                  <Link href="/jobs/india" className="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-100 hover:bg-white/10 hover:text-[#F3A713]">Pan India</Link>
-                </div>
-              </div>
+              <NavItem href="/" label="Home" mobile isActive={pathname === '/'} />
               {links.map((link) => (
                 <NavItem key={link.href} href={link.href} label={link.label} mobile isActive={pathname === link.href} />
               ))}
+              <div className="mb-2 border-b border-slate-200 pb-2">
+                <p className="px-3 py-1 text-xs font-bold uppercase tracking-wide text-slate-500">Job categories</p>
+                <div className="space-y-1 mt-1 pl-2">
+                  <Link href="/jobs/fresher" className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-brand-800">Fresher Jobs</Link>
+                  <Link href="/jobs/experienced" className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-brand-800">Experienced</Link>
+                  <Link href="/jobs/remote" className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-brand-800">Remote</Link>
+                  <Link href="/jobs/bangalore" className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-brand-800">Bangalore</Link>
+                  <Link href="/jobs/india" className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-brand-800">Pan India</Link>
+                </div>
+              </div>
             </div>
           </motion.nav>
         ) : null}

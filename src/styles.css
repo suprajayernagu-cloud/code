@@ -15,7 +15,7 @@ body,
 body {
   margin: 0;
   font-family: Poppins, ui-sans-serif, system-ui, sans-serif;
-  background: #ffffff;
+  background: #f6f8fb;
   color: #1d1d1d;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -33,11 +33,19 @@ body {
   h5,
   h6 {
     font-family: Poppins, ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
+    overflow-wrap: break-word;
   }
 
   a {
     @apply transition-colors duration-200;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
   }
 
   ::selection {
@@ -48,7 +56,7 @@ body {
 
 @layer components {
   .surface {
-    @apply relative overflow-hidden rounded-[1.75rem] border border-[#e4ddd5] bg-white shadow-card;
+    @apply relative overflow-hidden rounded-lg border border-[#e4ddd5] bg-white shadow-card;
   }
 
   .surface::after {
@@ -60,7 +68,7 @@ body {
   }
 
   .surface-muted {
-    @apply relative overflow-hidden rounded-[1.5rem] border border-[#e7dfd6] bg-white shadow-soft;
+    @apply relative overflow-hidden rounded-lg border border-[#e7dfd6] bg-white shadow-soft;
   }
 
   .surface-muted::before {
@@ -73,7 +81,7 @@ body {
   }
 
   .hero-title {
-    @apply text-4xl font-semibold leading-tight text-ink-900 sm:text-5xl lg:text-6xl;
+    @apply text-3xl font-semibold leading-tight text-ink-900 sm:text-5xl lg:text-6xl;
     text-wrap: balance;
   }
 
@@ -102,6 +110,58 @@ body {
 }
 
 @layer utilities {
+  @keyframes news-scroll {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .news-ticker {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .news-ticker__track {
+    display: inline-flex;
+    width: max-content;
+    min-width: 200%;
+    animation: news-scroll 34s linear infinite;
+    will-change: transform;
+  }
+
+  .news-ticker:hover .news-ticker__track {
+    animation-play-state: paused;
+  }
+
+  .news-ticker__item {
+    display: inline-flex;
+    align-items: center;
+    padding-right: 2rem;
+  }
+
+  .news-ticker__item::after {
+    content: '•';
+    margin-left: 2rem;
+    color: #fb923c;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .news-ticker {
+      white-space: normal;
+    }
+
+    .news-ticker__track {
+      animation: none;
+      flex-wrap: wrap;
+      row-gap: 0.25rem;
+      min-width: 0;
+    }
+  }
+
   @keyframes skeleton-shimmer {
     0% {
       transform: translateX(-100%);

@@ -17,9 +17,9 @@ export const PRIVACY_MESSAGE_SCRIPT_URL =
 
 // SEO & Meta defaults
 export const DEFAULT_META = {
-  title: 'HiringsToday - Premium Job Board for Tech Professionals',
-  description: 'Discover curated job opportunities at leading tech companies. Find roles matching your skills with detailed company insights, salary info, and interview preparation guides.',
-  keywords: 'jobs, hiring, tech jobs, software engineer, india jobs, career',
+  title: 'Hiringstoday - Daily Job Updates and Career Blog',
+  description: 'Find daily updated jobs in India and read practical career advice for interviews, fresher jobs, salary negotiation, and job search planning.',
+  keywords: 'daily jobs, job updates, career blog, jobs, hiring, tech jobs, software engineer, india jobs, interview tips, salary negotiation',
 }
 
 // Feature flags

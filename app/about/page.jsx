@@ -22,7 +22,7 @@ export default function AboutPage() {
             Making Job Search Less Frustrating
           </h1>
           <p className="mt-4 text-base leading-7 text-slate-700 sm:text-lg">
-            Hi, I'm Sai Supraja Yernagu, a developer based in Hyderabad. I built Hiringstoday because I got tired of the mess. I spent weeks job hunting across broken platforms, spam-filled boards, and fake listings. Something had to change. Today, I'm building the job platform I wish existed—one where real opportunities connect with real talent, no noise, no middlemen, no BS.
+            Hi, I'm Sai Supraja Yernagu, a developer based in Hyderabad. I built Hiringstoday because I got tired of the mess. I spent weeks job hunting across broken platforms, spam-filled boards, and fake listings. Something had to change. Today, I'm building the job platform I wish existed: one where real opportunities connect with real talent, with less noise and fewer middlemen.
           </p>
         </div>
 
