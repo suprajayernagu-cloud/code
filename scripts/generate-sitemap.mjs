@@ -4,22 +4,47 @@ import { fileURLToPath } from 'node:url'
 
 const SITE_URL = 'https://hiringstoday.in'
 const JOBS_URL = 'https://suprajayernagu-cloud.github.io/Job-data/Jobdetails.json'
-const STATIC_PATHS = ['/', '/about', '/contact', '/privacy', '/disclaimer']
+const STATIC_PATHS = [
+  '/',
+  '/jobs',
+  '/blog',
+  '/resources',
+  '/about',
+  '/contact',
+  '/faq',
+  '/privacy',
+  '/terms',
+  '/disclaimer',
+]
 
-function toSlug(value = '') {
-  return value
-    .toString()
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, ' and ')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
+const JOB_FILTER_PATHS = [
+  '/jobs/fresher',
+  '/jobs/experienced',
+  '/jobs/internship',
+  '/jobs/remote',
+  '/jobs/office',
+  '/jobs/hybrid',
+  '/jobs/bangalore',
+  '/jobs/hyderabad',
+  '/jobs/mumbai',
+  '/jobs/delhi',
+  '/jobs/chennai',
+  '/jobs/india',
+  '/jobs/2026',
+  '/jobs/2025',
+]
+
+const RESOURCE_PATHS = [
+  '/resources/resume-writing-guide',
+  '/resources/interview-prep-guide',
+  '/resources/salary-negotiation-guide',
+  '/resources/job-search-strategy',
+  '/resources/career-transition-guide',
+  '/resources/remote-job-success',
+]
 
 function getJobPath(job) {
-  const companySlug = toSlug(job?.company) || 'company'
-  const titleSlug = toSlug(job?.title) || 'role'
-  return `/jobs/${encodeURIComponent(companySlug)}/${encodeURIComponent(titleSlug)}`
+  return job?.id ? `/job/${encodeURIComponent(String(job.id))}` : ''
 }
 
 function formatDate(value) {
@@ -51,17 +76,38 @@ async function fetchJobs() {
   return Array.isArray(data) ? data : []
 }
 
-function buildEntries(jobs) {
-  const today = new Date().toISOString().slice(0, 10)
-  const entries = STATIC_PATHS.map((pathname) => ({
+async function readBlogPaths() {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  const blogPath = path.join(__dirname, '..', 'src', 'data', 'blog.js')
+  const source = await fs.readFile(blogPath, 'utf8')
+  const slugs = [...source.matchAll(/slug:\s*['"]([^'"]+)['"]/g)].map((match) => match[1])
+
+  return [...new Set(slugs)].map((slug) => `/blog/${slug}`)
+}
+
+function toEntry(pathname, lastmod) {
+  return {
     loc: pathname === '/' ? SITE_URL : `${SITE_URL}${pathname}`,
-    lastmod: today,
-  }))
+    lastmod,
+  }
+}
+
+async function buildEntries(jobs) {
+  const today = new Date().toISOString().slice(0, 10)
+  const blogPaths = await readBlogPaths()
+  const entries = [
+    ...STATIC_PATHS,
+    ...JOB_FILTER_PATHS,
+    ...RESOURCE_PATHS,
+    ...blogPaths,
+  ].map((pathname) => toEntry(pathname, today))
 
   const dedupedJobs = new Map()
 
   jobs.forEach((job) => {
     const pathname = getJobPath(job)
+    if (!pathname) return
+
     const loc = `${SITE_URL}${pathname}`
     const lastmod = formatDate(job.postedAt) || today
     const existing = dedupedJobs.get(loc)
@@ -98,7 +144,7 @@ ${body}
 
 async function main() {
   const jobs = await fetchJobs()
-  const entries = buildEntries(jobs)
+  const entries = await buildEntries(jobs)
   await writeSitemap(entries)
   console.log(`Generated sitemap with ${entries.length} URLs.`)
 }
