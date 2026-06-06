@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 const SITE_URL = 'https://hiringstoday.in'
 const JOBS_URL = 'https://suprajayernagu-cloud.github.io/Job-data/Jobdetails.json'
+const LOCAL_JOBS_PATH = '../../Job-data/Jobdetails.json'
 const STATIC_PATHS = [
   '/',
   '/jobs',
@@ -24,11 +25,21 @@ const JOB_FILTER_PATHS = [
   '/jobs/remote',
   '/jobs/office',
   '/jobs/hybrid',
+  '/jobs/walk-in',
   '/jobs/bangalore',
   '/jobs/hyderabad',
+  '/jobs/pune',
   '/jobs/mumbai',
   '/jobs/delhi',
   '/jobs/chennai',
+  '/jobs/noida',
+  '/jobs/gurgaon',
+  '/jobs/kolkata',
+  '/jobs/btech',
+  '/jobs/mca',
+  '/jobs/mba',
+  '/jobs/diploma',
+  '/jobs/any-degree',
   '/jobs/india',
   '/jobs/2026',
   '/jobs/2025',
@@ -66,14 +77,21 @@ function escapeXml(value = '') {
 }
 
 async function fetchJobs() {
-  const response = await fetch(JOBS_URL)
+  try {
+    const response = await fetch(JOBS_URL)
 
-  if (!response.ok) {
-    throw new Error(`Unable to fetch jobs for sitemap generation: ${response.status}`)
+    if (!response.ok) {
+      throw new Error(`Unable to fetch jobs for sitemap generation: ${response.status}`)
+    }
+
+    const data = await response.json()
+    return Array.isArray(data) ? data : []
+  } catch (error) {
+    const __dirname = path.dirname(fileURLToPath(import.meta.url))
+    const localPath = path.resolve(__dirname, LOCAL_JOBS_PATH)
+    const data = JSON.parse(await fs.readFile(localPath, 'utf8'))
+    return Array.isArray(data) ? data : []
   }
-
-  const data = await response.json()
-  return Array.isArray(data) ? data : []
 }
 
 async function readBlogPaths() {

@@ -69,18 +69,23 @@ function CompanyAvatar({ company, logoUrl }) {
 }
 
 const filterCategories = [
-  { label: 'Fresher Jobs', href: '/jobs/fresher', emoji: '🚀' },
-  { label: 'Experienced Jobs', href: '/jobs/experienced', emoji: '⭐' },
-  { label: 'Internships', href: '/jobs/internship', emoji: '📚' },
-  { label: 'Remote Jobs', href: '/jobs/remote', emoji: '🏠' },
-  { label: 'Office Jobs', href: '/jobs/office', emoji: '🏢' },
-  { label: 'Hybrid Jobs', href: '/jobs/hybrid', emoji: '🔄' },
-  { label: 'Bangalore Jobs', href: '/jobs/bangalore', emoji: '🌆' },
-  { label: 'Hyderabad Jobs', href: '/jobs/hyderabad', emoji: '🌃' },
-  { label: 'Mumbai Jobs', href: '/jobs/mumbai', emoji: '🏙️' },
-  { label: 'Delhi Jobs', href: '/jobs/delhi', emoji: '🏛️' },
-  { label: 'Chennai Jobs', href: '/jobs/chennai', emoji: '🌴' },
-  { label: 'Pan India Jobs', href: '/jobs/india', emoji: '🇮🇳' },
+  { label: 'Fresher Jobs', href: '/jobs/fresher', emoji: '🚀', description: 'Entry-level jobs and off-campus drives for recent graduates.' },
+  { label: 'Experienced Jobs', href: '/jobs/experienced', emoji: '⭐', description: 'Mid-level and senior openings for candidates with work experience.' },
+  { label: 'Internships', href: '/jobs/internship', emoji: '📚', description: 'Internship roles for students and early-career candidates.' },
+  { label: 'Remote Jobs', href: '/jobs/remote', emoji: '🏠', description: 'Remote and work-from-home roles across India.' },
+  { label: 'Walk-in Jobs', href: '/jobs/walk-in', emoji: '📝', description: 'Walk-in drives, direct hiring events, and fast interview updates.' },
+  { label: 'Hybrid Jobs', href: '/jobs/hybrid', emoji: '🔄', description: 'Roles that combine office work with remote flexibility.' },
+  { label: 'Bangalore Jobs', href: '/jobs/bangalore', emoji: '🌆', description: 'Software, startup, product, and IT jobs in Bengaluru.' },
+  { label: 'Hyderabad Jobs', href: '/jobs/hyderabad', emoji: '🌃', description: 'Tech, product, finance, and operations jobs in Hyderabad.' },
+  { label: 'Pune Jobs', href: '/jobs/pune', emoji: '🏙️', description: 'IT, software, support, and trainee jobs in Pune.' },
+  { label: 'Mumbai Jobs', href: '/jobs/mumbai', emoji: '🏙️', description: 'Finance, tech, media, support, and business jobs in Mumbai.' },
+  { label: 'Delhi NCR Jobs', href: '/jobs/delhi', emoji: '🏛️', description: 'Jobs across Delhi, Noida, Gurgaon, and Gurugram.' },
+  { label: 'Chennai Jobs', href: '/jobs/chennai', emoji: '🌴', description: 'IT, SaaS, engineering, and fresher jobs in Chennai.' },
+  { label: 'B.E/B.Tech Jobs', href: '/jobs/btech', emoji: '⚙️', description: 'Engineering graduate jobs across software and technical roles.' },
+  { label: 'BCA/MCA Jobs', href: '/jobs/mca', emoji: '💻', description: 'Computer applications and software-focused graduate jobs.' },
+  { label: 'MBA Jobs', href: '/jobs/mba', emoji: '📊', description: 'Business, consulting, analyst, sales, and operations jobs.' },
+  { label: 'Any Degree Jobs', href: '/jobs/any-degree', emoji: '🎓', description: 'Openings suitable for candidates from multiple degree backgrounds.' },
+  { label: 'Pan India Jobs', href: '/jobs/india', emoji: '🇮🇳', description: 'Browse all jobs across cities, companies, and experience levels.' },
 ]
 
 export default async function BrowseJobsHubPage() {
@@ -144,10 +149,44 @@ export default async function BrowseJobsHubPage() {
                 {category.label}
               </h3>
             </div>
-            <p className="text-sm text-slate-600 mt-2">Browse →</p>
+            <p className="text-sm leading-6 text-slate-600 mt-2">{category.description}</p>
+            <p className="text-sm font-semibold text-brand-700 mt-3">Browse →</p>
           </Link>
         ))}
       </div>
+
+      <section className="space-y-5 border-t border-slate-200 pt-8">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">Browse Like A Job Portal</p>
+          <h2 className="mt-2 font-display text-2xl font-bold text-ink-900">
+            Jobs by city, batch, degree, and work mode
+          </h2>
+          <p className="mt-3 max-w-3xl text-slate-700 leading-7">
+            HiringsToday groups job updates into dedicated pages so candidates can browse the way most off-campus job portals are organized: by fresher jobs, internships, remote jobs, city jobs, degree eligibility, and all-India opportunities. Each category page includes job listings plus guidance on eligibility, documents, source checking, and application preparation.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="font-semibold text-ink-900">City pages</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Use Bangalore, Hyderabad, Pune, Mumbai, Delhi NCR, Chennai, Noida, Gurgaon, and Kolkata pages to compare location-specific openings.
+            </p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="font-semibold text-ink-900">Degree pages</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Use B.E/B.Tech, BCA/MCA, MBA, Diploma, and Any Degree pages to find roles where your education background is more likely to match.
+            </p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="font-semibold text-ink-900">Application checks</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Open the full job page to see source details, last checked date, documents required, selection process, preparation tips, and FAQ before applying.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Featured Jobs Section */}
       <div className="space-y-6">

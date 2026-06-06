@@ -60,6 +60,16 @@ const FILTER_CONFIG = {
       job.workMode?.toLowerCase().includes('hybrid') ||
       job.tags?.some((t) => t.toLowerCase?.().includes('hybrid')),
   },
+  'walk-in': {
+    label: 'Walk-in Jobs and Direct Hiring Drives',
+    description: 'Walk-in drives, direct interviews, and fast hiring opportunities for freshers and experienced candidates in India.',
+    filter: (job) =>
+      job.title?.toLowerCase().includes('walk-in') ||
+      job.title?.toLowerCase().includes('walkin') ||
+      job.description?.toLowerCase().includes('walk-in') ||
+      job.description?.toLowerCase().includes('walkin') ||
+      job.tags?.some((t) => t.toLowerCase?.().includes('walk')),
+  },
 
   // Year
   '2026': {
@@ -104,6 +114,70 @@ const FILTER_CONFIG = {
     label: 'Jobs in Chennai 2026',
     description: 'IT and tech job openings in Chennai, India. Strong manufacturing and IT presence.',
     filter: (job) => job.location?.toLowerCase().includes('chennai'),
+  },
+  pune: {
+    label: 'Jobs in Pune 2026',
+    description: 'Software, IT, product, support, and fresher job openings in Pune across established companies and growing teams.',
+    filter: (job) => job.location?.toLowerCase().includes('pune'),
+  },
+  noida: {
+    label: 'Jobs in Noida 2026',
+    description: 'Latest Noida job openings for freshers, interns, software engineers, analysts, and support roles.',
+    filter: (job) => job.location?.toLowerCase().includes('noida'),
+  },
+  gurgaon: {
+    label: 'Jobs in Gurgaon and Gurugram 2026',
+    description: 'Gurgaon and Gurugram job openings in technology, operations, consulting, finance, support, and product teams.',
+    filter: (job) =>
+      job.location?.toLowerCase().includes('gurgaon') ||
+      job.location?.toLowerCase().includes('gurugram'),
+  },
+  kolkata: {
+    label: 'Jobs in Kolkata 2026',
+    description: 'Kolkata job openings for freshers and experienced candidates across technology, operations, and business roles.',
+    filter: (job) => job.location?.toLowerCase().includes('kolkata'),
+  },
+
+  // Degree and candidate type
+  btech: {
+    label: 'B.E/B.Tech Jobs 2026',
+    description: 'Engineering jobs for B.E, B.Tech, and related technical graduates across software, product, cloud, support, and analyst roles.',
+    filter: (job) =>
+      JSON.stringify([job.title, job.description, job.qualifications, job.overview])
+        .toLowerCase()
+        .match(/b\.?e|b\.?tech|engineering|engineer/),
+  },
+  mca: {
+    label: 'BCA/MCA Jobs 2026',
+    description: 'Freshers and experienced jobs for BCA, MCA, computer applications, and software-focused graduates.',
+    filter: (job) =>
+      JSON.stringify([job.title, job.description, job.qualifications, job.overview])
+        .toLowerCase()
+        .match(/bca|mca|computer applications/),
+  },
+  mba: {
+    label: 'MBA Jobs 2026',
+    description: 'MBA and management graduate jobs across consulting, business operations, sales, marketing, analytics, and program roles.',
+    filter: (job) =>
+      JSON.stringify([job.title, job.description, job.qualifications, job.overview])
+        .toLowerCase()
+        .match(/mba|management|business|sales|marketing|consulting/),
+  },
+  diploma: {
+    label: 'Diploma Jobs 2026',
+    description: 'Diploma and early-career technical jobs across support, engineering, operations, and trainee roles.',
+    filter: (job) =>
+      JSON.stringify([job.title, job.description, job.qualifications, job.overview])
+        .toLowerCase()
+        .includes('diploma'),
+  },
+  'any-degree': {
+    label: 'Any Degree Jobs 2026',
+    description: 'Openings where candidates from multiple degree backgrounds can apply, including support, operations, analyst, sales, and trainee roles.',
+    filter: (job) =>
+      JSON.stringify([job.title, job.description, job.qualifications, job.overview])
+        .toLowerCase()
+        .match(/any degree|any graduate|graduate|bachelor|degree/),
   },
   india: {
     label: 'Pan India Jobs 2026',
@@ -178,13 +252,71 @@ const ALL_FILTERS = [
   { label: 'Remote', href: '/jobs/remote' },
   { label: 'Office', href: '/jobs/office' },
   { label: 'Hybrid', href: '/jobs/hybrid' },
+  { label: 'Walk-in', href: '/jobs/walk-in' },
   { label: 'Bangalore', href: '/jobs/bangalore' },
   { label: 'Hyderabad', href: '/jobs/hyderabad' },
+  { label: 'Pune', href: '/jobs/pune' },
   { label: 'Mumbai', href: '/jobs/mumbai' },
   { label: 'Delhi', href: '/jobs/delhi' },
   { label: 'Chennai', href: '/jobs/chennai' },
+  { label: 'Noida', href: '/jobs/noida' },
+  { label: 'Gurgaon', href: '/jobs/gurgaon' },
+  { label: 'B.E/B.Tech', href: '/jobs/btech' },
+  { label: 'BCA/MCA', href: '/jobs/mca' },
+  { label: 'MBA', href: '/jobs/mba' },
+  { label: 'Any Degree', href: '/jobs/any-degree' },
   { label: 'Pan India', href: '/jobs/india' },
 ]
+
+function getTagName(tag) {
+  return typeof tag === 'string' ? tag : tag?.name
+}
+
+function getTopValues(items, limit = 8) {
+  const counts = items.filter(Boolean).reduce((acc, item) => {
+    const key = String(item).trim()
+    if (!key) return acc
+    acc[key] = (acc[key] || 0) + 1
+    return acc
+  }, {})
+
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([label, count]) => ({ label, count }))
+}
+
+function buildCategoryInsights(jobs) {
+  const companies = getTopValues(jobs.map((job) => job.company), 6)
+  const locations = getTopValues(jobs.map((job) => job.location), 6)
+  const skills = getTopValues(
+    jobs.flatMap((job) => Array.isArray(job.tags) ? job.tags.map(getTagName) : []),
+    10
+  )
+  const types = getTopValues(jobs.map((job) => job.type || (job.remote ? 'Remote' : 'Full-time')), 5)
+
+  return { companies, locations, skills, types }
+}
+
+function InsightList({ title, items }) {
+  if (!items.length) return null
+
+  return (
+    <div>
+      <h3 className="font-semibold text-ink-900">{title}</h3>
+      <ul className="mt-3 space-y-2 text-sm text-slate-700">
+        {items.map((item) => (
+          <li key={item.label} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2">
+            <span>{item.label}</span>
+            <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+              {item.count}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 export async function generateMetadata({ params }) {
   const config = FILTER_CONFIG[params.filter]
@@ -226,6 +358,8 @@ export default async function FilteredJobsPage({ params }) {
 
   // Apply filter
   const filteredJobs = allJobs.filter(config.filter)
+  const insights = buildCategoryInsights(filteredJobs)
+  const latestJob = filteredJobs[0]
 
   // Generate schema for ItemList
   const schema = {
@@ -384,6 +518,111 @@ export default async function FilteredJobsPage({ params }) {
           </Link>
         </div>
       )}
+
+      {/* Category Guide Content */}
+      <section className="space-y-6 border-t border-slate-200 pt-8">
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">Career Category Guide</p>
+          <h2 className="font-display text-3xl font-bold text-ink-900">
+            About {config.label}
+          </h2>
+          <p className="max-w-3xl text-slate-700 leading-7">
+            This page collects {config.label.toLowerCase()} from the HiringsToday job database and keeps them grouped in one place for easier browsing. Use it to compare role titles, locations, salary or stipend mentions, required skills, eligibility notes, and application links before opening individual job posts.
+          </p>
+          <p className="max-w-3xl text-slate-700 leading-7">
+            Every job detail page includes a source section, last checked date, application notes, selection process, documents to keep ready, preparation tips, and frequently asked questions. Candidates should still verify the official apply link before sharing personal information or attending any interview.
+          </p>
+        </div>
+
+        <div className="grid gap-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm md:grid-cols-2">
+          <div>
+            <h3 className="font-semibold text-ink-900">How to use this page</h3>
+            <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-700">
+              <li>Open roles that match your location, batch, degree, and skill set.</li>
+              <li>Check the eligibility and source section before applying.</li>
+              <li>Keep your resume, marksheets, ID proof, certificates, and project links ready.</li>
+              <li>Apply early when the deadline is not mentioned, because links may close without notice.</li>
+            </ol>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-ink-900">What to check before applying</h3>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-700">
+              <li>Role title and company name match the official application page.</li>
+              <li>Salary, stipend, location, and work mode are acceptable for you.</li>
+              <li>Your resume clearly mentions the required skills and projects.</li>
+              <li>No recruiter or third party asks for payment to attend the hiring process.</li>
+            </ul>
+          </div>
+        </div>
+
+        {filteredJobs.length > 0 && (
+          <div className="grid gap-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm md:grid-cols-2 lg:grid-cols-4">
+            <InsightList title="Top companies" items={insights.companies} />
+            <InsightList title="Common locations" items={insights.locations} />
+            <InsightList title="Popular skills" items={insights.skills} />
+            <InsightList title="Job types" items={insights.types} />
+          </div>
+        )}
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="font-display text-xl font-bold text-ink-900">
+              Preparation focus for {config.label}
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              Start with the job description and identify the top three requirements. For technical roles, revise the listed programming languages, projects, debugging basics, and interview fundamentals. For analyst, operations, support, sales, or management roles, prepare examples around communication, ownership, reporting, problem-solving, and customer handling.
+            </p>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              If you are applying as a fresher, do not leave your resume empty. Add college projects, internships, certifications, hackathons, coursework, volunteer work, or any practical example that proves you can learn and execute.
+            </p>
+          </section>
+
+          <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="font-display text-xl font-bold text-ink-900">
+              Latest listing note
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              {latestJob
+                ? `One recent listing in this category is ${latestJob.title} at ${latestJob.company}. Check the full job page for source details, eligibility, salary or stipend information, and documents required before applying.`
+                : 'No live listing is available in this category right now. Use the quick filters above to browse related roles.'}
+            </p>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              HiringsToday groups job information to make comparison easier, but the final hiring decision, deadline, interview schedule, salary, and joining process always depend on the employer.
+            </p>
+          </section>
+        </div>
+
+        <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="font-display text-2xl font-bold text-ink-900">
+            FAQs about {config.label}
+          </h2>
+          <details className="border-t border-slate-100 pt-3">
+            <summary className="cursor-pointer font-semibold text-ink-900">
+              Are these jobs verified?
+            </summary>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              Each job detail page includes source and last checked fields from the available data. Applicants should still open the source link and confirm the employer, role, deadline, and form details before applying.
+            </p>
+          </details>
+          <details className="border-t border-slate-100 pt-3">
+            <summary className="cursor-pointer font-semibold text-ink-900">
+              Can freshers apply from this page?
+            </summary>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              Freshers should check the experience and qualification fields on each job page. Some roles are open to 2026 or recent batches, while others require specific work experience.
+            </p>
+          </details>
+          <details className="border-t border-slate-100 pt-3">
+            <summary className="cursor-pointer font-semibold text-ink-900">
+              What documents should I keep ready?
+            </summary>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              Keep an updated resume, government or college ID, marksheets, certificates, portfolio links, GitHub or LinkedIn profile, and any requested experience documents ready before submitting applications.
+            </p>
+          </details>
+        </section>
+      </section>
 
       {/* CTA Section */}
       <section className="surface space-y-4 rounded-2xl border border-slate-200 p-8 text-center">
