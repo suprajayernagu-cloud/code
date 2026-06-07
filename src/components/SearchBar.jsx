@@ -62,7 +62,7 @@ export default function SearchBar() {
   }
 
   const handleSelectJob = (job) => {
-    navigate(`/job/${job.id}`)
+    router.push(`/job/${job.id}`)
     setShowSuggestions(false)
     setSearchTerm('')
   }
@@ -71,7 +71,7 @@ export default function SearchBar() {
     e.preventDefault()
     if (searchTerm.trim()) {
       // Navigate to jobs with search query
-      navigate(`/?search=${encodeURIComponent(searchTerm)}`)
+      router.push(`/?search=${encodeURIComponent(searchTerm)}`)
       setShowSuggestions(false)
     }
   }

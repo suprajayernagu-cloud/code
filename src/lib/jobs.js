@@ -4,7 +4,9 @@ import { JOBS_URL, LOCAL_DATA_PATH, USE_LOCAL_DATA } from '@/src/config'
 
 let cachedJobs = null
 let cacheTimestamp = 0
+let cacheSignature = null
 const CACHE_DURATION = 3600000 // 1 hour in milliseconds
+const COMPANY_LOGOS_CDN_BASE = 'https://cdn.jsdelivr.net/gh/suprajayernagu-cloud/Job-data@main/company-logos'
 
 /**
  * Fetch all jobs from external source with caching
@@ -15,9 +17,15 @@ const CACHE_DURATION = 3600000 // 1 hour in milliseconds
  */
 export async function getAllJobs(includeDetails = false, options = {}) {
   try {
+    const localSignature = USE_LOCAL_DATA ? await getLocalJobsSignature().catch(() => null) : null
+
     // Check cache validity
     const now = Date.now()
-    if (cachedJobs && now - cacheTimestamp < CACHE_DURATION) {
+    if (
+      cachedJobs &&
+      now - cacheTimestamp < CACHE_DURATION &&
+      (!USE_LOCAL_DATA || cacheSignature === localSignature)
+    ) {
       const jobs = filterJobsByStatus(cachedJobs, options)
       return includeDetails ? jobs : jobs.map(stripDetails)
     }
@@ -29,11 +37,12 @@ export async function getAllJobs(includeDetails = false, options = {}) {
         })
       : await fetchRemoteJobs()
 
-    const jobs = Array.isArray(data) ? data : []
+    const jobs = sortJobsByNewest(await fillMissingLogoUrls(Array.isArray(data) ? data : []))
 
     // Update cache
     cachedJobs = jobs
     cacheTimestamp = now
+    cacheSignature = localSignature
 
     const visibleJobs = filterJobsByStatus(jobs, options)
     return includeDetails ? visibleJobs : visibleJobs.map(stripDetails)
@@ -44,11 +53,93 @@ export async function getAllJobs(includeDetails = false, options = {}) {
 }
 
 async function readLocalJobs() {
-  const localPath = path.isAbsolute(LOCAL_DATA_PATH)
+  const contents = await fs.readFile(getLocalDataPath(), 'utf8')
+  return JSON.parse(contents)
+}
+
+function getLocalDataPath() {
+  return path.isAbsolute(LOCAL_DATA_PATH)
     ? LOCAL_DATA_PATH
     : path.resolve(process.cwd(), LOCAL_DATA_PATH)
-  const contents = await fs.readFile(localPath, 'utf8')
-  return JSON.parse(contents)
+}
+
+async function getLocalJobsSignature() {
+  const stats = await fs.stat(getLocalDataPath())
+  return `${stats.mtimeMs}:${stats.size}`
+}
+
+async function fillMissingLogoUrls(jobs) {
+  const logoByCompany = new Map()
+
+  for (const job of jobs) {
+    if (!job.company || !job.logoUrl) continue
+    const key = normalizeCompanyName(job.company)
+    if (!logoByCompany.has(key)) {
+      logoByCompany.set(key, job.logoUrl)
+    }
+  }
+
+  const availableLogoSlugs = await getAvailableLogoSlugs().catch(() => new Set())
+
+  return jobs.map((job) => {
+    if (job.logoUrl || !job.company) return job
+
+    const companyKey = normalizeCompanyName(job.company)
+    const existingLogoUrl = logoByCompany.get(companyKey)
+    if (existingLogoUrl) {
+      return { ...job, logoUrl: existingLogoUrl }
+    }
+
+    const logoSlug = getCompanyLogoSlug(job.company)
+    if (availableLogoSlugs.has(logoSlug)) {
+      return { ...job, logoUrl: `${COMPANY_LOGOS_CDN_BASE}/${logoSlug}.webp` }
+    }
+
+    return job
+  })
+}
+
+async function getAvailableLogoSlugs() {
+  const logoDir = path.join(path.dirname(getLocalDataPath()), 'company-logos')
+  const files = await fs.readdir(logoDir)
+
+  return new Set(
+    files
+      .filter((file) => file.endsWith('.webp'))
+      .map((file) => file.replace(/\.webp$/, ''))
+  )
+}
+
+function normalizeCompanyName(company) {
+  return String(company).trim().toLowerCase()
+}
+
+function getCompanyLogoSlug(company) {
+  return String(company)
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+export function sortJobsByNewest(jobs) {
+  return [...jobs].sort((a, b) => {
+    const dateA = a.postedAt ? new Date(a.postedAt).getTime() : 0
+    const dateB = b.postedAt ? new Date(b.postedAt).getTime() : 0
+
+    if (dateB !== dateA) {
+      return dateB - dateA
+    }
+
+    return getJobSortId(b) - getJobSortId(a)
+  })
+}
+
+function getJobSortId(job) {
+  const numericId = Number(job.id)
+  if (Number.isFinite(numericId)) return numericId
+
+  return 0
 }
 
 async function fetchRemoteJobs() {

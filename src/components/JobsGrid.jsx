@@ -74,7 +74,12 @@ export default function JobsGrid({ initialJobs = [] }) {
     return [...initialJobs].sort((a, b) => {
       const dateA = a.postedAt ? new Date(a.postedAt).getTime() : 0
       const dateB = b.postedAt ? new Date(b.postedAt).getTime() : 0
-      return dateB - dateA
+
+      if (dateB !== dateA) {
+        return dateB - dateA
+      }
+
+      return getJobSortId(b) - getJobSortId(a)
     })
   }, [initialJobs])
 
@@ -355,4 +360,11 @@ export default function JobsGrid({ initialJobs = [] }) {
       </section>
     </>
   )
+}
+
+function getJobSortId(job) {
+  const numericId = Number(job.id)
+  if (Number.isFinite(numericId)) return numericId
+
+  return 0
 }

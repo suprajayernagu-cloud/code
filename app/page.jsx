@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import PageMeta from '@/src/components/PageMeta'
 import { blogArticles } from '@/src/data/blog'
-import { getAllJobs } from '@/src/lib/jobs'
+import { getAllJobs, sortJobsByNewest } from '@/src/lib/jobs'
 
 export const dynamic = 'force-dynamic'
 
@@ -290,11 +290,7 @@ export default async function Home() {
     console.error('Failed to load homepage jobs:', error.message)
   }
 
-  const sortedJobs = [...jobs].sort((a, b) => {
-    const dateA = a.postedAt ? new Date(a.postedAt).getTime() : 0
-    const dateB = b.postedAt ? new Date(b.postedAt).getTime() : 0
-    return dateB - dateA
-  })
+  const sortedJobs = sortJobsByNewest(jobs)
 
   const latestJobs = sortedJobs.slice(0, 8)
   const popularJobs = [...jobs]

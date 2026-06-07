@@ -1,4 +1,4 @@
-import { USE_LOCAL_DATA, LOCAL_DATA_PATH, JOBS_URL } from '../config'
+import { JOBS_URL } from '../config'
 
 let cachedJobs = null
 
@@ -15,25 +15,15 @@ export async function fetchJobs() {
   try {
     let data
 
-    if (USE_LOCAL_DATA) {
-      // Try to load from local enriched JSON
-      try {
-        const response = await fetch(LOCAL_DATA_PATH)
-        if (response.ok) {
-          data = await response.json()
-          console.log(`✓ Loaded ${data.length} jobs from local enriched data`)
-        } else {
-          throw new Error('Local data not found, falling back to remote')
-        }
-      } catch (error) {
-        console.warn('Failed to load local data, trying remote URL:', error.message)
-        const response = await fetch(JOBS_URL)
-        if (!response.ok) throw new Error('Failed to fetch remote jobs')
-        data = await response.json()
-        console.log(`✓ Loaded ${data.length} jobs from remote source`)
-      }
-    } else {
-      // Load from remote source
+    try {
+      const response = await fetch('/api/jobs?details=true&limit=1000', {
+        cache: 'no-store',
+      })
+      if (!response.ok) throw new Error('Failed to fetch local jobs API')
+      data = await response.json()
+      console.log(`✓ Loaded ${data.length} jobs from app API`)
+    } catch (error) {
+      console.warn('Failed to load jobs from app API, trying remote URL:', error.message)
       const response = await fetch(JOBS_URL)
       if (!response.ok) throw new Error('Failed to fetch remote jobs')
       data = await response.json()
@@ -46,13 +36,33 @@ export async function fetchJobs() {
     }
 
     // Cache the data
-    cachedJobs = data
+    cachedJobs = sortJobsByNewest(data)
 
-    return data
+    return cachedJobs
   } catch (error) {
     console.error('Error fetching jobs:', error)
     throw error
   }
+}
+
+function sortJobsByNewest(jobs) {
+  return [...jobs].sort((a, b) => {
+    const dateA = a.postedAt ? new Date(a.postedAt).getTime() : 0
+    const dateB = b.postedAt ? new Date(b.postedAt).getTime() : 0
+
+    if (dateB !== dateA) {
+      return dateB - dateA
+    }
+
+    return getJobSortId(b) - getJobSortId(a)
+  })
+}
+
+function getJobSortId(job) {
+  const numericId = Number(job.id)
+  if (Number.isFinite(numericId)) return numericId
+
+  return 0
 }
 
 /**
