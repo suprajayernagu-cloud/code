@@ -9,6 +9,7 @@ const inputPath = process.argv[2]
 
 const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date())
 const APPLY_TIMEOUT_MS = 12000
+const CHECK_CONCURRENCY = Number(process.env.JOB_STATUS_CONCURRENCY || 8)
 
 function cleanText(value) {
   return String(value || '')
@@ -18,11 +19,11 @@ function cleanText(value) {
 }
 
 function isOfficialJob(job) {
-  return (
-    cleanText(job.sourceType).toLowerCase().includes('official') ||
-    Boolean(job.officialPosting?.provider) ||
-    /jobs\.(ashbyhq|lever)\.co|greenhouse\.io/i.test(cleanText(job.applyUrl || job.sourceUrl))
-  )
+  return Boolean(getPrimaryUrl(job))
+}
+
+function getPrimaryUrl(job) {
+  return cleanText(job.applyUrl || job.sourceUrl || job.link || job.applyLink)
 }
 
 function closedResult(reason) {
@@ -201,7 +202,7 @@ async function checkGreenhouse(job) {
 }
 
 async function checkGeneric(job) {
-  const url = cleanText(job.applyUrl || job.sourceUrl)
+  const url = getPrimaryUrl(job)
   if (!url) return closedResult('No official apply URL is available')
 
   const page = await fetchHtml(url)
@@ -251,20 +252,31 @@ function updateStatusFields(job, result) {
 async function main() {
   const jobs = JSON.parse(fs.readFileSync(inputPath, 'utf8'))
   const report = []
+  const candidates = jobs.filter(isOfficialJob)
+  let nextIndex = 0
 
-  for (const job of jobs) {
-    if (!isOfficialJob(job)) continue
+  async function worker() {
+    while (nextIndex < candidates.length) {
+      const job = candidates[nextIndex]
+      nextIndex += 1
 
-    try {
-      const result = await checkJob(job)
-      updateStatusFields(job, result)
-      report.push({ id: job.id, title: job.title, company: job.company, status: result.status, reason: result.reason })
-    } catch (error) {
-      const result = reviewNeededResult(`Could not verify official apply page: ${error.message}`)
-      updateStatusFields(job, result)
-      report.push({ id: job.id, title: job.title, company: job.company, status: result.status, reason: result.reason })
+      try {
+        const result = await checkJob(job)
+        updateStatusFields(job, result)
+        report.push({ id: job.id, title: job.title, company: job.company, status: result.status, reason: result.reason })
+      } catch (error) {
+        const result = reviewNeededResult(`Could not verify official apply page: ${error.message}`)
+        updateStatusFields(job, result)
+        report.push({ id: job.id, title: job.title, company: job.company, status: result.status, reason: result.reason })
+      }
     }
   }
+
+  await Promise.all(
+    Array.from({ length: Math.max(1, Math.min(CHECK_CONCURRENCY, candidates.length)) }, worker)
+  )
+
+  report.sort((a, b) => Number(a.id) - Number(b.id))
 
   fs.writeFileSync(inputPath, `${JSON.stringify(jobs, null, 2)}\n`)
 
