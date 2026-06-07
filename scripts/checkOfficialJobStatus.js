@@ -98,6 +98,14 @@ function hasClosedLanguage(value) {
   ].some((phrase) => text.includes(phrase))
 }
 
+function hasUnavailableAshbyPosting(page) {
+  return (
+    /jobs\.ashbyhq\.com/i.test(page.url || '') &&
+    /window\.__appData\s*=/.test(page.text || '') &&
+    /"posting"\s*:\s*null/.test(page.text || '')
+  )
+}
+
 async function checkAshby(job) {
   const posting = job.officialPosting || {}
   const board = cleanText(posting.jobBoard)
@@ -117,7 +125,8 @@ async function checkAshby(job) {
 
   const applyUrl = current.applyUrl || job.applyUrl
   const page = await fetchHtml(applyUrl)
-  if (!page.ok) return reviewNeededResult(`Official apply page returned HTTP ${page.status}`)
+  if (!page.ok) return closedResult(`Official apply page returned HTTP ${page.status}`)
+  if (hasUnavailableAshbyPosting(page)) return closedResult('Official Ashby posting data is not available')
   if (hasClosedLanguage(page.text)) return closedResult('Official apply page says applications are closed')
 
   job.applyUrl = applyUrl
@@ -152,7 +161,7 @@ async function checkLever(job) {
 
   const applyUrl = current.applyUrl || job.applyUrl || `${current.hostedUrl}/apply`
   const page = await fetchHtml(applyUrl)
-  if (!page.ok) return reviewNeededResult(`Official apply page returned HTTP ${page.status}`)
+  if (!page.ok) return closedResult(`Official apply page returned HTTP ${page.status}`)
   if (hasClosedLanguage(page.text)) return closedResult('Official apply page says applications are closed')
 
   job.applyUrl = applyUrl
@@ -185,7 +194,7 @@ async function checkGreenhouse(job) {
   if (!current) return closedResult('Posting ID is no longer available on the official Greenhouse board')
 
   const page = await fetchHtml(job.applyUrl || job.sourceUrl)
-  if (!page.ok) return reviewNeededResult(`Official apply page returned HTTP ${page.status}`)
+  if (!page.ok) return closedResult(`Official apply page returned HTTP ${page.status}`)
   if (hasClosedLanguage(page.text)) return closedResult('Official apply page says applications are closed')
 
   return activeResult()
@@ -196,12 +205,10 @@ async function checkGeneric(job) {
   if (!url) return closedResult('No official apply URL is available')
 
   const page = await fetchHtml(url)
-  if (page.status === 404 || page.status === 410) {
+  if (!page.ok) {
     return closedResult(`Official page returned HTTP ${page.status}`)
   }
-  if (!page.ok) {
-    return reviewNeededResult(`Official page returned HTTP ${page.status}`)
-  }
+  if (hasUnavailableAshbyPosting(page)) return closedResult('Official Ashby posting data is not available')
   if (hasClosedLanguage(page.text)) return closedResult('Official page says applications are closed')
 
   return activeResult('Official page is reachable')

@@ -6,6 +6,65 @@ import PageMeta from '@/src/components/PageMeta'
 
 export const dynamic = 'force-dynamic'
 
+function getFieldText(value) {
+  if (!value) return ''
+  if (Array.isArray(value)) return value.map(getFieldText).join(' ')
+  if (typeof value === 'object') return Object.values(value).map(getFieldText).join(' ')
+  return String(value)
+}
+
+function getJobText(job, fields) {
+  return fields.map((field) => getFieldText(job[field])).join(' ').toLowerCase()
+}
+
+function hasExperiencedYearSignal(text) {
+  const plusMatch = text.match(/(?:^|[^\d])([2-9]|1\d)\s*\+?\s*(?:years?|yrs?)/i)
+  if (plusMatch) return true
+
+  const rangeMatch = text.match(/(?:^|[^\d])(\d{1,2})\s*-\s*(\d{1,2})\s*(?:years?|yrs?)?/i)
+  if (!rangeMatch) return false
+
+  const min = Number(rangeMatch[1])
+  const max = Number(rangeMatch[2])
+  return min >= 1 && max >= 3
+}
+
+function isEarlyCareerSignal(job) {
+  const text = getJobText(job, ['title', 'type', 'experience', 'tags'])
+  return (
+    /intern|internship|fresher|freshers|entry[- ]?level|graduate trainee/.test(text) ||
+    /\btrainee\b/.test(text) ||
+    /(?:^|[^\d])0\s*-\s*\d{1,2}\s*(?:years?|yrs?)/i.test(text) ||
+    /(?:^|[^\d])0\s*\+\s*(?:years?|yrs?)/i.test(text)
+  )
+}
+
+function isExperiencedJob(job) {
+  const titleAndTags = getJobText(job, ['title', 'tags'])
+  const experienceText = getJobText(job, ['experience'])
+  const searchableText = getJobText(job, [
+    'title',
+    'experience',
+    'overview',
+    'description',
+    'qualifications',
+    'officialDescription',
+  ])
+
+  const seniorSignal =
+    /\b(senior|lead|principal|staff|manager|architect|experienced|professional)\b/.test(titleAndTags) ||
+    /\bengineer\s+(ii|iii|iv)\b/.test(titleAndTags) ||
+    /\b(sde|swe)\s+(ii|iii|iv)\b/.test(titleAndTags)
+
+  if (isEarlyCareerSignal(job)) return false
+
+  return (
+    seniorSignal ||
+    hasExperiencedYearSignal(experienceText) ||
+    hasExperiencedYearSignal(searchableText)
+  )
+}
+
 // Filter configuration with labels, descriptions, and filtering logic
 const FILTER_CONFIG = {
   // Experience
@@ -21,11 +80,7 @@ const FILTER_CONFIG = {
   experienced: {
     label: 'Experienced Professional Jobs',
     description: 'Mid and senior level tech jobs across India. Opportunities for professionals with 3+ years of experience.',
-    filter: (job) =>
-      !job.experience?.toLowerCase().includes('fresh') &&
-      (job.experience?.match(/[3-9]|10|\d{2}/) ||
-        job.tags?.some((t) => ['senior', 'lead', 'principal'].includes(t?.toLowerCase?.())) ||
-        job.experience?.toLowerCase().includes('experience')),
+    filter: isExperiencedJob,
   },
   internship: {
     label: 'Internship Opportunities 2026',

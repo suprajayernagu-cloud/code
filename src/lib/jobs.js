@@ -193,6 +193,8 @@ function stripDetails(job) {
     location: job.location,
     type: job.type,
     remote: job.remote,
+    experience: job.experience,
+    workMode: job.workMode,
     postedAt: job.postedAt,
     salary: job.salary,
     overview: job.overview,
