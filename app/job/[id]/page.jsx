@@ -42,6 +42,152 @@ function objectItems(value) {
   return Object.values(value).filter(Boolean)
 }
 
+function cleanOfficialLine(line) {
+  return String(line || '')
+    .replace(/\u00a0/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function cleanOfficialDescription(description) {
+  return String(description || '')
+    .replace(/\u00a0/g, ' ')
+    .split(/\r?\n/)
+    .map(cleanOfficialLine)
+    .filter(Boolean)
+    .join('\n')
+}
+
+function isOfficialHeading(line) {
+  const clean = cleanOfficialLine(line)
+  if (!clean || clean.length > 90) return false
+  if (clean.startsWith('- ') || clean.startsWith('* ') || clean.startsWith('\u2022')) return false
+
+  const normalized = clean.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+  const knownHeadings = new Set([
+    'about sarvam',
+    'about the role',
+    'what youll do',
+    'what you ll do',
+    'what were looking for',
+    'what we re looking for',
+    'bonus points',
+    'why sarvam',
+    'about us',
+    'about company',
+    'responsibilities',
+    'requirements',
+    'qualifications',
+    'benefits',
+  ])
+
+  return knownHeadings.has(normalized) || clean === clean.toUpperCase()
+}
+
+function getOfficialDescription(job) {
+  return cleanOfficialDescription(
+    job.officialDescription ||
+    job.officialPosting?.descriptionPlain ||
+    job.sourceDescription ||
+    ''
+  )
+}
+
+function parseOfficialDescription(description) {
+  const lines = cleanOfficialDescription(description)
+    .split('\n')
+    .map(cleanOfficialLine)
+    .filter(Boolean)
+
+  const sections = []
+  let current = null
+
+  lines.forEach((line) => {
+    if (isOfficialHeading(line)) {
+      current = { heading: line, lines: [] }
+      sections.push(current)
+      return
+    }
+
+    if (!current) {
+      current = { heading: 'Official posting', lines: [] }
+      sections.push(current)
+    }
+    current.lines.push(line)
+  })
+
+  return sections.filter((section) => section.lines.length > 0)
+}
+
+function stripBullet(line) {
+  return cleanOfficialLine(line)
+    .replace(/^[-*]\s+/, '')
+    .replace(/^\u2022\s*/, '')
+}
+
+function isBulletLine(line) {
+  const clean = cleanOfficialLine(line)
+  return clean.startsWith('- ') || clean.startsWith('* ') || clean.startsWith('\u2022')
+}
+
+function OfficialDescription({ description }) {
+  const sections = parseOfficialDescription(description)
+  if (!sections.length) return null
+
+  return (
+    <section className="space-y-5 border-t pt-6">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-wide text-orange-600">From the employer page</p>
+        <h2 className="mt-1 text-2xl font-bold text-ink-900">Official Job Description</h2>
+      </div>
+
+      <div className="space-y-6 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        {sections.map((section, sectionIndex) => {
+          const blocks = []
+          let bulletGroup = []
+
+          section.lines.forEach((line, lineIndex) => {
+            if (isBulletLine(line)) {
+              bulletGroup.push(stripBullet(line))
+              return
+            }
+
+            if (bulletGroup.length) {
+              blocks.push({ type: 'bullets', items: bulletGroup })
+              bulletGroup = []
+            }
+            blocks.push({ type: 'paragraph', text: line, key: lineIndex })
+          })
+
+          if (bulletGroup.length) {
+            blocks.push({ type: 'bullets', items: bulletGroup })
+          }
+
+          return (
+            <div key={`${section.heading}-${sectionIndex}`} className="space-y-3">
+              <h3 className="text-lg font-bold text-ink-900">{section.heading}</h3>
+              {blocks.map((block, blockIndex) => (
+                block.type === 'bullets' ? (
+                  <ul key={blockIndex} className="space-y-2 text-slate-700">
+                    {block.items.map((item, itemIndex) => (
+                      <li key={itemIndex} className="flex gap-3">
+                        <span className="font-bold text-brand-700">-</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p key={blockIndex} className="leading-relaxed text-slate-700">{block.text}</p>
+                )
+              ))}
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
 function getSkillName(skill) {
   return typeof skill === 'string' ? skill : skill?.name
 }
@@ -148,7 +294,8 @@ export async function generateMetadata({ params }) {
   }
 
   const title = `${job.title} at ${job.company} | Hiringstoday`
-  const description = (job.overview || `Apply for ${job.title} at ${job.company}`).slice(0, 155)
+  const officialDescription = getOfficialDescription(job)
+  const description = (officialDescription || job.overview || `Apply for ${job.title} at ${job.company}`).slice(0, 155)
   const canonicalUrl = `https://hiringstoday.in/job/${params.id}`
 
   return {
@@ -187,6 +334,7 @@ export default async function JobDetailsPage({ params }) {
   }
 
   const applyUrl = job.link || job.applyUrl || job.applyLink
+  const officialDescription = getOfficialDescription(job)
   const hasTrustDetails =
     job.sourceName ||
     job.sourceUrl ||
@@ -222,7 +370,7 @@ export default async function JobDetailsPage({ params }) {
     '@context': 'https://schema.org',
     '@type': 'JobPosting',
     title: job.title,
-    description: job.overview || job.title,
+    description: officialDescription || job.overview || job.title,
     hiringOrganization: {
       '@type': 'Organization',
       name: job.company,
@@ -325,14 +473,18 @@ export default async function JobDetailsPage({ params }) {
             </div>
           </section>
 
-        {job.overview && (
+        {!officialDescription && job.overview && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">About This Role</h2>
             <p className="text-slate-700 leading-relaxed" itemProp="description">{job.overview}</p>
           </section>
         )}
 
-        {job.applicationAdvice && (
+        {officialDescription && (
+          <OfficialDescription description={officialDescription} />
+        )}
+
+        {!officialDescription && job.applicationAdvice && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Before You Apply</h2>
             <p className="rounded-lg border border-slate-200 bg-white p-4 text-slate-700 leading-relaxed shadow-sm">
@@ -390,7 +542,7 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {job.responsibilitiesDetailed && (
+        {!officialDescription && job.responsibilitiesDetailed && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Responsibilities</h2>
             <ul className="space-y-2">
@@ -421,7 +573,7 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {eligibilityItems.length > 0 && (
+        {!officialDescription && eligibilityItems.length > 0 && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Eligibility</h2>
             <ul className="space-y-3">
@@ -442,7 +594,7 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {job.skillsRequired && (
+        {!officialDescription && job.skillsRequired && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Required Skills</h2>
             <div className="flex flex-wrap gap-2">
@@ -470,7 +622,7 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {job.whyApply && (
+        {!officialDescription && job.whyApply && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Why Apply</h2>
             <div className="text-slate-700">
@@ -490,7 +642,7 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {hasApplicationDetails && (
+        {!officialDescription && hasApplicationDetails && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Application Notes</h2>
             <div className="grid gap-5 sm:grid-cols-2">
@@ -550,7 +702,7 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {prepItems.length > 0 && (
+        {!officialDescription && prepItems.length > 0 && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Preparation Tips</h2>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -597,7 +749,7 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {job.aboutCompany?.aboutCompany && (
+        {!officialDescription && job.aboutCompany?.aboutCompany && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">About {job.company}</h2>
             <p className="text-slate-700 leading-relaxed">{job.aboutCompany.aboutCompany}</p>
@@ -618,7 +770,7 @@ export default async function JobDetailsPage({ params }) {
           </section>
         )}
 
-        {faqItems.length > 0 && (
+        {!officialDescription && faqItems.length > 0 && (
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Frequently Asked Questions</h2>
             <div className="space-y-3">

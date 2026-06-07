@@ -1,4 +1,6 @@
-import { JOBS_URL, SITE_URL } from '@/src/config'
+import fs from 'fs/promises'
+import path from 'path'
+import { JOBS_URL, LOCAL_DATA_PATH, USE_LOCAL_DATA } from '@/src/config'
 
 let cachedJobs = null
 let cacheTimestamp = 0
@@ -17,25 +19,13 @@ export async function getAllJobs(includeDetails = false) {
       return includeDetails ? cachedJobs : cachedJobs.map(stripDetails)
     }
 
-    // Fetch from external URL with timeout
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+    const data = USE_LOCAL_DATA
+      ? await readLocalJobs().catch(async (error) => {
+          console.warn(`Local jobs data unavailable, falling back to remote source: ${error.message}`)
+          return fetchRemoteJobs()
+        })
+      : await fetchRemoteJobs()
 
-    const response = await fetch(JOBS_URL, {
-      headers: {
-        'Accept': 'application/json',
-      },
-      cache: 'no-store',
-      signal: controller.signal,
-    })
-
-    clearTimeout(timeout)
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch jobs: ${response.status}`)
-    }
-
-    const data = await response.json()
     const jobs = Array.isArray(data) ? data : []
 
     // Update cache
@@ -46,6 +36,37 @@ export async function getAllJobs(includeDetails = false) {
   } catch (error) {
     console.error('Error fetching jobs from API:', error.message)
     throw error
+  }
+}
+
+async function readLocalJobs() {
+  const localPath = path.isAbsolute(LOCAL_DATA_PATH)
+    ? LOCAL_DATA_PATH
+    : path.resolve(process.cwd(), LOCAL_DATA_PATH)
+  const contents = await fs.readFile(localPath, 'utf8')
+  return JSON.parse(contents)
+}
+
+async function fetchRemoteJobs() {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 30000)
+
+  try {
+    const response = await fetch(JOBS_URL, {
+      headers: {
+        Accept: 'application/json',
+      },
+      cache: 'no-store',
+      signal: controller.signal,
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch jobs: ${response.status}`)
+    }
+
+    return response.json()
+  } finally {
+    clearTimeout(timeout)
   }
 }
 

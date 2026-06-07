@@ -4,7 +4,7 @@
 // Uses local enriched JSON for better SEO and content quality
 // Falls back to remote URL if needed
 export const USE_LOCAL_DATA = true
-export const LOCAL_DATA_PATH = '/src/Untitled-1.json'
+export const LOCAL_DATA_PATH = '../Job-data/Jobdetails.json'
 export const JOBS_URL = 'https://suprajayernagu-cloud.github.io/Job-data/Jobdetails.json'
 export const COMPANIES_URL = 'https://suprajayernagu-cloud.github.io/Job-data/companies.json'
 

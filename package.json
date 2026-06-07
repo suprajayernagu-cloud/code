@@ -18,6 +18,7 @@
     "start": "next start",
     "lint": "next lint",
     "audit:job-content": "node scripts/auditJobContent.js ../Job-data/Jobdetails.json",
+    "sync:official-jobs": "node scripts/syncOfficialJobPostings.js ../Job-data/Jobdetails.json",
     "rewrite:job-content": "node scripts/rewriteJobDetailsForAdsense.js ../Job-data/Jobdetails.json",
     "add:official-software-jobs": "node scripts/addOfficialSoftwareJobs.js ../Job-data/Jobdetails.json",
     "download:company-logos": "node scripts/downloadCompanyLogos.js ../Job-data/Jobdetails.json"
