@@ -3,7 +3,7 @@ import Link from 'next/link'
 import RelatedJobs from '@/src/components/RelatedJobs'
 import RelatedArticles from '@/src/components/RelatedArticles'
 import { notFound } from 'next/navigation'
-import { getJobById, getAllJobs } from '@/src/lib/jobs'
+import { getJobById, getAllJobs, getJobSummary } from '@/src/lib/jobs'
 
 export const dynamic = 'force-dynamic'
 
@@ -59,12 +59,74 @@ function cleanOfficialLine(line) {
     .trim()
 }
 
+function decodeHtmlEntities(value) {
+  const namedEntities = {
+    amp: '&',
+    apos: "'",
+    gt: '>',
+    lt: '<',
+    nbsp: ' ',
+    quot: '"',
+  }
+
+  return String(value || '').replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (entity, code) => {
+    const normalized = code.toLowerCase()
+    if (normalized.startsWith('#x')) {
+      return String.fromCodePoint(Number.parseInt(normalized.slice(2), 16))
+    }
+    if (normalized.startsWith('#')) {
+      return String.fromCodePoint(Number.parseInt(normalized.slice(1), 10))
+    }
+    return namedEntities[normalized] || entity
+  })
+}
+
+function decodeRepeatedly(value) {
+  let text = String(value || '')
+  for (let i = 0; i < 3; i += 1) {
+    const decoded = decodeHtmlEntities(text)
+    if (decoded === text) break
+    text = decoded
+  }
+  return text
+}
+
+function htmlToReadableText(value) {
+  return decodeRepeatedly(value)
+    .replace(/\\r\\n|\\n|\\t/g, '\n')
+    .replace(/<script[\s\S]*?<\/script>/gi, '\n')
+    .replace(/<style[\s\S]*?<\/style>/gi, '\n')
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, '\n')
+    .replace(/<li\b[^>]*>/gi, '\n- ')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<\/?(ul|ol)\b[^>]*>/gi, '\n')
+    .replace(/<\/?(p|div|br|h[1-6]|section|article|tr|table)\b[^>]*>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+}
+
+function isBrokenScrapeLine(line) {
+  const clean = cleanOfficialLine(line)
+  if (!clean || clean === '-' || clean === '*') return true
+  if (/themeOptions|customTheme|pcsx-|data-up-|up-rich-text|window\.__|__NEXT_DATA__/i.test(clean)) return true
+  if (/^\{.*\}$/.test(clean) && clean.length > 120) return true
+  if (/^["'}\]]+$/.test(clean)) return true
+  return false
+}
+
+function looksLikeBrokenOfficialDescription(description) {
+  return /themeOptions|customTheme|pcsx-|data-up-|up-rich-text|__NEXT_DATA__|window\.__/i.test(
+    decodeRepeatedly(description)
+  )
+}
+
 function cleanOfficialDescription(description) {
-  return String(description || '')
+  if (looksLikeBrokenOfficialDescription(description)) return ''
+
+  return htmlToReadableText(description)
     .replace(/\u00a0/g, ' ')
     .split(/\r?\n/)
     .map(cleanOfficialLine)
-    .filter(Boolean)
+    .filter((line) => !isBrokenScrapeLine(line))
     .join('\n')
 }
 
@@ -308,7 +370,7 @@ export async function generateMetadata({ params }) {
   const description = (
     isClosedJob(job)
       ? `This ${job.title} opening at ${job.company} is marked closed on Hiringstoday.`
-      : officialDescription || job.overview || `Apply for ${job.title} at ${job.company}`
+      : getJobSummary({ ...job, officialDescription }, 155)
   ).slice(0, 155)
   const canonicalUrl = `https://hiringstoday.in/job/${params.id}`
 

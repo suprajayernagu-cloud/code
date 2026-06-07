@@ -37,7 +37,9 @@ export async function getAllJobs(includeDetails = false, options = {}) {
         })
       : await fetchRemoteJobs()
 
-    const jobs = sortJobsByNewest(await fillMissingLogoUrls(Array.isArray(data) ? data : []))
+    const jobs = sortJobsByNewest(
+      (await fillMissingLogoUrls(Array.isArray(data) ? data : [])).map(normalizeJobContent)
+    )
 
     // Update cache
     cachedJobs = jobs
@@ -122,6 +124,162 @@ function getCompanyLogoSlug(company) {
     .replace(/^-+|-+$/g, '')
 }
 
+function decodeHtmlEntities(value) {
+  const namedEntities = {
+    amp: '&',
+    apos: "'",
+    gt: '>',
+    lt: '<',
+    nbsp: ' ',
+    quot: '"',
+  }
+
+  return String(value || '').replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (entity, code) => {
+    const normalized = code.toLowerCase()
+    if (normalized.startsWith('#x')) {
+      return String.fromCodePoint(Number.parseInt(normalized.slice(2), 16))
+    }
+    if (normalized.startsWith('#')) {
+      return String.fromCodePoint(Number.parseInt(normalized.slice(1), 10))
+    }
+    return namedEntities[normalized] || entity
+  })
+}
+
+function decodeRepeatedly(value) {
+  let text = String(value || '')
+  for (let i = 0; i < 3; i += 1) {
+    const decoded = decodeHtmlEntities(text)
+    if (decoded === text) break
+    text = decoded
+  }
+  return text
+}
+
+function htmlToPlainText(value) {
+  return decodeRepeatedly(value)
+    .replace(/\\r\\n|\\n|\\t/g, '\n')
+    .replace(/<script[\s\S]*?<\/script>/gi, '\n')
+    .replace(/<style[\s\S]*?<\/style>/gi, '\n')
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, '\n')
+    .replace(/<li\b[^>]*>/gi, '\n- ')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<\/?(ul|ol)\b[^>]*>/gi, '\n')
+    .replace(/<\/?(p|div|br|h[1-6]|section|article|tr|table)\b[^>]*>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\u00a0/g, ' ')
+    .split(/\r?\n/)
+    .map((line) => line.replace(/\s+/g, ' ').trim())
+    .filter((line) => line && !isBrokenScrapeLine(line))
+    .join('\n')
+}
+
+function isBrokenScrape(value) {
+  return /themeOptions|customTheme|pcsx-|data-up-|up-rich-text|__NEXT_DATA__|window\.__/i.test(
+    decodeRepeatedly(value)
+  )
+}
+
+function isBrokenScrapeLine(line) {
+  if (/themeOptions|customTheme|pcsx-|data-up-|up-rich-text|window\.__|__NEXT_DATA__/i.test(line)) return true
+  if (/^\{.*\}$/.test(line) && line.length > 120) return true
+  if (/^[-*•"'}\]]+$/.test(line)) return true
+  return false
+}
+
+function normalizeTextField(value) {
+  if (!value || typeof value !== 'string') return value
+  if (isBrokenScrape(value)) return ''
+  return htmlToPlainText(value).replace(/\n{3,}/g, '\n\n')
+}
+
+function isLowValueSummaryLine(line) {
+  const clean = String(line || '').trim()
+  if (!clean) return true
+
+  const normalized = clean.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+  if (/^p\d+$/i.test(clean)) return true
+  if (/^\d+\.$/.test(clean)) return true
+
+  return new Set([
+    'job level',
+    'employee role',
+    'individual contributor',
+    'job description',
+    'key responsibilities',
+    'requirements',
+    'qualifications',
+    'what you ll do',
+    'what youll do',
+    'what you need to succeed',
+    'bonus qualifications',
+    'internal opportunities',
+    'put your best foot forward',
+  ]).has(normalized)
+}
+
+function compactText(value) {
+  return htmlToPlainText(value)
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function truncateAtWord(value, maxLength = 220) {
+  const text = String(value || '').replace(/\s+/g, ' ').trim()
+  if (text.length <= maxLength) return text
+
+  const trimmed = text.slice(0, maxLength).replace(/\s+\S*$/, '').trim()
+  return `${trimmed}...`
+}
+
+export function getJobSummary(job, maxLength = 220) {
+  const fallback = `${job.company || 'This company'} is hiring for ${job.title || 'this role'}. Review the official application page for the latest eligibility, location, salary, and application instructions.`
+  const candidates = [
+    job.description,
+    job.overview,
+    job.officialDescription,
+    job.officialPosting?.descriptionPlain,
+    job.sourceDescription,
+  ]
+
+  for (const candidate of candidates) {
+    const lines = htmlToPlainText(candidate)
+      .split(/\r?\n/)
+      .map((line) => line.replace(/^-+\s*/, '').trim())
+      .filter((line) => line.length >= 55 && !isLowValueSummaryLine(line))
+
+    if (lines.length) {
+      return truncateAtWord(lines[0], maxLength)
+    }
+  }
+
+  for (const candidate of candidates) {
+    const text = compactText(candidate)
+    if (text.length >= 55) return truncateAtWord(text, maxLength)
+  }
+
+  return truncateAtWord(fallback, maxLength)
+}
+
+function normalizeJobContent(job) {
+  const normalized = {
+    ...job,
+    description: normalizeTextField(job.description),
+    overview: normalizeTextField(job.overview),
+    officialDescription: normalizeTextField(job.officialDescription),
+    sourceDescription: normalizeTextField(job.sourceDescription),
+  }
+
+  if (job.officialPosting && typeof job.officialPosting === 'object') {
+    normalized.officialPosting = {
+      ...job.officialPosting,
+      descriptionPlain: normalizeTextField(job.officialPosting.descriptionPlain),
+    }
+  }
+
+  return normalized
+}
+
 export function sortJobsByNewest(jobs) {
   return [...jobs].sort((a, b) => {
     const dateA = a.postedAt ? new Date(a.postedAt).getTime() : 0
@@ -197,7 +355,7 @@ function stripDetails(job) {
     workMode: job.workMode,
     postedAt: job.postedAt,
     salary: job.salary,
-    overview: job.overview,
+    overview: getJobSummary(job),
     link: job.link || job.applyUrl || job.applyLink,
     logoUrl: job.logoUrl,
     tags: job.tags,
@@ -206,13 +364,14 @@ function stripDetails(job) {
   }
 }
 
-function isClosedJob(job) {
-  return String(job.status || '').toLowerCase() === 'closed' || Boolean(job.closedAt)
+function isInactiveJob(job) {
+  const status = String(job.status || '').toLowerCase()
+  return status === 'closed' || status === 'review_needed' || Boolean(job.closedAt)
 }
 
 function filterJobsByStatus(jobs, options = {}) {
   if (options.includeClosed) return jobs
-  return jobs.filter((job) => !isClosedJob(job))
+  return jobs.filter((job) => !isInactiveJob(job))
 }
 
 /**
