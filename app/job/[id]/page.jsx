@@ -7,6 +7,8 @@ import { getJobById, getAllJobs } from '@/src/lib/jobs'
 
 export const dynamic = 'force-dynamic'
 
+const CLOSED_APPLICATION_LABEL = 'No longer accepting new applications'
+
 function formatPostedDate(dateString) {
   if (!dateString) return 'Posted date not listed'
 
@@ -38,7 +40,11 @@ function hasListItems(value) {
 }
 
 function isClosedJob(job) {
-  return String(job?.status || '').toLowerCase() === 'closed' || Boolean(job?.closedAt)
+  return (
+    String(job?.status || '').toLowerCase() === 'closed' ||
+    Boolean(job?.closedAt) ||
+    /appears closed|no longer accepting applications/i.test(String(job?.editorNote || ''))
+  )
 }
 
 function objectItems(value) {
@@ -343,7 +349,7 @@ export default async function JobDetailsPage({ params }) {
 
   const closedJob = isClosedJob(job)
   const reviewNeeded = String(job.status || '').toLowerCase() === 'review_needed'
-  const statusLabel = closedJob ? 'Closed' : reviewNeeded ? 'Needs recheck' : 'Active'
+  const statusLabel = closedJob ? CLOSED_APPLICATION_LABEL : reviewNeeded ? 'Needs recheck' : 'Active'
   const rawApplyUrl = job.link || job.applyUrl || job.applyLink
   const applyUrl = closedJob ? '' : rawApplyUrl
   const officialDescription = getOfficialDescription(job)
@@ -435,6 +441,11 @@ export default async function JobDetailsPage({ params }) {
               <CompanyLogo company={job.company} logoUrl={job.logoUrl} />
               <div className="min-w-0">
                 <p className="text-xs font-bold uppercase tracking-wide text-orange-600">Job Update</p>
+                {closedJob ? (
+                  <span className="mt-2 inline-flex w-fit rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-red-700">
+                    {CLOSED_APPLICATION_LABEL}
+                  </span>
+                ) : null}
                 <h1 className="mt-2 text-3xl font-bold leading-tight text-ink-900 sm:text-4xl" itemProp="title">{job.title}</h1>
                 <p className="mt-2 text-lg font-semibold text-slate-700" itemProp="hiringOrganization">{job.company}</p>
                 <p className="mt-3 text-sm leading-6 text-slate-600">
@@ -476,6 +487,9 @@ export default async function JobDetailsPage({ params }) {
           {closedJob && (
             <section className="rounded-lg border border-red-200 bg-red-50 p-4">
               <p className="text-xs font-bold uppercase tracking-wide text-red-700">Applications Closed</p>
+              <span className="mt-2 inline-flex w-fit rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-bold uppercase tracking-wide text-red-700">
+                {CLOSED_APPLICATION_LABEL}
+              </span>
               <h2 className="mt-1 text-xl font-bold text-red-950">This job is no longer active</h2>
               <p className="mt-2 text-sm leading-6 text-red-900">
                 HiringsToday last checked this official application page on {formatOptionalDate(job.lastCheckedAt) || 'the latest verification run'}.
@@ -840,7 +854,7 @@ export default async function JobDetailsPage({ params }) {
         <section className="border-t pt-6">
           {closedJob ? (
             <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold leading-6 text-red-900">
-              This listing is marked closed, so the apply button is disabled. Please use other active jobs on Hiringstoday.
+              {CLOSED_APPLICATION_LABEL}. The apply button is disabled. Please use other active jobs on Hiringstoday.
             </p>
           ) : applyUrl ? (
             <a
