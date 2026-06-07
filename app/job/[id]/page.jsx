@@ -46,6 +46,97 @@ function getSkillName(skill) {
   return typeof skill === 'string' ? skill : skill?.name
 }
 
+function getTagName(tag) {
+  return typeof tag === 'string' ? tag : tag?.name
+}
+
+function makeCategoryLinks(job) {
+  const links = [
+    { href: '/jobs/fresher', label: 'Fresher Jobs' },
+    { href: '/jobs/internship', label: 'Internships' },
+    { href: '/jobs/remote', label: 'Remote Jobs' },
+    { href: '/jobs/btech', label: 'B.E/B.Tech Jobs' },
+    { href: '/jobs/any-degree', label: 'Any Degree Jobs' },
+  ]
+
+  const location = String(job.location || '').toLowerCase()
+  if (location.includes('hyderabad')) links.unshift({ href: '/jobs/hyderabad', label: 'Hyderabad Jobs' })
+  if (location.includes('bangalore') || location.includes('bengaluru')) links.unshift({ href: '/jobs/bangalore', label: 'Bangalore Jobs' })
+  if (location.includes('pune')) links.unshift({ href: '/jobs/pune', label: 'Pune Jobs' })
+  if (location.includes('chennai')) links.unshift({ href: '/jobs/chennai', label: 'Chennai Jobs' })
+  if (location.includes('mumbai')) links.unshift({ href: '/jobs/mumbai', label: 'Mumbai Jobs' })
+  if (location.includes('noida')) links.unshift({ href: '/jobs/noida', label: 'Noida Jobs' })
+  if (location.includes('gurgaon') || location.includes('gurugram')) links.unshift({ href: '/jobs/gurgaon', label: 'Gurgaon Jobs' })
+
+  return links.slice(0, 8)
+}
+
+function CompanyLogo({ company, logoUrl }) {
+  if (logoUrl) {
+    return (
+      <img
+        src={logoUrl}
+        alt={`${company} logo`}
+        loading="lazy"
+        className="h-12 w-12 shrink-0 rounded-lg border border-slate-200 bg-white object-cover"
+      />
+    )
+  }
+
+  return (
+    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-brand-800 text-sm font-bold text-white">
+      {company?.trim()?.charAt(0)?.toUpperCase() || 'H'}
+    </div>
+  )
+}
+
+function SidebarJobList({ title, jobs }) {
+  if (!jobs.length) return null
+
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="border-b border-slate-100 px-4 py-3">
+        <h2 className="font-display text-lg font-bold text-ink-900">{title}</h2>
+      </div>
+      <div className="divide-y divide-slate-100">
+        {jobs.map((item) => (
+          <Link key={item.id} href={`/job/${item.id}`} className="group flex gap-3 px-4 py-3 hover:bg-orange-50/50">
+            <CompanyLogo company={item.company} logoUrl={item.logoUrl} />
+            <div className="min-w-0 flex-1">
+              <h3 className="line-clamp-2 text-sm font-bold leading-5 text-ink-900 group-hover:text-brand-800">
+                {item.title}
+              </h3>
+              <p className="mt-1 truncate text-xs font-semibold text-slate-600">{item.company}</p>
+              <p className="mt-1 text-xs text-slate-500">{formatPostedDate(item.postedAt)}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function LinkBox({ title, links }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="border-b border-slate-100 px-4 py-3">
+        <h2 className="font-display text-lg font-bold text-ink-900">{title}</h2>
+      </div>
+      <div className="grid grid-cols-2 gap-2 p-4">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-brand-800"
+          >
+            {link.label}
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export async function generateMetadata({ params }) {
   const job = await getJobById(params.id)
 
@@ -111,6 +202,21 @@ export default async function JobDetailsPage({ params }) {
   const prepItems = hasListItems(job.preparationTips) ? job.preparationTips : []
   const applySteps = hasListItems(job.howToApply) ? job.howToApply : []
   const faqItems = hasListItems(job.faq) ? job.faq : []
+  const categoryLinks = makeCategoryLinks(job)
+  const latestSidebarJobs = allJobs
+    .filter((item) => String(item.id) !== String(job.id))
+    .slice(0, 6)
+  const currentTags = Array.isArray(job.tags) ? job.tags.map(getTagName).filter(Boolean) : []
+  const popularSidebarJobs = [...allJobs]
+    .filter((item) => String(item.id) !== String(job.id))
+    .sort((a, b) => {
+      const score = (item) => {
+        const tags = Array.isArray(item.tags) ? item.tags.map(getTagName).filter(Boolean) : []
+        return tags.filter((tag) => currentTags.includes(tag)).length + (item.company === job.company ? 3 : 0)
+      }
+      return score(b) - score(a)
+    })
+    .slice(0, 6)
 
   const jobSchema = {
     '@context': 'https://schema.org',
@@ -149,24 +255,31 @@ export default async function JobDetailsPage({ params }) {
         suppressHydrationWarning
       />
 
-      <article
-        className="mx-auto max-w-4xl space-y-8"
-        itemScope
-        itemType="https://schema.org/JobPosting"
-      >
-        <div>
-          <Link href="/" className="text-sm text-brand-700 hover:text-brand-800">
-            ← Back to Jobs
-          </Link>
-        </div>
-
-        <header className="space-y-4">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-ink-900" itemProp="title">{job.title}</h1>
-              <p className="mt-2 text-lg text-slate-600" itemProp="hiringOrganization">{job.company}</p>
-            </div>
+      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <article
+          className="min-w-0 space-y-8 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6"
+          itemScope
+          itemType="https://schema.org/JobPosting"
+        >
+          <div>
+            <Link href="/jobs" className="text-sm font-semibold text-brand-700 hover:text-brand-800">
+              ← Back to Jobs
+            </Link>
           </div>
+
+          <header className="space-y-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+              <CompanyLogo company={job.company} logoUrl={job.logoUrl} />
+              <div className="min-w-0">
+                <p className="text-xs font-bold uppercase tracking-wide text-orange-600">Job Update</p>
+                <h1 className="mt-2 text-3xl font-bold leading-tight text-ink-900 sm:text-4xl" itemProp="title">{job.title}</h1>
+                <p className="mt-2 text-lg font-semibold text-slate-700" itemProp="hiringOrganization">{job.company}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  Published by <span className="font-semibold text-ink-900">Siddiq K</span> on {formatPostedDate(job.postedAt)}
+                  {job.lastCheckedAt ? ` / Updated on ${formatOptionalDate(job.lastCheckedAt)}` : ''}
+                </p>
+              </div>
+            </div>
 
           <div className="grid gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
             <div>
@@ -195,7 +308,22 @@ export default async function JobDetailsPage({ params }) {
               </p>
             </div>
           </div>
-        </header>
+          </header>
+
+          <section className="space-y-3 border-t pt-6">
+            <h2 className="text-2xl font-bold text-ink-900">Quick Links for This Job</h2>
+            <div className="flex flex-wrap gap-2">
+              {categoryLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-brand-800"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </section>
 
         {job.overview && (
           <section className="space-y-4 border-t pt-6">
@@ -526,7 +654,35 @@ export default async function JobDetailsPage({ params }) {
         )}
 
         <RelatedArticles />
-      </article>
+        </article>
+
+        <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
+          <SidebarJobList title="Latest Jobs" jobs={latestSidebarJobs} />
+          <SidebarJobList title="Popular Jobs" jobs={popularSidebarJobs} />
+          <LinkBox
+            title="Jobs by Batch"
+            links={[
+              { href: '/jobs/2026', label: '2026 Batch' },
+              { href: '/jobs/2025', label: '2025 Batch' },
+              { href: '/jobs/fresher', label: 'Freshers' },
+              { href: '/jobs/internship', label: 'Internships' },
+              { href: '/jobs/btech', label: 'B.Tech' },
+              { href: '/jobs/any-degree', label: 'Any Degree' },
+            ]}
+          />
+          <LinkBox
+            title="Jobs by Location"
+            links={[
+              { href: '/jobs/bangalore', label: 'Bangalore' },
+              { href: '/jobs/hyderabad', label: 'Hyderabad' },
+              { href: '/jobs/pune', label: 'Pune' },
+              { href: '/jobs/chennai', label: 'Chennai' },
+              { href: '/jobs/mumbai', label: 'Mumbai' },
+              { href: '/jobs/delhi', label: 'Delhi NCR' },
+            ]}
+          />
+        </aside>
+      </div>
     </>
   )
 }

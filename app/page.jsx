@@ -210,6 +210,77 @@ function NewsTicker({ items }) {
   )
 }
 
+function MiniJobList({ title, jobs = [], emptyText = 'No jobs available right now.' }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="border-b border-slate-100 px-4 py-3">
+        <h2 className="font-display text-lg font-bold text-ink-900">{title}</h2>
+      </div>
+      <div className="divide-y divide-slate-100">
+        {jobs.length > 0 ? jobs.map((job) => (
+          <Link key={job.id} href={`/job/${job.id}`} className="group flex gap-3 px-4 py-3 hover:bg-orange-50/50">
+            <CompanyLogo company={job.company} logoUrl={job.logoUrl} />
+            <div className="min-w-0 flex-1">
+              <h3 className="line-clamp-2 text-sm font-bold leading-5 text-ink-900 group-hover:text-brand-800">
+                {job.title}
+              </h3>
+              <p className="mt-1 truncate text-xs font-semibold text-slate-600">{job.company}</p>
+              <p className="mt-1 text-xs text-slate-500">{formatDate(job.postedAt)} / {job.location || 'India'}</p>
+            </div>
+          </Link>
+        )) : (
+          <p className="px-4 py-5 text-sm text-slate-600">{emptyText}</p>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function LinkGroup({ title, items }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="border-b border-slate-100 px-4 py-3">
+        <h2 className="font-display text-lg font-bold text-ink-900">{title}</h2>
+      </div>
+      <div className="grid grid-cols-2 gap-2 p-4">
+        {items.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-brand-800"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function PortalSidebar({ latestJobs, popularJobs, locations }) {
+  return (
+    <aside className="space-y-5 lg:sticky lg:top-28">
+      <MiniJobList title="Latest Jobs" jobs={latestJobs.slice(0, 5)} />
+      <MiniJobList title="Popular Jobs" jobs={popularJobs.slice(0, 5)} />
+      <LinkGroup
+        title="Jobs by Batch"
+        items={[
+          { href: '/jobs/2026', label: '2026 Batch' },
+          { href: '/jobs/2025', label: '2025 Batch' },
+          { href: '/jobs/fresher', label: 'Freshers' },
+          { href: '/jobs/internship', label: 'Internships' },
+          { href: '/jobs/btech', label: 'B.Tech' },
+          { href: '/jobs/any-degree', label: 'Any Degree' },
+        ]}
+      />
+      <LinkGroup
+        title="Jobs by Location"
+        items={locations.map((item) => ({ href: item.href, label: item.title }))}
+      />
+    </aside>
+  )
+}
+
 export default async function Home() {
   let jobs = []
 
@@ -226,6 +297,15 @@ export default async function Home() {
   })
 
   const latestJobs = sortedJobs.slice(0, 8)
+  const popularJobs = [...jobs]
+    .sort((a, b) => {
+      const score = (job) => {
+        const tags = Array.isArray(job.tags) ? job.tags.length : 0
+        return tags + (job.logoUrl?.includes('cdn.jsdelivr.net') ? 4 : 0) + (job.sourceUrl ? 3 : 0)
+      }
+      return score(b) - score(a)
+    })
+    .slice(0, 8)
   const latestArticles = [...blogArticles]
     .sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime())
     .slice(0, 6)
@@ -283,71 +363,62 @@ export default async function Home() {
         description="Find daily updated fresher jobs, off-campus drives, internships, remote jobs, and career guides for Indian job seekers."
       />
 
-      <section className="overflow-hidden rounded-lg border border-brand-900 bg-brand-900 text-white shadow-xl shadow-brand-900/20">
-        <div className="grid gap-7 px-4 py-8 sm:px-8 sm:py-10 lg:grid-cols-[1.2fr_0.8fr] lg:px-10 lg:py-12">
-          <div className="min-w-0">
-            <p className="inline-flex max-w-full rounded-full bg-white/10 px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-orange-200 sm:px-4 sm:text-xs">
-              India's daily job update blog
-            </p>
-            <h1 className="mt-5 font-display text-3xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-              Find Your Dream Job Before the Campus Does
-            </h1>
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-blue-100 sm:text-lg sm:leading-8">
-              Daily off-campus drives, internships, work-from-home jobs, location-wise openings,
-              and practical career guides for 2024-2027 batch candidates.
-            </p>
-
-            <form action="/jobs" className="mt-7 flex w-full max-w-2xl flex-col gap-3 rounded-lg border border-white/15 bg-white p-3 shadow-2xl sm:flex-row">
-              <input
-                type="search"
-                name="q"
-                placeholder="Search jobs, company, skill, or location"
-                className="min-h-12 min-w-0 flex-1 rounded-md border border-slate-200 px-4 text-sm text-slate-900 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
-              />
-              <button type="submit" className="min-h-12 rounded-md bg-orange-500 px-6 text-sm font-bold text-brand-900 transition hover:bg-orange-400 sm:shrink-0">
-                Search Jobs
-              </button>
-            </form>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              {[
-                { href: '/jobs/fresher', label: 'Software Engineer' },
-                { href: '/jobs/remote', label: 'Work From Home' },
-                { href: '/jobs/internship', label: 'Internship 2026' },
-                { href: '/jobs/bangalore', label: 'Bangalore Jobs' },
-                { href: '/jobs/2026', label: '2026 Batch' },
-              ].map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-xs font-semibold text-white hover:border-orange-300 hover:text-orange-200 sm:px-4 sm:text-sm"
-                >
-                  {item.label}
-                </Link>
-              ))}
+      <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 bg-brand-900 px-4 py-3 text-white sm:px-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs font-bold uppercase tracking-wide text-orange-200">Hiringstoday Job News Portal</p>
+            <div className="flex flex-wrap gap-3 text-xs font-semibold text-blue-100">
+              <span>{jobs.length} job updates</span>
+              <span>{topCompanies.length}+ hiring companies</span>
+              <span>{blogArticles.length} career guides</span>
             </div>
           </div>
+        </div>
 
-          <aside className="min-w-0 rounded-lg border border-white/15 bg-white/10 p-4 sm:p-5">
-            <p className="text-xs font-bold uppercase tracking-wide text-orange-200 sm:text-sm">Get instant job alerts</p>
-            <h2 className="mt-3 font-display text-xl font-bold text-white sm:text-2xl">Join readers checking new drives every day.</h2>
-            <p className="mt-3 text-sm leading-7 text-blue-100">
-              Bookmark Hiringstoday for verified openings, direct apply guidance, and interview prep in one place.
-            </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {[
-                { value: jobs.length || 'Daily', label: 'Jobs posted' },
-                { value: topCompanies.length || 'Top', label: 'Companies' },
-                { value: '2024-27', label: 'Batch focus' },
-                { value: blogArticles.length, label: 'Guides' },
-              ].map((stat) => (
-                <div key={stat.label} className="rounded-lg bg-white p-4 text-brand-900">
-                  <p className="font-display text-2xl font-bold">{stat.value}</p>
-                  <p className="mt-1 text-xs font-semibold text-slate-600">{stat.label}</p>
+        <div className="grid gap-6 p-4 sm:p-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <main className="min-w-0 space-y-5">
+            <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 sm:p-5">
+              <p className="text-xs font-bold uppercase tracking-wide text-orange-700">Latest off-campus and software job updates</p>
+              <h1 className="mt-3 font-display text-3xl font-bold leading-tight text-ink-900 sm:text-4xl">
+                Daily Job Updates for Freshers, Interns, and Software Professionals
+              </h1>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-700 sm:text-base">
+                Browse verified job posts with eligibility, source links, documents required, selection process, and apply guidance.
+                Use the sidebar to jump by batch, city, work mode, and popular hiring updates.
+              </p>
+            </div>
+
+            {latestJobs[0] ? (
+              <Link href={`/job/${latestJobs[0].id}`} className="group block rounded-lg border border-slate-200 bg-white p-4 shadow-sm hover:border-orange-300 hover:shadow-lg sm:p-5">
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <CompanyLogo company={latestJobs[0].company} logoUrl={latestJobs[0].logoUrl} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <span className="rounded-full bg-orange-50 px-2.5 py-1 text-orange-700">Featured Update</span>
+                      <span>{formatDate(latestJobs[0].postedAt)}</span>
+                      <span>{latestJobs[0].type || 'Full-time'}</span>
+                    </div>
+                    <h2 className="mt-3 font-display text-2xl font-bold leading-tight text-ink-900 group-hover:text-brand-800 sm:text-3xl">
+                      {latestJobs[0].title}
+                    </h2>
+                    <p className="mt-2 text-sm font-semibold text-slate-700">{latestJobs[0].company} / {latestJobs[0].location || 'India'}</p>
+                    <p className="mt-3 line-clamp-3 text-sm leading-7 text-slate-600">
+                      {latestJobs[0].overview || latestJobs[0].description || 'Open the job post to check eligibility, apply link, selection process, and documents required.'}
+                    </p>
+                    <p className="mt-4 text-sm font-bold text-orange-600">Read full job update →</p>
+                  </div>
                 </div>
+              </Link>
+            ) : null}
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {latestJobs.slice(1, 7).map((job) => (
+                <JobCard key={job.id} job={job} />
               ))}
             </div>
-          </aside>
+          </main>
+
+          <PortalSidebar latestJobs={latestJobs} popularJobs={popularJobs} locations={locations} />
         </div>
         <NewsTicker items={tickerItems} />
       </section>
