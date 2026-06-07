@@ -9,9 +9,10 @@ export async function GET(request) {
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')) : 300
     const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')) : 0
     const details = searchParams.get('details') === 'true'
+    const includeClosed = searchParams.get('includeClosed') === 'true'
 
     // Fetch jobs from centralized lib
-    const jobs = await getAllJobs(details)
+    const jobs = await getAllJobs(details, { includeClosed })
 
     // Apply pagination
     const paginatedJobs = jobs.slice(offset, offset + limit)

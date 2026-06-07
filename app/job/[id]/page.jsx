@@ -37,6 +37,10 @@ function hasListItems(value) {
   return Array.isArray(value) && value.filter(Boolean).length > 0
 }
 
+function isClosedJob(job) {
+  return String(job?.status || '').toLowerCase() === 'closed' || Boolean(job?.closedAt)
+}
+
 function objectItems(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return []
   return Object.values(value).filter(Boolean)
@@ -293,9 +297,13 @@ export async function generateMetadata({ params }) {
     }
   }
 
-  const title = `${job.title} at ${job.company} | Hiringstoday`
+  const title = `${job.title} at ${job.company}${isClosedJob(job) ? ' - Closed' : ''} | Hiringstoday`
   const officialDescription = getOfficialDescription(job)
-  const description = (officialDescription || job.overview || `Apply for ${job.title} at ${job.company}`).slice(0, 155)
+  const description = (
+    isClosedJob(job)
+      ? `This ${job.title} opening at ${job.company} is marked closed on Hiringstoday.`
+      : officialDescription || job.overview || `Apply for ${job.title} at ${job.company}`
+  ).slice(0, 155)
   const canonicalUrl = `https://hiringstoday.in/job/${params.id}`
 
   return {
@@ -333,9 +341,14 @@ export default async function JobDetailsPage({ params }) {
     console.error('Failed to fetch related jobs:', error)
   }
 
-  const applyUrl = job.link || job.applyUrl || job.applyLink
+  const closedJob = isClosedJob(job)
+  const reviewNeeded = String(job.status || '').toLowerCase() === 'review_needed'
+  const statusLabel = closedJob ? 'Closed' : reviewNeeded ? 'Needs recheck' : 'Active'
+  const rawApplyUrl = job.link || job.applyUrl || job.applyLink
+  const applyUrl = closedJob ? '' : rawApplyUrl
   const officialDescription = getOfficialDescription(job)
   const hasTrustDetails =
+    job.status ||
     job.sourceName ||
     job.sourceUrl ||
     job.lastCheckedAt ||
@@ -389,9 +402,11 @@ export default async function JobDetailsPage({ params }) {
       name: 'India',
     },
     ...(job.postedAt && { datePosted: job.postedAt }),
-    validThrough: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    validThrough: closedJob && job.closedAt
+      ? new Date(job.closedAt).toISOString()
+      : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     employmentType: job.type?.toUpperCase() ?? 'FULL_TIME',
-    directApply: true,
+    directApply: !closedJob,
     ...(applyUrl && { url: applyUrl }),
   }
 
@@ -458,6 +473,27 @@ export default async function JobDetailsPage({ params }) {
           </div>
           </header>
 
+          {closedJob && (
+            <section className="rounded-lg border border-red-200 bg-red-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-red-700">Applications Closed</p>
+              <h2 className="mt-1 text-xl font-bold text-red-950">This job is no longer active</h2>
+              <p className="mt-2 text-sm leading-6 text-red-900">
+                HiringsToday last checked this official application page on {formatOptionalDate(job.lastCheckedAt) || 'the latest verification run'}.
+                {job.expiredReason && job.expiredReason !== 'Not mentioned' ? ` Reason: ${job.expiredReason}.` : ''}
+              </p>
+              {job.sourceUrl ? (
+                <a
+                  href={job.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex text-sm font-bold text-red-800 hover:text-red-950"
+                >
+                  View official source
+                </a>
+              ) : null}
+            </section>
+          )}
+
           <section className="space-y-3 border-t pt-6">
             <h2 className="text-2xl font-bold text-ink-900">Quick Links for This Job</h2>
             <div className="flex flex-wrap gap-2">
@@ -501,6 +537,21 @@ export default async function JobDetailsPage({ params }) {
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Source</p>
                   <p className="mt-1 text-sm font-semibold text-ink-900">{job.sourceName}</p>
+                </div>
+              )}
+
+              {job.status && (
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Status</p>
+                  <p className={
+                    closedJob
+                      ? 'mt-1 text-sm font-semibold text-red-700'
+                      : reviewNeeded
+                        ? 'mt-1 text-sm font-semibold text-amber-700'
+                        : 'mt-1 text-sm font-semibold text-emerald-700'
+                  }>
+                    {statusLabel}
+                  </p>
                 </div>
               )}
 
@@ -787,7 +838,11 @@ export default async function JobDetailsPage({ params }) {
         )}
 
         <section className="border-t pt-6">
-          {applyUrl ? (
+          {closedJob ? (
+            <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold leading-6 text-red-900">
+              This listing is marked closed, so the apply button is disabled. Please use other active jobs on Hiringstoday.
+            </p>
+          ) : applyUrl ? (
             <a
               href={applyUrl}
               target="_blank"

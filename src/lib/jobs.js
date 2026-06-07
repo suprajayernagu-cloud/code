@@ -9,14 +9,17 @@ const CACHE_DURATION = 3600000 // 1 hour in milliseconds
 /**
  * Fetch all jobs from external source with caching
  * @param {boolean} includeDetails - Whether to include detailed fields
+ * @param {Object} options - Loader options
+ * @param {boolean} options.includeClosed - Whether to include closed/expired jobs
  * @returns {Promise<Array>} Array of job objects
  */
-export async function getAllJobs(includeDetails = false) {
+export async function getAllJobs(includeDetails = false, options = {}) {
   try {
     // Check cache validity
     const now = Date.now()
     if (cachedJobs && now - cacheTimestamp < CACHE_DURATION) {
-      return includeDetails ? cachedJobs : cachedJobs.map(stripDetails)
+      const jobs = filterJobsByStatus(cachedJobs, options)
+      return includeDetails ? jobs : jobs.map(stripDetails)
     }
 
     const data = USE_LOCAL_DATA
@@ -32,7 +35,8 @@ export async function getAllJobs(includeDetails = false) {
     cachedJobs = jobs
     cacheTimestamp = now
 
-    return includeDetails ? jobs : jobs.map(stripDetails)
+    const visibleJobs = filterJobsByStatus(jobs, options)
+    return includeDetails ? visibleJobs : visibleJobs.map(stripDetails)
   } catch (error) {
     console.error('Error fetching jobs from API:', error.message)
     throw error
@@ -77,7 +81,7 @@ async function fetchRemoteJobs() {
  */
 export async function getJobById(id) {
   try {
-    const jobs = await getAllJobs(true)
+    const jobs = await getAllJobs(true, { includeClosed: true })
     return jobs.find(j => String(j.id) === String(id)) ?? null
   } catch (error) {
     console.error(`Error fetching job ${id}:`, error.message)
@@ -104,7 +108,18 @@ function stripDetails(job) {
     link: job.link || job.applyUrl || job.applyLink,
     logoUrl: job.logoUrl,
     tags: job.tags,
+    status: job.status || 'active',
+    closedAt: job.closedAt,
   }
+}
+
+function isClosedJob(job) {
+  return String(job.status || '').toLowerCase() === 'closed' || Boolean(job.closedAt)
+}
+
+function filterJobsByStatus(jobs, options = {}) {
+  if (options.includeClosed) return jobs
+  return jobs.filter((job) => !isClosedJob(job))
 }
 
 /**
