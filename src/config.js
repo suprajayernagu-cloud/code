@@ -1,12 +1,22 @@
 // Hiringstoday runtime configuration
 
 // Data source configuration
-// Uses local enriched JSON for better SEO and content quality
-// Falls back to remote URL if needed
-export const USE_LOCAL_DATA = true
+// During development, fetch from GitHub API (private repo)
+// In production, can switch to local if needed
+export const USE_LOCAL_DATA = process.env.USE_LOCAL_DATA === 'true' // Default: false (fetch from GitHub)
 export const LOCAL_DATA_PATH = '../Job-data/Jobdetails.json'
-export const JOBS_URL = 'https://suprajayernagu-cloud.github.io/Job-data/Jobdetails.json'
-export const COMPANIES_URL = 'https://suprajayernagu-cloud.github.io/Job-data/companies.json'
+
+// GitHub API URLs for private repository access
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN
+export const GITHUB_API_BASE = 'https://api.github.com/repos/suprajayernagu-cloud/Job-data/contents'
+export const GITHUB_API_HEADERS = GITHUB_TOKEN ? {
+  'Authorization': `token ${GITHUB_TOKEN}`,
+  'Accept': 'application/vnd.github.v3.raw'
+} : {}
+
+// Legacy URLs (kept for reference, now using GitHub API for private repo)
+export const JOBS_URL = `${GITHUB_API_BASE}/Jobdetails.json`
+export const COMPANIES_URL = `${GITHUB_API_BASE}/companies.json`
 
 export const SITE_URL = 'https://hiringstoday.in'
 export const CONTACT_EMAIL = 'hiringstoday7@gmail.com'

@@ -1,4 +1,4 @@
-import { JOBS_URL } from '../config'
+import { JOBS_URL, GITHUB_API_HEADERS } from '../config'
 
 let cachedJobs = null
 
@@ -24,7 +24,9 @@ export async function fetchJobs() {
       console.log(`✓ Loaded ${data.length} jobs from app API`)
     } catch (error) {
       console.warn('Failed to load jobs from app API, trying remote URL:', error.message)
-      const response = await fetch(JOBS_URL)
+      const response = await fetch(JOBS_URL, {
+        headers: GITHUB_API_HEADERS,
+      })
       if (!response.ok) throw new Error('Failed to fetch remote jobs')
       data = await response.json()
       console.log(`✓ Loaded ${data.length} jobs from remote source`)

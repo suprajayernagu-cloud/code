@@ -1,6 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { JOBS_URL, LOCAL_DATA_PATH, USE_LOCAL_DATA } from '@/src/config'
+import { JOBS_URL, LOCAL_DATA_PATH, USE_LOCAL_DATA, GITHUB_API_HEADERS } from '@/src/config'
 
 let cachedJobs = null
 let cacheTimestamp = 0
@@ -308,6 +308,7 @@ async function fetchRemoteJobs() {
     const response = await fetch(JOBS_URL, {
       headers: {
         Accept: 'application/json',
+        ...GITHUB_API_HEADERS,
       },
       cache: 'no-store',
       signal: controller.signal,
