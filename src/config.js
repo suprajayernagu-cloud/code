@@ -1,9 +1,9 @@
 // Hiringstoday runtime configuration
 
 // Data source configuration
-// During development, fetch from GitHub API (private repo)
-// In production, can switch to local if needed
-export const USE_LOCAL_DATA = process.env.USE_LOCAL_DATA === 'true' // Default: false (fetch from GitHub)
+// Prefer the sibling Job-data folder when it exists, then fall back to GitHub.
+// Set USE_LOCAL_DATA=false to force GitHub API loading.
+export const USE_LOCAL_DATA = process.env.USE_LOCAL_DATA !== 'false'
 export const LOCAL_DATA_PATH = '../Job-data/Jobdetails.json'
 
 // GitHub API URLs for private repository access

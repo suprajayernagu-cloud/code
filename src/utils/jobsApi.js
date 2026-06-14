@@ -49,6 +49,13 @@ export async function fetchJobs() {
 
 function sortJobsByNewest(jobs) {
   return [...jobs].sort((a, b) => {
+    const idA = getJobSortId(a)
+    const idB = getJobSortId(b)
+
+    if (idB !== idA) {
+      return idB - idA
+    }
+
     const dateA = a.postedAt ? new Date(a.postedAt).getTime() : 0
     const dateB = b.postedAt ? new Date(b.postedAt).getTime() : 0
 
@@ -56,7 +63,7 @@ function sortJobsByNewest(jobs) {
       return dateB - dateA
     }
 
-    return getJobSortId(b) - getJobSortId(a)
+    return 0
   })
 }
 

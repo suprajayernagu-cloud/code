@@ -7,6 +7,7 @@ let cacheTimestamp = 0
 let cacheSignature = null
 const CACHE_DURATION = 3600000 // 1 hour in milliseconds
 const COMPANY_LOGOS_CDN_BASE = 'https://cdn.jsdelivr.net/gh/suprajayernagu-cloud/Job-data@main/company-logos'
+const COMPANY_LOGOS_ROUTE_BASE = '/api/company-logo'
 
 /**
  * Fetch all jobs from external source with caching
@@ -84,17 +85,19 @@ async function fillMissingLogoUrls(jobs) {
   const availableLogoSlugs = await getAvailableLogoSlugs().catch(() => new Set())
 
   return jobs.map((job) => {
-    if (job.logoUrl || !job.company) return job
+    const logoUrl = normalizeLogoUrl(job.logoUrl)
+    if (logoUrl) return logoUrl === job.logoUrl ? job : { ...job, logoUrl }
+    if (!job.company) return job
 
     const companyKey = normalizeCompanyName(job.company)
-    const existingLogoUrl = logoByCompany.get(companyKey)
+    const existingLogoUrl = normalizeLogoUrl(logoByCompany.get(companyKey))
     if (existingLogoUrl) {
       return { ...job, logoUrl: existingLogoUrl }
     }
 
     const logoSlug = getCompanyLogoSlug(job.company)
     if (availableLogoSlugs.has(logoSlug)) {
-      return { ...job, logoUrl: `${COMPANY_LOGOS_CDN_BASE}/${logoSlug}.webp` }
+      return { ...job, logoUrl: getCompanyLogoPath(logoSlug) }
     }
 
     return job
@@ -122,6 +125,28 @@ function getCompanyLogoSlug(company) {
     .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
+}
+
+function getCompanyLogoPath(slug) {
+  return `${COMPANY_LOGOS_ROUTE_BASE}/${slug}.webp`
+}
+
+function normalizeLogoUrl(logoUrl) {
+  if (!logoUrl) return ''
+
+  const value = String(logoUrl).trim()
+  if (!value) return ''
+
+  const cdnPrefix = `${COMPANY_LOGOS_CDN_BASE}/`
+  if (value.startsWith(cdnPrefix)) {
+    const fileName = value.slice(cdnPrefix.length)
+    const slug = fileName.replace(/\.webp(?:[?#].*)?$/, '')
+    if (/^[a-z0-9-]+$/.test(slug)) {
+      return getCompanyLogoPath(slug)
+    }
+  }
+
+  return value
 }
 
 function decodeHtmlEntities(value) {
@@ -282,6 +307,13 @@ function normalizeJobContent(job) {
 
 export function sortJobsByNewest(jobs) {
   return [...jobs].sort((a, b) => {
+    const idA = getJobSortId(a)
+    const idB = getJobSortId(b)
+
+    if (idB !== idA) {
+      return idB - idA
+    }
+
     const dateA = a.postedAt ? new Date(a.postedAt).getTime() : 0
     const dateB = b.postedAt ? new Date(b.postedAt).getTime() : 0
 
@@ -289,7 +321,7 @@ export function sortJobsByNewest(jobs) {
       return dateB - dateA
     }
 
-    return getJobSortId(b) - getJobSortId(a)
+    return 0
   })
 }
 
